@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ const contactSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
-export const ContactSection = () => {
+export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
@@ -107,6 +107,7 @@ export const ContactSection = () => {
 
   return (
     <section
+      ref={ref}
       id="contact"
       className="py-24 px-6 lg:px-12 bg-muted relative z-10"
     >
@@ -249,4 +250,6 @@ export const ContactSection = () => {
       </div>
     </section>
   );
-};
+});
+
+ContactSection.displayName = "ContactSection";
