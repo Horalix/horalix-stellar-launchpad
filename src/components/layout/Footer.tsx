@@ -1,15 +1,15 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
-import { Hexagon } from "lucide-react";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 /**
  * Footer - Site footer with links and branding
  */
-export const Footer = () => {
+export const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-primary-foreground border-t border-border relative z-10">
+    <footer ref={ref} className="bg-primary text-primary-foreground border-t border-border relative z-10">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand section */}
@@ -90,4 +90,6 @@ export const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
