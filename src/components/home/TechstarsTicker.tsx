@@ -16,11 +16,11 @@ export const TechstarsTicker = () => {
             <img 
               src={techstarsLogo} 
               alt="Techstars" 
-              className="h-6 w-auto brightness-0 invert"
+              className="h-12 w-auto brightness-0 invert"
             />
-            <span className="font-bold font-space text-lg tracking-tight">
+            {/* <span className="font-bold font-space text-lg tracking-tight">
               TECHSTARS
-            </span>
+            </span> */}
             <div className="w-1 h-8 bg-primary-foreground/20 rotate-12 mx-4" />
           </div>
         ))}
