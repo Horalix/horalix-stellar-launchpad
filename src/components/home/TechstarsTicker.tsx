@@ -16,7 +16,7 @@ export const TechstarsTicker = () => {
             <img 
               src={techstarsLogo} 
               alt="Techstars" 
-              className="h-12 w-auto brightness-0 invert"
+              className="h-12 w-auto mr-4 brightness-0 invert"
             />
             {/* <span className="font-bold font-space text-lg tracking-tight">
               TECHSTARS
