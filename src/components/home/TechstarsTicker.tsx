@@ -1,4 +1,4 @@
-import techstarsLogo from "@/assets/techstars-logo.png";
+import techstarsLogo from "@/assets/Techstars_Logo_Primary_Black.png";
 
 /**
  * TechstarsTicker - Scrolling banner showing Techstars accelerator badge
