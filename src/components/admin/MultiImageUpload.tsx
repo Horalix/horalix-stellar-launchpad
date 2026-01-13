@@ -149,14 +149,22 @@ export const MultiImageUpload = ({
             return (
               <div
                 key={`${url}-${index}`}
-                draggable
-                onDragStart={() => handleDragStart(index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDragEnd={handleDragEnd}
-                className={`relative aspect-video bg-secondary rounded-lg overflow-hidden group cursor-move border-2 transition-all ${
+                className={`relative aspect-video bg-secondary rounded-lg overflow-hidden group border-2 transition-all ${
                   dragIndex === index ? "border-accent scale-105" : "border-transparent hover:border-muted-foreground/30"
                 }`}
               >
+                {/* Draggable area - only the drag handle triggers drag */}
+                <div
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragEnd={handleDragEnd}
+                  className="absolute top-1 left-1 p-1.5 bg-background/80 rounded cursor-grab z-10 hover:bg-background transition-colors"
+                  title="Drag to reorder"
+                >
+                  <GripVertical className="w-4 h-4 text-foreground" />
+                </div>
+
                 {/* Image Preview */}
                 <img
                   src={url}
@@ -166,48 +174,35 @@ export const MultiImageUpload = ({
                   onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
                 />
 
-                {/* Drag handle indicator */}
-                <div className="absolute top-1 left-1 p-1 bg-background/70 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GripVertical className="w-4 h-4 text-foreground" />
-                </div>
-
                 {/* Image number badge */}
                 <span className="absolute bottom-1 right-1 text-xs font-bold bg-background/80 px-2 py-0.5 rounded">
                   {index + 1}
                 </span>
 
-                {/* Action buttons overlay */}
-                <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
+                {/* Action buttons - always visible for easier access */}
+                <div className="absolute top-1 right-1 flex gap-1 z-10">
                   {/* Adjust Crop button */}
                   <Button
                     type="button"
-                    size="sm"
+                    size="icon"
                     variant="secondary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setFocusEditorIndex(index);
-                    }}
-                    className="gap-1 pointer-events-auto"
+                    onClick={() => setFocusEditorIndex(index)}
+                    className="h-7 w-7"
+                    title="Adjust crop focus"
                   >
-                    <Crop className="w-4 h-4" />
-                    Crop
+                    <Crop className="w-3.5 h-3.5" />
                   </Button>
 
                   {/* Delete button */}
                   <Button
                     type="button"
-                    size="sm"
+                    size="icon"
                     variant="destructive"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleRemove(index);
-                    }}
-                    className="gap-1 pointer-events-auto"
+                    onClick={() => handleRemove(index)}
+                    className="h-7 w-7"
+                    title="Delete image"
                   >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
+                    <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 </div>
               </div>
@@ -251,7 +246,7 @@ export const MultiImageUpload = ({
 
       {/* Help text */}
       <p className="text-xs text-muted-foreground">
-        Images over 5MB auto-compressed. Drag to reorder. Hover and click "Crop" to adjust focus, "Delete" to remove.
+        Images over 5MB auto-compressed. Drag the grip icon ☰ to reorder. Use the buttons to crop or delete.
       </p>
 
       {/* Focal Point Editor Modal */}
