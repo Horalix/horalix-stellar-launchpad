@@ -7,7 +7,6 @@ import { useState, useEffect, useCallback } from "react";
 
 // Step 1: Define headline messages
 const HEADLINES = [
-  "Clinical Intelligence, Built for Real Medicine",
   "AI That Thinks Like a Clinician",
   "From Data to Decisions",
   "Decision Support at Lightning Speed",
@@ -97,7 +96,7 @@ export const TypewriterHeadline = () => {
   // Step 7: Render with accessibility support
   return (
     <h1 
-      className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-primary mb-8 leading-[0.9] font-mono"
+      className="min-h-[2.2em] overflow-hidden text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-primary mb-8 leading-[1.1] font-mono"
       aria-label={currentTarget}
     >
       {/* Visible animated text */}
