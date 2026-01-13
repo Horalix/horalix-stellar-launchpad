@@ -68,14 +68,14 @@ const NewsManager = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Fetch all articles
+  // Fetch all articles, sorted by display_date (admin-chosen date)
   const { data: articles, isLoading } = useQuery({
     queryKey: ["admin-news"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_articles")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("display_date", { ascending: false, nullsFirst: false });
       if (error) throw error;
       return data;
     },
@@ -341,7 +341,7 @@ const NewsManager = () => {
                   <TableHead>Title</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead>Date</TableHead>
                   <TableHead className="w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -373,7 +373,11 @@ const NewsManager = () => {
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {format(new Date(article.created_at), "MMM d, yyyy")}
+                        {article.display_date 
+                          ? format(new Date(article.display_date), "MMM d, yyyy")
+                          : article.published_at 
+                            ? format(new Date(article.published_at), "MMM d, yyyy")
+                            : "—"}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">

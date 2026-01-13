@@ -101,10 +101,10 @@ const NewsArticle = () => {
 
             {/* Meta info */}
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-              {article.published_at && (
+              {(article.display_date || article.published_at) && (
                 <span className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  {format(new Date(article.published_at), "MMMM d, yyyy")}
+                  {format(new Date(article.display_date || article.published_at), "MMMM d, yyyy")}
                 </span>
               )}
               {article.location && (

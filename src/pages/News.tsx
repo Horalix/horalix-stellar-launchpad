@@ -12,7 +12,7 @@ import { format } from "date-fns";
  */
 
 const News = () => {
-  // Step 1: Fetch all published articles
+  // Step 1: Fetch all published articles, sorted by display_date (admin-chosen date)
   const { data: articles, isLoading } = useQuery({
     queryKey: ["news-articles"],
     queryFn: async () => {
@@ -20,12 +20,17 @@ const News = () => {
         .from("news_articles")
         .select("*")
         .eq("is_published", true)
-        .order("published_at", { ascending: false });
+        .order("display_date", { ascending: false, nullsFirst: false });
 
       if (error) throw error;
       return data || [];
     },
   });
+
+  // Helper: Get display date (prefer display_date, fallback to published_at)
+  const getArticleDate = (article: any): string | null => {
+    return article.display_date || article.published_at;
+  };
 
   return (
     <MainLayout>
@@ -84,10 +89,10 @@ const News = () => {
                         <span className="bg-secondary px-2 py-0.5 uppercase">
                           {article.category}
                         </span>
-                        {article.published_at && (
+                        {getArticleDate(article) && (
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {format(new Date(article.published_at), "MMM d, yyyy")}
+                            {format(new Date(getArticleDate(article)!), "MMM d, yyyy")}
                           </span>
                         )}
                         {article.location && (
