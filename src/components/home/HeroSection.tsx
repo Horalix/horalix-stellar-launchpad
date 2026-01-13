@@ -3,7 +3,7 @@ import { ArrowRight, ScanLine, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
 import { TypewriterHeadline } from "./TypewriterHeadline";
-import { HeroSlider } from "./HeroSlider";
+import { HeroScreenshots } from "./HeroScreenshots";
 
 /**
  * HeroSection - Main homepage hero with tagline and CTAs
@@ -72,9 +72,9 @@ export const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right hero slider */}
-        <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border group">
-          <HeroSlider />
+        {/* Right hero screenshots */}
+        <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border">
+          <HeroScreenshots />
         </div>
       </div>
     </section>
