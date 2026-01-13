@@ -32,7 +32,7 @@
     --muted-foreground: 215 16% 47%;
 
     /* Accent: Medical teal/cyan */
-    --accent: 192 91% 36%;
+    --accent: 217 91% 65%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -41,14 +41,14 @@
     /* Border: Clinical precision lines */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 192 91% 36%;
+    --ring: 217 91% 65%;
 
     --radius: 0rem;
 
     /* Clinical-specific tokens */
     --clinical-bg: 210 20% 98%;
     --clinical-primary: 222 47% 11%;
-    --clinical-accent: 192 91% 36%;
+    --clinical-accent: 217 91% 65%;
     --clinical-border: 214 32% 91%;
     --clinical-subtle: 215 16% 47%;
 
@@ -60,7 +60,7 @@
     --sidebar-accent: 240 5% 96%;
     --sidebar-accent-foreground: 240 6% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 192 91% 36%;
+    --sidebar-ring: 217 91% 65%;
   }
 
   .dark {
@@ -82,7 +82,7 @@
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 192 91% 36%;
+    --accent: 217 91% 65%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 63% 31%;
@@ -90,11 +90,11 @@
 
     --border: 217 33% 17%;
     --input: 217 33% 17%;
-    --ring: 192 91% 36%;
+    --ring: 217 91% 65%;
 
     --clinical-bg: 222 47% 6%;
     --clinical-primary: 210 40% 98%;
-    --clinical-accent: 192 91% 36%;
+    --clinical-accent: 217 91% 65%;
     --clinical-border: 217 33% 17%;
     --clinical-subtle: 215 20% 65%;
 
@@ -105,7 +105,7 @@
     --sidebar-accent: 240 4% 16%;
     --sidebar-accent-foreground: 240 5% 96%;
     --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 192 91% 36%;
+    --sidebar-ring: 217 91% 65%;
   }
 }
 
@@ -116,7 +116,9 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 }
 
@@ -173,4 +175,4 @@
 }
 
 /* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
