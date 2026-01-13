@@ -46,7 +46,7 @@ export const Navbar = () => {
           {/* Logo section */}
           <Link 
             to="/" 
-            className="flex items-center gap-3 border-r border-border pr-6 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 pr-6 hover:opacity-80 transition-opacity"
           >
             <img 
               src={horalixLogo} 
