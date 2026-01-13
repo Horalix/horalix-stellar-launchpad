@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, ExternalLink, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 
 /**
@@ -37,7 +37,6 @@ interface PostForm {
   post_id: string;
   post_date: string;
   is_visible: boolean;
-  display_order: number;
 }
 
 const defaultForm: PostForm = {
@@ -45,7 +44,6 @@ const defaultForm: PostForm = {
   post_id: "",
   post_date: "",
   is_visible: true,
-  display_order: 0,
 };
 
 // Step 1: Extract post ID from LinkedIn URL
@@ -78,14 +76,14 @@ const LinkedInManager = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Step 3: Fetch all posts
+  // Step 3: Fetch all posts, sorted by creation date (most recent first)
   const { data: posts, isLoading } = useQuery({
     queryKey: ["admin-linkedin-posts"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("linkedin_posts")
         .select("*")
-        .order("display_order", { ascending: true });
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -99,7 +97,6 @@ const LinkedInManager = () => {
         post_id: post.post_id,
         post_date: post.post_date || null,
         is_visible: post.is_visible,
-        display_order: post.display_order,
       };
 
       if (isEditing && post.id) {
@@ -176,38 +173,10 @@ const LinkedInManager = () => {
       post_id: post.post_id,
       post_date: post.post_date ? post.post_date.split("T")[0] : "",
       is_visible: post.is_visible,
-      display_order: post.display_order,
     });
     setIsEditing(true);
     setIsDialogOpen(false);
     setTimeout(() => setIsDialogOpen(true), 0);
-  };
-
-  // Step 8: Update order mutation
-  const updateOrderMutation = useMutation({
-    mutationFn: async ({ id, newOrder }: { id: string; newOrder: number }) => {
-      const { error } = await supabase
-        .from("linkedin_posts")
-        .update({ display_order: newOrder })
-        .eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-linkedin-posts"] });
-    },
-  });
-
-  // Step 9: Handle order change
-  const movePost = (index: number, direction: "up" | "down") => {
-    if (!posts) return;
-    const newIndex = direction === "up" ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= posts.length) return;
-
-    const post1 = posts[index];
-    const post2 = posts[newIndex];
-
-    updateOrderMutation.mutate({ id: post1.id, newOrder: post2.display_order });
-    updateOrderMutation.mutate({ id: post2.id, newOrder: post1.display_order });
   };
 
   return (
@@ -277,16 +246,6 @@ const LinkedInManager = () => {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Display Order</Label>
-                    <Input
-                      type="number"
-                      value={form.display_order}
-                      onChange={(e) =>
-                        setForm({ ...form, display_order: parseInt(e.target.value) || 0 })
-                      }
-                    />
-                  </div>
 
                   <div className="flex items-center gap-2">
                     <Switch
@@ -324,9 +283,8 @@ const LinkedInManager = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">Order</TableHead>
                   <TableHead>Post ID</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>Added</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-32">Actions</TableHead>
                 </TableRow>
@@ -334,34 +292,13 @@ const LinkedInManager = () => {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
+                    <TableCell colSpan={4} className="text-center py-8">
                       <Loader2 className="w-6 h-6 animate-spin mx-auto" />
                     </TableCell>
                   </TableRow>
                 ) : posts && posts.length > 0 ? (
-                  posts.map((post, index) => (
+                  posts.map((post) => (
                     <TableRow key={post.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <GripVertical className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex flex-col">
-                            <button
-                              onClick={() => movePost(index, "up")}
-                              disabled={index === 0}
-                              className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-30"
-                            >
-                              ▲
-                            </button>
-                            <button
-                              onClick={() => movePost(index, "down")}
-                              disabled={index === posts.length - 1}
-                              className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-30"
-                            >
-                              ▼
-                            </button>
-                          </div>
-                        </div>
-                      </TableCell>
                       <TableCell className="font-mono text-sm">
                         <a
                           href={post.post_url}
@@ -374,9 +311,7 @@ const LinkedInManager = () => {
                         </a>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {post.post_date
-                          ? format(new Date(post.post_date), "MMM d, yyyy")
-                          : "—"}
+                        {format(new Date(post.created_at), "MMM d, yyyy")}
                       </TableCell>
                       <TableCell>
                         <span
@@ -411,7 +346,7 @@ const LinkedInManager = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                       No LinkedIn posts yet. Add your first post.
                     </TableCell>
                   </TableRow>
