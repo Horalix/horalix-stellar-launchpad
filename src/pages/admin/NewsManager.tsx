@@ -42,6 +42,8 @@ interface ArticleForm {
   category: string;
   location: string;
   image_urls: string[];
+  image_focus: Array<{ x: number; y: number }>;
+  display_date: string;
   is_published: boolean;
 }
 
@@ -53,6 +55,8 @@ const defaultForm: ArticleForm = {
   category: "NEWS",
   location: "",
   image_urls: [],
+  image_focus: [],
+  display_date: "",
   is_published: false,
 };
 
@@ -83,6 +87,8 @@ const NewsManager = () => {
       const payload = {
         ...article,
         image_url: article.image_urls[0] || null,
+        image_focus: article.image_focus,
+        display_date: article.display_date ? new Date(article.display_date).toISOString() : null,
         published_at: article.is_published ? new Date().toISOString() : null,
       };
 
@@ -136,6 +142,14 @@ const NewsManager = () => {
     return [];
   };
 
+  // Parse image_focus from database
+  const parseImageFocus = (article: any): Array<{ x: number; y: number }> => {
+    if (Array.isArray(article.image_focus)) {
+      return article.image_focus;
+    }
+    return [];
+  };
+
   // Open edit dialog
   const handleEdit = (article: any) => {
     setForm({
@@ -147,6 +161,8 @@ const NewsManager = () => {
       category: article.category,
       location: article.location || "",
       image_urls: parseImageUrls(article),
+      image_focus: parseImageFocus(article),
+      display_date: article.display_date ? article.display_date.split("T")[0] : "",
       is_published: article.is_published,
     });
     setIsEditing(true);
@@ -237,6 +253,17 @@ const NewsManager = () => {
                         placeholder="San Francisco, CA"
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label>Display Date (optional)</Label>
+                      <Input
+                        type="date"
+                        value={form.display_date}
+                        onChange={(e) => setForm({ ...form, display_date: e.target.value })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Override the date shown on the article (for older events)
+                      </p>
+                    </div>
                     <div className="col-span-2">
                       <MultiImageUpload
                         bucket="news-images"
@@ -244,6 +271,8 @@ const NewsManager = () => {
                         onChange={(urls) => setForm({ ...form, image_urls: urls })}
                         label="Article Images"
                         maxImages={10}
+                        imageFocus={form.image_focus}
+                        onFocusChange={(focus) => setForm({ ...form, image_focus: focus })}
                       />
                     </div>
                     <div className="col-span-2 space-y-2">

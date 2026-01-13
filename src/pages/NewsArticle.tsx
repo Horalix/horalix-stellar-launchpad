@@ -126,11 +126,18 @@ const NewsArticle = () => {
                 ? [article.image_url]
                 : [];
             
+            // Parse focus points
+            const rawFocus = article.image_focus;
+            const imageFocus = Array.isArray(rawFocus) 
+              ? rawFocus.map((f: any) => ({ x: f?.x ?? 50, y: f?.y ?? 50 }))
+              : [];
+            
             return images.length > 0 ? (
               <ImageSlider 
                 images={images} 
                 alt={article.title} 
                 className="mb-8"
+                imageFocus={imageFocus}
               />
             ) : null;
           })()}

@@ -50,13 +50,48 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_posts: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_visible: boolean
+          post_date: string | null
+          post_id: string
+          post_url: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_visible?: boolean
+          post_date?: string | null
+          post_id: string
+          post_url: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_visible?: boolean
+          post_date?: string | null
+          post_id?: string
+          post_url?: string
+        }
+        Relationships: []
+      }
       news_articles: {
         Row: {
           author_id: string | null
           category: string
           content: string
           created_at: string
+          display_date: string | null
           id: string
+          image_focus: Json | null
           image_url: string | null
           image_urls: Json | null
           is_published: boolean
@@ -72,7 +107,9 @@ export type Database = {
           category?: string
           content: string
           created_at?: string
+          display_date?: string | null
           id?: string
+          image_focus?: Json | null
           image_url?: string | null
           image_urls?: Json | null
           is_published?: boolean
@@ -88,7 +125,9 @@ export type Database = {
           category?: string
           content?: string
           created_at?: string
+          display_date?: string | null
           id?: string
+          image_focus?: Json | null
           image_url?: string | null
           image_urls?: Json | null
           is_published?: boolean
