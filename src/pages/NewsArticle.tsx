@@ -2,9 +2,10 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Calendar, MapPin, User } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageSlider } from "@/components/ui/image-slider";
 import { format } from "date-fns";
 
 /**
@@ -115,16 +116,24 @@ const NewsArticle = () => {
             </div>
           </header>
 
-          {/* Featured image */}
-          {article.image_url && (
-            <figure className="mb-8">
-              <img
-                src={article.image_url}
-                alt={article.title}
-                className="w-full aspect-video object-cover border border-border"
+          {/* Featured image slider */}
+          {(() => {
+            // Parse images - prefer image_urls array, fallback to single image_url
+            const rawUrls = article.image_urls;
+            const images: string[] = Array.isArray(rawUrls) && rawUrls.length > 0
+              ? rawUrls.filter((url): url is string => typeof url === "string")
+              : article.image_url
+                ? [article.image_url]
+                : [];
+            
+            return images.length > 0 ? (
+              <ImageSlider 
+                images={images} 
+                alt={article.title} 
+                className="mb-8"
               />
-            </figure>
-          )}
+            ) : null;
+          })()}
 
           {/* Summary (lead paragraph) */}
           <p className="text-lg text-muted-foreground leading-relaxed mb-8 border-l-2 border-accent pl-4">

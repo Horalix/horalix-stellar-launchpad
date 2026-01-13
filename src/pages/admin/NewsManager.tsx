@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { MultiImageUpload } from "@/components/admin/MultiImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,7 +41,7 @@ interface ArticleForm {
   content: string;
   category: string;
   location: string;
-  image_url: string;
+  image_urls: string[];
   is_published: boolean;
 }
 
@@ -52,7 +52,7 @@ const defaultForm: ArticleForm = {
   content: "",
   category: "NEWS",
   location: "",
-  image_url: "",
+  image_urls: [],
   is_published: false,
 };
 
@@ -79,8 +79,10 @@ const NewsManager = () => {
   // Create/Update mutation
   const saveMutation = useMutation({
     mutationFn: async (article: ArticleForm) => {
+      // Keep image_url synced with first image for backwards compatibility
       const payload = {
         ...article,
+        image_url: article.image_urls[0] || null,
         published_at: article.is_published ? new Date().toISOString() : null,
       };
 
@@ -122,6 +124,18 @@ const NewsManager = () => {
     },
   });
 
+  // Parse image_urls from database (handles both array and legacy single URL)
+  const parseImageUrls = (article: any): string[] => {
+    if (Array.isArray(article.image_urls) && article.image_urls.length > 0) {
+      return article.image_urls;
+    }
+    // Fallback to legacy single image
+    if (article.image_url) {
+      return [article.image_url];
+    }
+    return [];
+  };
+
   // Open edit dialog
   const handleEdit = (article: any) => {
     setForm({
@@ -132,7 +146,7 @@ const NewsManager = () => {
       content: article.content,
       category: article.category,
       location: article.location || "",
-      image_url: article.image_url || "",
+      image_urls: parseImageUrls(article),
       is_published: article.is_published,
     });
     setIsEditing(true);
@@ -224,11 +238,12 @@ const NewsManager = () => {
                       />
                     </div>
                     <div className="col-span-2">
-                      <ImageUpload
+                      <MultiImageUpload
                         bucket="news-images"
-                        value={form.image_url}
-                        onChange={(url) => setForm({ ...form, image_url: url })}
-                        label="Article Image"
+                        value={form.image_urls}
+                        onChange={(urls) => setForm({ ...form, image_urls: urls })}
+                        label="Article Images"
+                        maxImages={10}
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
