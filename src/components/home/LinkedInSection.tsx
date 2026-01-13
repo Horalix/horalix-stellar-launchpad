@@ -31,28 +31,28 @@ export const LinkedInSection = () => {
 
   // Step 3: Render post card
   const renderPostCard = (post: NonNullable<typeof posts>[number]) => (
-    <a
+    <div
       key={post.id}
-      href={post.post_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group cursor-pointer border border-border bg-secondary hover:bg-card hover:border-primary transition-all duration-300 flex flex-col h-full"
+      className="border border-border bg-secondary hover:border-primary transition-all duration-300 flex flex-col h-full"
     >
-      {/* LinkedIn embed iframe */}
-      <div className="aspect-[4/5] w-full overflow-hidden border-b border-border relative bg-background">
+      {/* LinkedIn embed iframe - interactive */}
+      <div className="aspect-[4/5] w-full overflow-hidden border-b border-border bg-background">
         <iframe
           src={`https://www.linkedin.com/embed/feed/update/urn:li:activity:${post.post_id}`}
-          className="w-full h-full pointer-events-none"
+          className="w-full h-full"
           frameBorder="0"
           allowFullScreen
           title="LinkedIn Post"
         />
-        {/* Overlay to make entire card clickable */}
-        <div className="absolute inset-0 bg-transparent group-hover:bg-primary/5 transition-colors" />
       </div>
 
-      {/* Footer */}
-      <div className="p-4 flex items-center justify-between">
+      {/* Footer with link */}
+      <a
+        href={post.post_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group p-4 flex items-center justify-between hover:bg-card transition-colors"
+      >
         <div className="flex items-center gap-2 text-muted-foreground">
           <Linkedin className="w-4 h-4" />
           <span className="text-xs font-mono uppercase tracking-wider">LinkedIn</span>
@@ -61,8 +61,8 @@ export const LinkedInSection = () => {
           View Post
           <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
         </div>
-      </div>
-    </a>
+      </a>
+    </div>
   );
 
   return (
