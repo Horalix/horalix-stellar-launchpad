@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -198,14 +199,21 @@ const NewsManager = () => {
               }
             }}>
               <DialogTrigger asChild>
-                <Button>
+                <Button onClick={() => {
+                  // Reset form for new article before dialog opens
+                  setForm(defaultForm);
+                  setIsEditing(false);
+                }}>
                   <Plus className="w-4 h-4 mr-2" />
                   New Article
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="article-dialog-description">
                 <DialogHeader>
                   <DialogTitle>{isEditing ? "Edit Article" : "New Article"}</DialogTitle>
+                  <DialogDescription id="article-dialog-description">
+                    {isEditing ? "Update the article details below." : "Fill in the details to create a new article."}
+                  </DialogDescription>
                 </DialogHeader>
                 <form
                   onSubmit={(e) => {

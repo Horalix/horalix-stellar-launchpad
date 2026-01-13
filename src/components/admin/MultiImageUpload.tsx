@@ -177,14 +177,18 @@ export const MultiImageUpload = ({
                 </span>
 
                 {/* Action buttons overlay */}
-                <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
                   {/* Adjust Crop button */}
                   <Button
                     type="button"
                     size="sm"
                     variant="secondary"
-                    onClick={() => setFocusEditorIndex(index)}
-                    className="gap-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setFocusEditorIndex(index);
+                    }}
+                    className="gap-1 pointer-events-auto"
                   >
                     <Crop className="w-4 h-4" />
                     Crop
@@ -195,8 +199,12 @@ export const MultiImageUpload = ({
                     type="button"
                     size="sm"
                     variant="destructive"
-                    onClick={() => handleRemove(index)}
-                    className="gap-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemove(index);
+                    }}
+                    className="gap-1 pointer-events-auto"
                   >
                     <Trash2 className="w-4 h-4" />
                     Delete

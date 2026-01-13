@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Check, Move } from "lucide-react";
 
@@ -126,12 +132,15 @@ export const FocalPointEditor = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl w-[90vw]">
+      <DialogContent className="max-w-3xl w-[90vw]" aria-describedby="focal-point-description">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Move className="w-5 h-5" />
             Adjust Crop Focus Point
           </DialogTitle>
+          <DialogDescription id="focal-point-description">
+            Drag on the image to position the focal point for cropping.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
