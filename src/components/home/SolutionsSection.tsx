@@ -1,95 +1,112 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Layers, Loader2 } from "lucide-react";
-import * as LucideIcons from "lucide-react";
+import { 
+  Layers, 
+  ArrowRight, 
+  Loader2, 
+  Activity, 
+  Scan, 
+  Microscope, 
+  HeartPulse, 
+  FileText,
+  Brain,
+  Stethoscope,
+  Dna
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 import { ContentSlider } from "@/components/ui/content-slider";
-import { Container } from "@/components/layout/Container";
+import type { LucideIcon } from "lucide-react";
 
 /**
- * SolutionsSection - Displays available clinical solutions
- * Fetches from database with slider for 4+ items
+ * SolutionsSection - Displays active solutions from database
+ * Uses slider when more than 3 items
  */
 
-// Step 1: Define solution type
-interface Solution {
-  id: string;
-  name: string;
-  slug: string;
-  short_description: string;
-  icon_name: string;
-  badge_text: string | null;
-  display_order: number;
-}
+// Step 1: Icon mapping for supported icons
+const ICON_MAP: Record<string, LucideIcon> = {
+  Activity,
+  Scan,
+  Microscope,
+  HeartPulse,
+  FileText,
+  Brain,
+  Stethoscope,
+  Dna,
+  Layers,
+};
 
-// Step 2: Helper to get icon component dynamically
-const getIconComponent = (iconName: string): React.ComponentType<{ className?: string }> => {
-  const icons = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
-  return icons[iconName] || LucideIcons.Boxes;
+const getIconComponent = (iconName: string): LucideIcon => {
+  return ICON_MAP[iconName] || Activity;
 };
 
 export const SolutionsSection = () => {
-  // Step 3: Fetch solutions from database
+  // Step 2: Fetch active solutions from database
   const { data: solutions, isLoading } = useQuery({
-    queryKey: ["solutions"],
+    queryKey: ["homepage-solutions"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("solutions")
-        .select("id, name, slug, short_description, icon_name, badge_text, display_order")
+        .select("id, slug, name, short_description, icon_name, specs, badge_text, display_order")
         .eq("is_active", true)
-        .order("display_order");
+        .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data as Solution[];
+      return data;
     },
   });
 
-  // Render individual solution card
-  const renderSolutionCard = (solution: Solution, index: number) => {
+  // Step 3: Render solution card
+  const renderSolutionCard = (solution: NonNullable<typeof solutions>[number]) => {
     const IconComponent = getIconComponent(solution.icon_name);
-    
+    const specs = (solution.specs as Record<string, string>) || {};
+
     return (
       <Link
         key={solution.id}
         to={`/solutions/${solution.slug}`}
-        className="group border border-border bg-card hover:border-accent transition-all duration-300 flex flex-col h-full"
+        className="group bg-card border border-border p-8 hover:border-accent hover:shadow-lg transition-all relative overflow-hidden h-full flex flex-col"
       >
-        {/* Card header with icon */}
-        <div className="p-6 border-b border-border bg-secondary/30 relative">
-          {/* Index badge */}
-          <div className="absolute top-4 right-4 font-mono text-[10px] text-muted-foreground">
-            [{String(index + 1).padStart(2, "0")}]
-          </div>
-          
-          <div className="w-12 h-12 border border-accent bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-            <IconComponent className="w-6 h-6" />
-          </div>
-          
-          <h3 className="text-xl font-bold font-space text-primary group-hover:text-accent transition-colors">
-            {solution.name}
-          </h3>
-          
-          {solution.badge_text && (
-            <Badge 
-              variant="outline" 
-              className="mt-2 text-[10px] uppercase tracking-wider border-accent text-accent"
-            >
-              {solution.badge_text}
-            </Badge>
-          )}
+        {/* Background icon */}
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <IconComponent className="w-24 h-24 text-primary" />
         </div>
 
-        {/* Card body */}
-        <div className="p-6 flex-1 flex flex-col">
-          <p className="text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
-            {solution.short_description}
-          </p>
-          
-          <div className="flex items-center text-xs font-bold uppercase tracking-widest text-accent group-hover:gap-3 gap-2 transition-all">
-            <span>View Protocol</span>
-            <ArrowRight className="w-4 h-4" />
+        {/* Badge if present */}
+        {solution.badge_text && (
+          <div className="absolute top-4 right-4 text-[10px] font-bold bg-accent text-accent-foreground px-2 py-0.5 uppercase">
+            {solution.badge_text}
           </div>
+        )}
+
+        {/* Icon */}
+        <div className="w-12 h-12 bg-secondary border border-border flex items-center justify-center mb-6 text-accent">
+          <IconComponent className="w-6 h-6" />
+        </div>
+
+        {/* Content */}
+        <h3 className="text-xl font-bold font-space mb-2 group-hover:text-accent transition-colors">
+          {solution.name}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-6 leading-relaxed flex-grow">
+          {solution.short_description}
+        </p>
+
+        {/* Specs */}
+        {Object.keys(specs).length > 0 && (
+          <div className="border-t border-border pt-4 space-y-2 font-mono text-xs text-muted-foreground">
+            {Object.entries(specs).slice(0, 3).map(([key, value]) => (
+              <div key={key} className="flex justify-between">
+                <span>{key}:</span>
+                <span className="text-primary">{String(value)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* View more indicator */}
+        <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent opacity-0 group-hover:opacity-100 transition-opacity">
+          View Details
+          <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
         </div>
       </Link>
     );
@@ -98,9 +115,9 @@ export const SolutionsSection = () => {
   return (
     <section
       id="solutions"
-      className="py-24 bg-secondary border-b border-border relative z-10"
+      className="py-24 px-6 lg:px-12 bg-secondary border-b border-border relative z-10"
     >
-      <Container>
+      <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-border pb-6">
           <div>
@@ -147,7 +164,7 @@ export const SolutionsSection = () => {
             </ContentSlider>
           )
         )}
-      </Container>
+      </div>
     </section>
   );
 };

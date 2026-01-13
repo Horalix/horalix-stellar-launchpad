@@ -1,67 +1,53 @@
-import { Users, Loader2, ExternalLink } from "lucide-react";
+import { Users, ExternalLink, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { Container } from "@/components/layout/Container";
+import { supabase } from "@/integrations/supabase/client";
 
-// Import local team photos as fallbacks
+// Import team member photos as fallbacks
 import affanPhoto from "@/assets/team/affan.jpg";
-import amrPhoto from "@/assets/team/amr.jpg";
 import kerimPhoto from "@/assets/team/kerim.jpg";
 import neumanPhoto from "@/assets/team/neuman.jpg";
+import amrPhoto from "@/assets/team/amr.jpg";
 
 /**
- * TeamSection - Displays team members
- * Fetches from database with local photo fallbacks
+ * TeamSection - Displays the founding team members from database
+ * Each member card links to their LinkedIn profile
  */
 
-// Step 1: Define team member type
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string | null;
-  photo_url: string | null;
-  linkedin_url: string | null;
-  display_order: number;
-}
+// Step 1: Photo fallback mapping for local assets
+const PHOTO_FALLBACKS: Record<string, string> = {
+  "/assets/team/kerim.jpg": kerimPhoto,
+  "/assets/team/affan.jpg": affanPhoto,
+  "/assets/team/neuman.jpg": neumanPhoto,
+  "/assets/team/amr.jpg": amrPhoto,
+};
 
-// Step 2: Map for local photo fallbacks
-const localPhotoMap: Record<string, string> = {
-  affan: affanPhoto,
-  amr: amrPhoto,
-  kerim: kerimPhoto,
-  neuman: neumanPhoto,
+const getPhotoUrl = (photoUrl: string | null): string => {
+  if (!photoUrl) return affanPhoto;
+  return PHOTO_FALLBACKS[photoUrl] || photoUrl;
 };
 
 export const TeamSection = () => {
-  // Step 3: Fetch active team members
+  // Step 2: Fetch active team members from database
   const { data: teamMembers, isLoading } = useQuery({
-    queryKey: ["team-members"],
+    queryKey: ["homepage-team"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("team_members")
-        .select("*")
+        .select("id, name, role, bio, photo_url, linkedin_url, display_order")
         .eq("is_active", true)
-        .order("display_order");
+        .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data as TeamMember[];
+      return data;
     },
   });
-
-  // Helper to get photo URL with fallback
-  const getPhotoUrl = (photoUrl: string | null): string => {
-    if (photoUrl) return photoUrl;
-    // Return first available local photo as generic fallback
-    return affanPhoto;
-  };
 
   return (
     <section
       id="team"
-      className="py-24 bg-secondary border-b border-border relative z-10"
+      className="py-24 px-6 lg:px-12 bg-secondary border-b border-border relative z-10"
     >
-      <Container>
+      <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="mb-16">
           <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
@@ -133,7 +119,7 @@ export const TeamSection = () => {
             ))}
           </div>
         )}
-      </Container>
+      </div>
     </section>
   );
 };

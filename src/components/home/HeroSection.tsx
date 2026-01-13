@@ -4,12 +4,10 @@ import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
 import { TypewriterHeadline } from "./TypewriterHeadline";
 import { HeroSlider } from "./HeroSlider";
-import { Container } from "@/components/layout/Container";
 
 /**
  * HeroSection - Main homepage hero with tagline and CTAs
  * Features animated typewriter headline and enterprise slider
- * Uses full-width background with constrained content
  */
 
 // Step 1: Default content fallbacks
@@ -24,66 +22,60 @@ export const HeroSection = () => {
   const heroSubtitle = content.hero_subtitle || DEFAULTS.hero_subtitle;
 
   return (
-    <section className="relative z-10 bg-secondary/30">
-      {/* Full-width background container */}
-      <div className="min-h-[calc(100vh-84px)]">
-        <Container className="h-full px-0 lg:px-0">
-          {/* Two-column grid within container */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-84px)]">
-            {/* Left hero content - constrained */}
-            <div className="lg:col-span-7 p-8 md:p-12 lg:pl-12 lg:pr-8 flex flex-col justify-center relative">
-              {/* Decorative corner */}
-              <div className="absolute top-10 left-10 w-4 h-4 border-t border-l border-primary opacity-30" />
+    <section className="relative z-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-84px)]">
+        {/* Left hero content */}
+        <div className="lg:col-span-7 p-8 md:p-16 flex flex-col justify-center border-r border-border bg-secondary/30 relative">
+          {/* Decorative corner */}
+          <div className="absolute top-10 left-10 w-4 h-4 border-t border-l border-primary opacity-30" />
 
-              <div className="relative z-10 max-w-xl">
-                {/* Version badge */}
-                <div className="inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
-                  <Activity className="w-3 h-3 text-accent" />
-                  <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-primary">
-                    Diagnostics Suite v4.0
-                  </span>
-                </div>
-
-                {/* Animated typewriter headline */}
-                <TypewriterHeadline />
-
-                {/* Subheadline */}
-                <p className="text-lg text-muted-foreground mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1">
-                  {heroSubtitle}
-                </p>
-
-                {/* CTA buttons */}
-                <div className="flex flex-wrap gap-4">
-                  <Link to="/#contact">
-                    <Button 
-                      size="lg"
-                      className="group text-xs font-bold uppercase tracking-widest"
-                    >
-                      <span>Request Demo</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
-                  
-                  <Link to="/#solutions">
-                    <Button 
-                      variant="outline"
-                      size="lg"
-                      className="text-xs font-bold uppercase tracking-widest"
-                    >
-                      <ScanLine className="w-4 h-4" />
-                      View Protocols
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+          <div className="relative z-10 max-w-2xl">
+            {/* Version badge */}
+            <div className="inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
+              <Activity className="w-3 h-3 text-accent" />
+              <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-primary">
+                Diagnostics Suite v4.0
+              </span>
             </div>
 
-            {/* Right hero slider - can extend slightly for visual impact */}
-            <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-l border-border group">
-              <HeroSlider />
+            {/* Animated typewriter headline */}
+            <TypewriterHeadline />
+
+            {/* Subheadline */}
+            <p className="text-lg text-muted-foreground mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1">
+              {heroSubtitle}
+            </p>
+
+            {/* CTA buttons */}
+            <div className="flex flex-wrap gap-4">
+              <Link to="/#contact">
+                <Button 
+                  size="lg"
+                  className="group text-xs font-bold uppercase tracking-widest"
+                >
+                  <span>Request Demo</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              
+              <Link to="/#solutions">
+                <Button 
+                  variant="outline"
+                  size="lg"
+                  className="text-xs font-bold uppercase tracking-widest"
+                >
+                  <ScanLine className="w-4 h-4" />
+                  View Protocols
+                </Button>
+              </Link>
             </div>
           </div>
-        </Container>
+        </div>
+
+        {/* Right hero slider */}
+        <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border group">
+          <HeroSlider />
+        </div>
       </div>
     </section>
   );

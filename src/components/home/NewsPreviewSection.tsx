@@ -1,112 +1,93 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Globe, Loader2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { Globe, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { ContentSlider } from "@/components/ui/content-slider";
-import { Container } from "@/components/layout/Container";
+import { format } from "date-fns";
 
 /**
- * NewsPreviewSection - Displays latest news articles on homepage
- * Shows up to 6 articles with slider for 4+ items
+ * NewsPreviewSection - Shows news articles on homepage with slider when > 3
+ * Fetches published articles from database
  */
 
-// Step 1: Define article type
-interface NewsArticle {
-  id: string;
-  title: string;
-  slug: string;
-  summary: string;
-  category: string;
-  display_date: string | null;
-  published_at: string | null;
-  image_urls: string[] | null;
-}
+// Step 1: Default placeholder image for articles without images
+const PLACEHOLDER_IMAGE =
+  "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2670&auto=format&fit=crop";
 
 export const NewsPreviewSection = () => {
-  // Step 2: Fetch latest published articles
+  // Step 2: Fetch published articles from database (no limit for slider)
   const { data: articles, isLoading } = useQuery({
-    queryKey: ["news-preview"],
+    queryKey: ["homepage-news"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_articles")
-        .select("id, title, slug, summary, category, display_date, published_at, image_urls")
+        .select("id, slug, title, summary, image_urls, category, location, published_at, display_date")
         .eq("is_published", true)
-        .order("display_date", { ascending: false, nullsFirst: false })
         .order("published_at", { ascending: false })
-        .limit(6);
+        .limit(10);
 
       if (error) throw error;
-      return data as NewsArticle[];
+      return data;
     },
   });
 
-  // Step 3: Format date helper
-  const formatDate = (article: NewsArticle) => {
-    const dateStr = article.display_date || article.published_at;
-    if (!dateStr) return "No date";
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+  // Step 3: Format date for display (use display_date if set, fallback to published_at)
+  const formatDate = (displayDate: string | null, publishedAt: string | null) => {
+    const dateToUse = displayDate || publishedAt;
+    if (!dateToUse) return "---";
+    return format(new Date(dateToUse), "dd.MM.yyyy");
   };
 
-  // Step 4: Render individual article card
-  const renderArticleCard = (article: NewsArticle) => {
-    const imageUrl = article.image_urls?.[0];
-    
-    return (
-      <Link
-        key={article.id}
-        to={`/news/${article.slug}`}
-        className="group border border-border bg-card hover:border-accent transition-all duration-300 flex flex-col h-full"
-      >
-        {/* Image area */}
-        {imageUrl && (
-          <div className="aspect-video w-full overflow-hidden border-b border-border bg-secondary">
-            <img
-              src={imageUrl}
-              alt={article.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-        )}
-
-        {/* Content area */}
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
-              {article.category}
-            </span>
-            <span className="text-[10px] font-mono text-muted-foreground">
-              {formatDate(article)}
-            </span>
-          </div>
-          
-          <h3 className="text-lg font-bold font-space text-primary group-hover:text-accent transition-colors mb-3 line-clamp-2">
-            {article.title}
-          </h3>
-          
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
-            {article.summary}
-          </p>
-
-          <div className="flex items-center text-xs font-bold uppercase tracking-widest text-accent group-hover:gap-3 gap-2 transition-all">
-            <span>Read Report</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
+  // Step 4: Render article card
+  const renderArticleCard = (article: NonNullable<typeof articles>[number]) => (
+    <Link
+      key={article.id}
+      to={`/news/${article.slug}`}
+      className="group cursor-pointer border border-border bg-secondary hover:bg-card hover:border-primary transition-all duration-300 flex flex-col h-full"
+    >
+      {/* Image area */}
+      <div className="aspect-video w-full overflow-hidden border-b border-border relative">
+        <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10" />
+        <img
+          src={(() => {
+            const urls = article.image_urls;
+            return (Array.isArray(urls) && typeof urls[0] === 'string') ? urls[0] : PLACEHOLDER_IMAGE;
+          })()}
+          alt={article.title}
+          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105"
+        />
+        <div className="absolute bottom-0 left-0 bg-primary text-primary-foreground px-3 py-1 text-[10px] font-mono font-bold uppercase z-20">
+          [{article.category}]
         </div>
-      </Link>
-    );
-  };
+      </div>
+
+      {/* Content area */}
+      <div className="p-6 flex flex-col flex-1">
+        <div className="flex justify-between items-center mb-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+          <span>{formatDate(article.display_date, article.published_at)}</span>
+          <span>{article.location || "GLOBAL"}</span>
+        </div>
+        <h3 className="text-lg font-bold font-space leading-tight mb-3 group-hover:text-accent transition-colors">
+          {article.title}
+        </h3>
+        <p className="text-xs text-muted-foreground leading-relaxed mb-6 line-clamp-3 flex-grow">
+          {article.summary}
+        </p>
+        <div className="mt-auto flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+          Read Log
+          <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+        </div>
+      </div>
+    </Link>
+  );
 
   return (
     <section
       id="news"
-      className="py-24 bg-card border-b border-border relative z-10"
+      className="py-24 px-6 lg:px-12 bg-card border-b border-border relative z-10"
     >
-      <Container>
+      <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
@@ -154,7 +135,7 @@ export const NewsPreviewSection = () => {
             </ContentSlider>
           )
         )}
-      </Container>
+      </div>
     </section>
   );
 };

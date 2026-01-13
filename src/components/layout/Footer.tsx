@@ -1,18 +1,16 @@
 import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import horalixLogo from "@/assets/horalix-logo.png";
-import { Container } from "@/components/layout/Container";
 
 /**
  * Footer - Site footer with links and branding
- * Uses constrained container for consistent layout
  */
 export const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer ref={ref} className="bg-primary text-primary-foreground border-t border-border relative z-10">
-      <Container className="py-12">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand section */}
           <div className="md:col-span-2">
@@ -89,7 +87,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
             Clinical Intelligence // Medical Technology
           </p>
         </div>
-      </Container>
+      </div>
     </footer>
   );
 });
