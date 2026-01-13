@@ -96,7 +96,7 @@ export const TypewriterHeadline = () => {
   // Step 7: Render with accessibility support
   return (
     <h1 
-      className="min-h-[2.2em] overflow-hidden text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-primary mb-8 leading-[1.1] font-mono"
+      className="min-h-[2.4em] overflow-hidden text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-primary mb-8 leading-[1.2] font-mono"
       aria-label={currentTarget}
     >
       {/* Visible animated text */}
