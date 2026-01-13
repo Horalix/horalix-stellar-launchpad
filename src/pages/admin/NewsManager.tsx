@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -222,12 +223,12 @@ const NewsManager = () => {
                         placeholder="San Francisco, CA"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label>Image URL (optional)</Label>
-                      <Input
+                    <div className="col-span-2">
+                      <ImageUpload
+                        bucket="news-images"
                         value={form.image_url}
-                        onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                        placeholder="https://..."
+                        onChange={(url) => setForm({ ...form, image_url: url })}
+                        label="Article Image"
                       />
                     </div>
                     <div className="col-span-2 space-y-2">

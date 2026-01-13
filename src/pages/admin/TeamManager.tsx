@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -191,14 +192,12 @@ const TeamManager = () => {
                       rows={3}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Photo URL</Label>
-                    <Input
-                      value={form.photo_url}
-                      onChange={(e) => setForm({ ...form, photo_url: e.target.value })}
-                      placeholder="https://... or /assets/team/photo.jpg"
-                    />
-                  </div>
+                  <ImageUpload
+                    bucket="team-photos"
+                    value={form.photo_url}
+                    onChange={(url) => setForm({ ...form, photo_url: url })}
+                    label="Photo"
+                  />
                   <div className="space-y-2">
                     <Label>LinkedIn URL</Label>
                     <Input
