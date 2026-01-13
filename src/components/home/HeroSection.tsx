@@ -2,23 +2,22 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ScanLine, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
+import { TypewriterHeadline } from "./TypewriterHeadline";
 
 /**
  * HeroSection - Main homepage hero with tagline and CTAs
- * Supports dynamic content from CMS
+ * Features animated typewriter headline
  */
 
 // Step 1: Default content fallbacks
 const DEFAULTS = {
-  hero_title: "PRECISION MEDICINE QUANTIFIED.",
   hero_subtitle: "Eliminating margin of error through advanced algorithmic diagnostics. The future of care is binary, precise, and absolute.",
 };
 
 export const HeroSection = () => {
   // Step 2: Fetch dynamic content with fallbacks
-  const content = useSiteContentBatch(["hero_title", "hero_subtitle"]);
+  const content = useSiteContentBatch(["hero_subtitle"]);
 
-  const heroTitle = content.hero_title || DEFAULTS.hero_title;
   const heroSubtitle = content.hero_subtitle || DEFAULTS.hero_subtitle;
 
   return (
@@ -38,10 +37,8 @@ export const HeroSection = () => {
               </span>
             </div>
 
-            {/* Main headline */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-primary mb-8 leading-[0.9] font-space">
-              {heroTitle}
-            </h1>
+            {/* Animated typewriter headline */}
+            <TypewriterHeadline />
 
             {/* Subheadline */}
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1">
