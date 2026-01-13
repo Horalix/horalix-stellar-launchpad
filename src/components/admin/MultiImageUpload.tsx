@@ -1,14 +1,15 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2, X, Plus, GripVertical, Crosshair } from "lucide-react";
+import { Loader2, X, Plus, GripVertical, Crop, Trash2 } from "lucide-react";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { compressImage, formatFileSize } from "@/lib/imageCompression";
 import { useToast } from "@/hooks/use-toast";
+import { FocalPointEditor } from "./FocalPointEditor";
 
 /**
  * MultiImageUpload - Component for uploading multiple images
- * Supports drag reordering, compression, and focus point selection
+ * Supports drag reordering, compression, and visual focus point editor
  */
 
 interface ImageFocus {
@@ -39,7 +40,7 @@ export const MultiImageUpload = ({
   const { uploadImage, isUploading } = useImageUpload(bucket);
   const [isCompressing, setIsCompressing] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [focusEditIndex, setFocusEditIndex] = useState<number | null>(null);
+  const [focusEditorIndex, setFocusEditorIndex] = useState<number | null>(null);
   const { toast } = useToast();
 
   // Step 1: Handle file selection with compression
@@ -58,20 +59,24 @@ export const MultiImageUpload = ({
     for (const file of files) {
       let processedFile = file;
       const maxSize = 5 * 1024 * 1024;
+      
+      // Compress large files
       if (file.size > maxSize) {
         setIsCompressing(true);
         toast({ title: "Compressing image", description: `${file.name} is being compressed...` });
         try {
           processedFile = await compressImage(file, { maxSizeMB: 5 });
           toast({ title: "Compression complete", description: `Reduced to ${formatFileSize(processedFile.size)}` });
-        } catch {
-          toast({ variant: "destructive", title: "Compression failed" });
+        } catch (err) {
+          console.error("Compression error:", err);
+          toast({ variant: "destructive", title: "Compression failed", description: "Could not compress image." });
           continue;
         } finally {
           setIsCompressing(false);
         }
       }
 
+      // Upload image
       const url = await uploadImage(processedFile);
       if (url) {
         newUrls.push(url);
@@ -84,6 +89,7 @@ export const MultiImageUpload = ({
       onFocusChange?.([...imageFocus, ...newFocus]);
     }
 
+    // Reset input
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -99,6 +105,7 @@ export const MultiImageUpload = ({
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (dragIndex === null || dragIndex === index) return;
+    
     const newUrls = [...value];
     const [removed] = newUrls.splice(dragIndex, 1);
     newUrls.splice(index, 0, removed);
@@ -113,45 +120,44 @@ export const MultiImageUpload = ({
 
   const handleDragEnd = () => setDragIndex(null);
 
-  // Step 4: Focus point click handler
-  const handleFocusClick = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
-    
+  // Step 4: Update focus for specific image
+  const handleFocusUpdate = (index: number, newFocusPoint: ImageFocus) => {
     const newFocus = [...imageFocus];
     while (newFocus.length <= index) newFocus.push({ x: 50, y: 50 });
-    newFocus[index] = { x, y };
+    newFocus[index] = newFocusPoint;
     onFocusChange?.(newFocus);
-    setFocusEditIndex(null);
   };
 
   const isBusy = isUploading || isCompressing;
+  const focusEditImage = focusEditorIndex !== null ? value[focusEditorIndex] : null;
+  const focusEditValue = focusEditorIndex !== null ? imageFocus[focusEditorIndex] || { x: 50, y: 50 } : { x: 50, y: 50 };
 
   return (
     <div className="space-y-3">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
         <span className="text-xs text-muted-foreground">{value.length}/{maxImages} images</span>
       </div>
 
+      {/* Image Grid */}
       {value.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {value.map((url, index) => {
             const focus = imageFocus[index] || { x: 50, y: 50 };
-            const isEditingFocus = focusEditIndex === index;
 
             return (
               <div
-                key={url}
-                draggable={!isEditingFocus}
+                key={`${url}-${index}`}
+                draggable
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className={`relative aspect-video bg-secondary rounded-md overflow-hidden group cursor-move border-2 transition-colors ${
-                  dragIndex === index ? "border-accent" : "border-transparent"
+                className={`relative aspect-video bg-secondary rounded-lg overflow-hidden group cursor-move border-2 transition-all ${
+                  dragIndex === index ? "border-accent scale-105" : "border-transparent hover:border-muted-foreground/30"
                 }`}
               >
+                {/* Image Preview */}
                 <img
                   src={url}
                   alt={`Image ${index + 1}`}
@@ -160,47 +166,96 @@ export const MultiImageUpload = ({
                   onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
                 />
 
-                {isEditingFocus ? (
-                  <div
-                    className="absolute inset-0 cursor-crosshair bg-black/30"
-                    onClick={(e) => handleFocusClick(e, index)}
+                {/* Drag handle indicator */}
+                <div className="absolute top-1 left-1 p-1 bg-background/70 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GripVertical className="w-4 h-4 text-foreground" />
+                </div>
+
+                {/* Image number badge */}
+                <span className="absolute bottom-1 right-1 text-xs font-bold bg-background/80 px-2 py-0.5 rounded">
+                  {index + 1}
+                </span>
+
+                {/* Action buttons overlay */}
+                <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                  {/* Adjust Crop button */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => setFocusEditorIndex(index)}
+                    className="gap-1"
                   >
-                    <div
-                      className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                      style={{ left: `${focus.x}%`, top: `${focus.y}%` }}
-                    >
-                      <Crosshair className="w-4 h-4 text-accent drop-shadow-lg" />
-                    </div>
-                    <p className="absolute bottom-1 left-1 right-1 text-[9px] text-white text-center bg-black/50 px-1 py-0.5 rounded">
-                      Click to set focus point
-                    </p>
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <GripVertical className="absolute top-1 left-1 w-4 h-4 text-foreground" />
-                    <button type="button" onClick={() => setFocusEditIndex(index)} className="p-1.5 bg-accent text-accent-foreground rounded-full" title="Set focus point">
-                      <Crosshair className="w-4 h-4" />
-                    </button>
-                    <button type="button" onClick={() => handleRemove(index)} className="p-1.5 bg-destructive text-destructive-foreground rounded-full">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-                <span className="absolute bottom-1 right-1 text-[10px] font-bold bg-background/80 px-1.5 py-0.5 rounded">{index + 1}</span>
+                    <Crop className="w-4 h-4" />
+                    Crop
+                  </Button>
+
+                  {/* Delete button */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleRemove(index)}
+                    className="gap-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </Button>
+                </div>
               </div>
             );
           })}
         </div>
       )}
 
+      {/* Add Images Button */}
       {value.length < maxImages && (
-        <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isBusy} className="w-full">
-          {isBusy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{isCompressing ? "Compressing..." : "Uploading..."}</> : <><Plus className="w-4 h-4 mr-2" />Add Images</>}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isBusy}
+          className="w-full"
+        >
+          {isBusy ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              {isCompressing ? "Compressing..." : "Uploading..."}
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Images
+            </>
+          )}
         </Button>
       )}
 
-      <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFileChange} className="hidden" multiple />
-      <p className="text-xs text-muted-foreground">Images over 5MB auto-compressed. Drag to reorder, click crosshair to set crop focus.</p>
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        onChange={handleFileChange}
+        className="hidden"
+        multiple
+      />
+
+      {/* Help text */}
+      <p className="text-xs text-muted-foreground">
+        Images over 5MB auto-compressed. Drag to reorder. Hover and click "Crop" to adjust focus, "Delete" to remove.
+      </p>
+
+      {/* Focal Point Editor Modal */}
+      {focusEditImage && focusEditorIndex !== null && (
+        <FocalPointEditor
+          isOpen={true}
+          onClose={() => setFocusEditorIndex(null)}
+          imageUrl={focusEditImage}
+          focus={focusEditValue}
+          onFocusChange={(newFocus) => handleFocusUpdate(focusEditorIndex, newFocus)}
+        />
+      )}
     </div>
   );
 };
