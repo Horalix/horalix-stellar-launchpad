@@ -286,11 +286,11 @@ const NewsManager = () => {
                       <MultiImageUpload
                         bucket="news-images"
                         value={form.image_urls}
-                        onChange={(urls) => setForm({ ...form, image_urls: urls })}
+                        onChange={(urls) => setForm(prev => ({ ...prev, image_urls: urls }))}
                         label="Article Images"
                         maxImages={10}
                         imageFocus={form.image_focus}
-                        onFocusChange={(focus) => setForm({ ...form, image_focus: focus })}
+                        onFocusChange={(focus) => setForm(prev => ({ ...prev, image_focus: focus }))}
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
