@@ -40,9 +40,9 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="fixed top-1 left-0 w-full z-40">
+    <header className="fixed top-0 left-0 w-full z-40 border-b border-border bg-card/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        <div className="flex justify-between items-stretch h-16 md:h-20 border border-border bg-card/90 backdrop-blur-md rounded-lg px-4 lg:px-6">
+        <div className="flex justify-between items-stretch h-16 md:h-20">
           {/* Logo section */}
           <Link 
             to="/" 
@@ -110,7 +110,7 @@ export const Navbar = () => {
 
         {/* Mobile navigation menu */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden bg-card border border-t-0 border-border rounded-b-lg animate-fade-in-up">
+          <nav className="md:hidden bg-card border-t border-border animate-fade-in-up">
             <div className="flex flex-col py-4">
               {NAV_ITEMS.map((item) => (
                 <Link
