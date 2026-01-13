@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   X,
+  Linkedin,
 } from "lucide-react";
 import { useState } from "react";
 import horalixLogo from "@/assets/horalix-logo.png";
@@ -29,6 +30,7 @@ interface AdminLayoutProps {
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "News", href: "/admin/news", icon: Newspaper },
+  { label: "LinkedIn Posts", href: "/admin/linkedin", icon: Linkedin },
   { label: "Team", href: "/admin/team", icon: Users },
   { label: "Solutions", href: "/admin/solutions", icon: Layers },
   { label: "Site Content", href: "/admin/content", icon: FileText },

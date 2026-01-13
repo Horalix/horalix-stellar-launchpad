@@ -22,7 +22,7 @@ export const NewsPreviewSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_articles")
-        .select("id, slug, title, summary, image_url, category, location, published_at")
+        .select("id, slug, title, summary, image_url, category, location, published_at, display_date")
         .eq("is_published", true)
         .order("published_at", { ascending: false })
         .limit(10);
@@ -32,10 +32,11 @@ export const NewsPreviewSection = () => {
     },
   });
 
-  // Step 3: Format date for display
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "---";
-    return format(new Date(dateString), "yyyy.MM.dd");
+  // Step 3: Format date for display (use display_date if set, fallback to published_at)
+  const formatDate = (displayDate: string | null, publishedAt: string | null) => {
+    const dateToUse = displayDate || publishedAt;
+    if (!dateToUse) return "---";
+    return format(new Date(dateToUse), "dd.MM.yyyy");
   };
 
   // Step 4: Render article card
@@ -61,7 +62,7 @@ export const NewsPreviewSection = () => {
       {/* Content area */}
       <div className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-center mb-3 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-          <span>{formatDate(article.published_at)}</span>
+          <span>{formatDate(article.display_date, article.published_at)}</span>
           <span>{article.location || "GLOBAL"}</span>
         </div>
         <h3 className="text-lg font-bold font-space leading-tight mb-3 group-hover:text-accent transition-colors">

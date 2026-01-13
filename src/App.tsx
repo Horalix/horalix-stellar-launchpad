@@ -11,6 +11,7 @@ import SolutionDetail from "./pages/SolutionDetail";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import NewsManager from "./pages/admin/NewsManager";
+import LinkedInManager from "./pages/admin/LinkedInManager";
 import TeamManager from "./pages/admin/TeamManager";
 import SolutionsManager from "./pages/admin/SolutionsManager";
 import ContentManager from "./pages/admin/ContentManager";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/news" element={<NewsManager />} />
+          <Route path="/admin/linkedin" element={<LinkedInManager />} />
           <Route path="/admin/team" element={<TeamManager />} />
           <Route path="/admin/solutions" element={<SolutionsManager />} />
           <Route path="/admin/content" element={<ContentManager />} />
