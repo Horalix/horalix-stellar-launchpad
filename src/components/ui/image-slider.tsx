@@ -156,6 +156,18 @@ export const ImageSlider = ({
     );
   }
 
+  // Step 7: Calculate slider offset for horizontal slide
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const getSliderOffset = () => {
+    const baseOffset = currentIndex * 100;
+    if (isSwiping && sliderRef.current) {
+      const containerWidth = sliderRef.current.offsetWidth;
+      const swipePercent = (touchDiff / containerWidth) * 100;
+      return baseOffset + swipePercent;
+    }
+    return baseOffset;
+  };
+
   return (
     <>
       <figure
@@ -163,29 +175,38 @@ export const ImageSlider = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Image container with touch support */}
+        {/* Slider container with touch support */}
         <div
-          className="relative"
+          ref={sliderRef}
+          className={cn(
+            "relative overflow-hidden border border-border",
+            aspectRatio === "video" && "aspect-video",
+            aspectRatio === "square" && "aspect-square",
+            aspectRatio === "wide" && "aspect-[21/9]"
+          )}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <img
-            src={images[currentIndex]}
-            alt={`${alt} ${currentIndex + 1}`}
-            onClick={handleImageClick}
+          {/* Horizontal image strip */}
+          <div
             className={cn(
-              "w-full object-cover border border-border transition-all duration-300 cursor-pointer",
-              aspectRatio === "video" && "aspect-video",
-              aspectRatio === "square" && "aspect-square",
-              aspectRatio === "wide" && "aspect-[21/9]",
-              isSwiping && "transition-none"
+              "flex h-full",
+              isSwiping ? "transition-none" : "transition-transform duration-500 ease-out"
             )}
-            style={{
-              ...getFocusStyle(currentIndex),
-              transform: isSwiping ? `translateX(${-touchDiff}px)` : undefined,
-            }}
-          />
+            style={{ transform: `translateX(-${getSliderOffset()}%)` }}
+          >
+            {images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`${alt} ${index + 1}`}
+                onClick={handleImageClick}
+                className="w-full h-full flex-shrink-0 object-cover cursor-pointer"
+                style={getFocusStyle(index)}
+              />
+            ))}
+          </div>
 
           {/* Previous button */}
           <button
@@ -194,7 +215,7 @@ export const ImageSlider = ({
               e.stopPropagation();
               goToPrevious();
             }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-background/80 hover:bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-background/80 hover:bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -207,14 +228,14 @@ export const ImageSlider = ({
               e.stopPropagation();
               goToNext();
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-background/80 hover:bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-background/80 hover:bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
             aria-label="Next image"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
 
           {/* Top controls: counter and pause */}
-          <div className="absolute top-2 right-2 flex items-center gap-2">
+          <div className="absolute top-2 right-2 flex items-center gap-2 z-10">
             {autoPlay && (
               <button
                 type="button"
@@ -238,30 +259,30 @@ export const ImageSlider = ({
           </div>
 
           {/* Click to enlarge hint */}
-          <div className="absolute bottom-2 right-2 text-[10px] font-mono text-muted-foreground bg-background/60 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-2 right-2 text-[10px] font-mono text-muted-foreground bg-background/60 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
             Click to enlarge
           </div>
-        </div>
 
-        {/* Dot indicators */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
-          {images.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                goToIndex(index);
-              }}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all",
-                index === currentIndex
-                  ? "bg-accent w-4"
-                  : "bg-background/60 hover:bg-background/80"
-              )}
-              aria-label={`Go to image ${index + 1}`}
-            />
-          ))}
+          {/* Dot indicators */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToIndex(index);
+                }}
+                className={cn(
+                  "w-2 h-2 rounded-full transition-all",
+                  index === currentIndex
+                    ? "bg-accent w-4"
+                    : "bg-background/60 hover:bg-background/80"
+                )}
+                aria-label={`Go to image ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </figure>
 
