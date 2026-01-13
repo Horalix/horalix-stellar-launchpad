@@ -118,13 +118,11 @@ const NewsArticle = () => {
 
           {/* Featured image slider */}
           {(() => {
-            // Parse images - prefer image_urls array, fallback to single image_url
+            // Parse images from image_urls array
             const rawUrls = article.image_urls;
             const images: string[] = Array.isArray(rawUrls) && rawUrls.length > 0
               ? rawUrls.filter((url): url is string => typeof url === "string")
-              : article.image_url
-                ? [article.image_url]
-                : [];
+              : [];
             
             // Parse focus points
             const rawFocus = article.image_focus;

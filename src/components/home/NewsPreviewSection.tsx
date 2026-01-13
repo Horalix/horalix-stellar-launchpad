@@ -22,7 +22,7 @@ export const NewsPreviewSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_articles")
-        .select("id, slug, title, summary, image_url, category, location, published_at, display_date")
+        .select("id, slug, title, summary, image_urls, category, location, published_at, display_date")
         .eq("is_published", true)
         .order("published_at", { ascending: false })
         .limit(10);
@@ -50,7 +50,10 @@ export const NewsPreviewSection = () => {
       <div className="aspect-video w-full overflow-hidden border-b border-border relative">
         <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10" />
         <img
-          src={article.image_url || PLACEHOLDER_IMAGE}
+          src={(() => {
+            const urls = article.image_urls;
+            return (Array.isArray(urls) && typeof urls[0] === 'string') ? urls[0] : PLACEHOLDER_IMAGE;
+          })()}
           alt={article.title}
           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105"
         />

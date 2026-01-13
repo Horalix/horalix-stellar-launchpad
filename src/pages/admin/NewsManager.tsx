@@ -84,13 +84,19 @@ const NewsManager = () => {
   // Create/Update mutation
   const saveMutation = useMutation({
     mutationFn: async (article: ArticleForm) => {
-      // Keep image_url synced with first image for backwards compatibility
+      // Build payload (image_url column was dropped in migration)
       const payload = {
-        ...article,
-        image_url: article.image_urls[0] || null,
+        title: article.title,
+        slug: article.slug,
+        summary: article.summary,
+        content: article.content,
+        category: article.category,
+        location: article.location || null,
+        image_urls: article.image_urls,
         image_focus: article.image_focus,
         display_date: article.display_date ? new Date(article.display_date).toISOString() : null,
         published_at: article.is_published ? new Date().toISOString() : null,
+        is_published: article.is_published,
       };
 
       if (isEditing && article.id) {
@@ -131,28 +137,32 @@ const NewsManager = () => {
     },
   });
 
-  // Parse image_urls from database (handles both array and legacy single URL)
+  // Parse image_urls from database
   const parseImageUrls = (article: any): string[] => {
     if (Array.isArray(article.image_urls) && article.image_urls.length > 0) {
       return article.image_urls;
     }
-    // Fallback to legacy single image
-    if (article.image_url) {
-      return [article.image_url];
-    }
     return [];
   };
 
-  // Parse image_focus from database
-  const parseImageFocus = (article: any): Array<{ x: number; y: number }> => {
+  // Parse image_focus from database and normalize to match image count
+  const parseImageFocus = (article: any, imageCount: number): Array<{ x: number; y: number }> => {
+    let focus: Array<{ x: number; y: number }> = [];
     if (Array.isArray(article.image_focus)) {
-      return article.image_focus;
+      focus = article.image_focus.map((f: any) => ({ x: f?.x ?? 50, y: f?.y ?? 50 }));
     }
-    return [];
+    // Normalize array length to match image count
+    while (focus.length < imageCount) {
+      focus.push({ x: 50, y: 50 });
+    }
+    return focus.slice(0, imageCount);
   };
 
   // Open edit dialog
   const handleEdit = (article: any) => {
+    const urls = parseImageUrls(article);
+    const focus = parseImageFocus(article, urls.length);
+    
     setForm({
       id: article.id,
       title: article.title,
@@ -161,8 +171,8 @@ const NewsManager = () => {
       content: article.content,
       category: article.category,
       location: article.location || "",
-      image_urls: parseImageUrls(article),
-      image_focus: parseImageFocus(article),
+      image_urls: urls,
+      image_focus: focus,
       display_date: article.display_date ? article.display_date.split("T")[0] : "",
       is_published: article.is_published,
     });

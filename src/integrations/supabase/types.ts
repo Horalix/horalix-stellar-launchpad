@@ -92,7 +92,6 @@ export type Database = {
           display_date: string | null
           id: string
           image_focus: Json | null
-          image_url: string | null
           image_urls: Json | null
           is_published: boolean
           location: string | null
@@ -110,7 +109,6 @@ export type Database = {
           display_date?: string | null
           id?: string
           image_focus?: Json | null
-          image_url?: string | null
           image_urls?: Json | null
           is_published?: boolean
           location?: string | null
@@ -128,7 +126,6 @@ export type Database = {
           display_date?: string | null
           id?: string
           image_focus?: Json | null
-          image_url?: string | null
           image_urls?: Json | null
           is_published?: boolean
           location?: string | null
