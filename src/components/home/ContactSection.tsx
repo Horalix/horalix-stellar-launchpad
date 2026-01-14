@@ -1,4 +1,5 @@
 import { useState, forwardRef } from "react";
+import horalixLogoGradient from "@/assets/horalix-logo-gradient.jpg";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -130,14 +131,12 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
               </p>
             </div>
             <div className="hidden md:block text-right">
-              <div className="w-24 h-24 border border-border flex items-center justify-center bg-secondary">
-                <div className="text-[10px] text-center text-muted-foreground font-mono">
-                  PLACE
-                  <br />
-                  STAMP
-                  <br />
-                  HERE
-                </div>
+              <div className="w-24 h-24 border border-border flex items-center justify-center bg-secondary overflow-hidden">
+                <img 
+                  src={horalixLogoGradient} 
+                  alt="Horalix" 
+                  className="w-20 h-20 object-contain"
+                />
               </div>
             </div>
           </div>
