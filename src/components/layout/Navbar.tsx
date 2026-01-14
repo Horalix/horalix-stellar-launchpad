@@ -65,6 +65,12 @@ export const Navbar = () => {
           {/* Logo section */}
           <Link 
             to="/" 
+            onClick={(e) => {
+              if (location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             className="flex items-center gap-3 pr-6 hover:opacity-80 transition-opacity"
           >
             <img 
