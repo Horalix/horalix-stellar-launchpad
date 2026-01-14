@@ -115,7 +115,7 @@ export const HeroScreenshots = () => {
         
         {/* Supporting line - single sentence, no exaggeration */}
         <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-sm text-center">
-          DICOM-in, viewer-first, with AI-assisted measurements and visual overlays for fast verification.
+          Designed for real deployments, with clear overlays and audit-friendly outputs.
         </p>
 
         {/* Capability chips - compact row */}
