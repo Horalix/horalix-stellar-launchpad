@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, ScanLine, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
 import { TypewriterHeadline } from "./TypewriterHeadline";
 import { HeroScreenshots } from "./HeroScreenshots";
-
 /**
  * HeroSection - Main homepage hero with tagline and CTAs
  * Features animated typewriter headline and enterprise slider
@@ -16,10 +15,23 @@ const DEFAULTS = {
 };
 
 export const HeroSection = () => {
+  const location = useLocation();
+  
   // Step 2: Fetch dynamic content with fallbacks
   const content = useSiteContentBatch(["hero_subtitle"]);
 
   const heroSubtitle = content.hero_subtitle || DEFAULTS.hero_subtitle;
+
+  // Step 3: Handle smooth scroll for contact section
+  const handleDemoClick = (e: React.MouseEvent) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      const element = document.getElementById("contact");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <section className="relative z-10">
@@ -48,7 +60,7 @@ export const HeroSection = () => {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-4">
-              <Link to="/#contact">
+              <Link to="/#contact" onClick={handleDemoClick}>
                 <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
                   <span>Request Demo</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
