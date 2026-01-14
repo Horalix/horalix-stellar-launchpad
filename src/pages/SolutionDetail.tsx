@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Waves, ScanLine, Microscope, Activity, CheckCircle } from "lucide-react";
+import { ArrowLeft, Waves, ScanLine, Microscope, Activity, CheckCircle, Bone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -17,6 +17,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   ScanLine,
   Microscope,
   Activity,
+  Bone,
 };
 
 const SolutionDetail = () => {

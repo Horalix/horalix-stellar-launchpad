@@ -10,7 +10,8 @@ import {
   FileText,
   Brain,
   Stethoscope,
-  Dna
+  Dna,
+  Bone
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +34,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Stethoscope,
   Dna,
   Layers,
+  Bone,
 };
 
 const getIconComponent = (iconName: string): LucideIcon => {
