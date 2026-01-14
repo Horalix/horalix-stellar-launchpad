@@ -1,25 +1,44 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Hexagon, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useActiveSection } from "@/hooks/useActiveSection";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 /**
  * Navbar - Main navigation component
- * Includes logo, navigation links, and mobile menu
+ * Includes logo, navigation links, mobile menu, and active section highlighting
  */
 
 // Navigation items configuration
 const NAV_ITEMS = [
-  { label: "Solutions", href: "/#solutions" },
-  { label: "News", href: "/news" },
-  { label: "Team", href: "/#team" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Solutions", href: "/#solutions", sectionId: "solutions" },
+  { label: "News", href: "/news", sectionId: null },
+  { label: "Team", href: "/#team", sectionId: "team" },
+  { label: "Contact", href: "/#contact", sectionId: "contact" },
 ];
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const activeSection = useActiveSection();
+
+  /**
+   * Determine if a nav item should show as active
+   */
+  const getIsActive = (item: typeof NAV_ITEMS[number]): boolean => {
+    // Handle /news route
+    if (item.href === "/news") {
+      return location.pathname === "/news" || location.pathname.startsWith("/news/");
+    }
+    
+    // Handle hash links - only when on homepage
+    if (item.sectionId && location.pathname === "/") {
+      return activeSection === item.sectionId;
+    }
+    
+    return false;
+  };
 
   // Handle smooth scroll for hash links on homepage
   const handleNavClick = (href: string) => {
@@ -57,17 +76,26 @@ export const Navbar = () => {
 
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center gap-8 px-8">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.label}
-                to={item.href}
-                onClick={() => handleNavClick(item.href)}
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors relative group"
-              >
-                {item.label}
-                <span className="absolute -bottom-7 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform" />
-              </Link>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const isActive = getIsActive(item);
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={`text-xs font-bold uppercase tracking-widest transition-colors relative group ${
+                    isActive ? "text-accent" : "text-muted-foreground hover:text-accent"
+                  }`}
+                >
+                  {item.label}
+                  <span 
+                    className={`absolute -bottom-7 left-0 w-full h-0.5 bg-accent transition-transform ${
+                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`} 
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right section - status and CTA */}
@@ -112,16 +140,23 @@ export const Navbar = () => {
         {isMobileMenuOpen && (
           <nav className="md:hidden bg-card border-t border-border animate-fade-in-up">
             <div className="flex flex-col py-4">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  onClick={() => handleNavClick(item.href)}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-accent hover:bg-secondary transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                const isActive = getIsActive(item);
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    onClick={() => handleNavClick(item.href)}
+                    className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors ${
+                      isActive 
+                        ? "text-accent bg-secondary border-l-2 border-accent" 
+                        : "text-muted-foreground hover:text-accent hover:bg-secondary"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
               <Link
                 to="/admin/login"
                 onClick={() => setIsMobileMenuOpen(false)}
