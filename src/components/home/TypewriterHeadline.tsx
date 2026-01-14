@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 /**
  * TypewriterHeadline - Terminal-style animated headline
@@ -33,16 +33,16 @@ export const TypewriterHeadline = () => {
   const [phase, setPhase] = useState<Phase>("typing");
   const [cursorVisible, setCursorVisible] = useState(true);
 
-  // Step 4: Get current target headline (with easter egg chance)
-  const getNextHeadline = useCallback(() => {
+  // Step 4: Get current target headline safely
+  const currentTarget = (() => {
     // Check for easter egg on each new headline
     if (Math.random() < EASTER_EGG_CHANCE) {
       return EASTER_EGG;
     }
-    return HEADLINES[headlineIndex];
-  }, [headlineIndex]);
-
-  const currentTarget = getNextHeadline();
+    // Ensure safe array access
+    const safeIndex = headlineIndex % HEADLINES.length;
+    return HEADLINES[safeIndex] || HEADLINES[0];
+  })();
 
   // Step 5: Cursor blinking effect
   useEffect(() => {
