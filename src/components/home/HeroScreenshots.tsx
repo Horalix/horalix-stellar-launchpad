@@ -47,7 +47,7 @@ export const HeroScreenshots = () => {
 
         {/* Screenshot 3: Bottom-left position (overlaps center screenshot corner) */}
         <div 
-          className="absolute top-[38%] left-[8%] w-[55%] z-30 rounded-lg overflow-hidden shadow-2xl border border-border/50"
+          className="absolute top-[28%] left-[8%] w-[55%] z-30 rounded-lg overflow-hidden shadow-2xl border border-border/50"
           style={{ 
             transform: "perspective(1200px) rotateY(10deg) rotateX(-3deg)",
             boxShadow: "0 30px 60px -12px rgba(0, 0, 0, 0.35), 0 16px 32px -8px rgba(0, 0, 0, 0.25)"
@@ -63,7 +63,7 @@ export const HeroScreenshots = () => {
 
         {/* Bottom fade overlay - starts below screenshots */}
         <div 
-          className="absolute bottom-0 left-0 right-0 h-[35%] z-40 pointer-events-none"
+          className="absolute bottom-0 left-0 right-0 h-[25%] z-40 pointer-events-none"
           style={{
             background: "linear-gradient(to top, hsl(var(--card)) 0%, hsl(var(--card)) 30%, transparent 100%)"
           }}
@@ -71,7 +71,7 @@ export const HeroScreenshots = () => {
       </div>
 
       {/* Placeholder text below screenshots */}
-      <div className="relative z-50 text-center mt-auto pb-4">
+      <div className="relative z-50 text-center pt-2">
         <p className="text-lg font-medium text-foreground">
           Placeholder headline text
         </p>
