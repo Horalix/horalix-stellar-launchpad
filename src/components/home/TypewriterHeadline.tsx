@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * TypewriterHeadline - Terminal-style animated headline
@@ -7,9 +7,14 @@ import { useState, useEffect } from "react";
 
 // Step 1: Define headline messages
 const HEADLINES = [
-  "Built for real cases.",
-  "Designed for fast review.",
-  "Enterprise-ready.",
+  "AI That Thinks Like a Clinician",
+  "From Data to Decisions",
+  "Decision Support at Lightning Speed",
+  "Real-Time Analysis for Real Patients",
+  "Built for Doctors, By Doctors",
+  "AI You Can Trust in Practice",
+  "Powering the Future of Medicine",
+  "Where Medicine meets Technology",
 ];
 
 // Easter egg with 1 in 1 billion chance
@@ -33,16 +38,16 @@ export const TypewriterHeadline = () => {
   const [phase, setPhase] = useState<Phase>("typing");
   const [cursorVisible, setCursorVisible] = useState(true);
 
-  // Step 4: Get current target headline safely
-  const currentTarget = (() => {
+  // Step 4: Get current target headline (with easter egg chance)
+  const getNextHeadline = useCallback(() => {
     // Check for easter egg on each new headline
     if (Math.random() < EASTER_EGG_CHANCE) {
       return EASTER_EGG;
     }
-    // Ensure safe array access
-    const safeIndex = headlineIndex % HEADLINES.length;
-    return HEADLINES[safeIndex] || HEADLINES[0];
-  })();
+    return HEADLINES[headlineIndex];
+  }, [headlineIndex]);
+
+  const currentTarget = getNextHeadline();
 
   // Step 5: Cursor blinking effect
   useEffect(() => {
