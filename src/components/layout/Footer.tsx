@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 /**
@@ -7,6 +7,22 @@ import horalixLogo from "@/assets/horalix-logo.png";
  */
 export const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
+  const location = useLocation();
+
+  /**
+   * Handle navigation click for hash links
+   * Smooth scrolls to section if already on homepage
+   */
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    if (href.startsWith("/#") && location.pathname === "/") {
+      e.preventDefault();
+      const sectionId = href.substring(2);
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <footer ref={ref} className="bg-primary text-primary-foreground border-t border-border relative z-10">
@@ -28,6 +44,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               <li>
                 <Link
                   to="/#solutions"
+                  onClick={(e) => handleNavClick(e, "/#solutions")}
                   className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
                 >
                   Solutions
@@ -39,12 +56,20 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
                 </Link>
               </li>
               <li>
-                <Link to="/#team" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
+                <Link
+                  to="/#team"
+                  onClick={(e) => handleNavClick(e, "/#team")}
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
                   Team
                 </Link>
               </li>
               <li>
-                <Link to="/#contact" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
+                <Link
+                  to="/#contact"
+                  onClick={(e) => handleNavClick(e, "/#contact")}
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
                   Contact
                 </Link>
               </li>
