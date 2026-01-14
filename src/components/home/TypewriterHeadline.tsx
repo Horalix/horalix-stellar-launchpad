@@ -23,9 +23,9 @@ const EASTER_EGG_CHANCE = 1 / 1_000_000_000;
 
 // Step 2: Animation timing configuration
 const CONFIG = {
-  typeSpeed: 50,        // ms per character when typing
-  deleteSpeed: 30,      // ms per character when deleting
-  pauseDuration: 1800,  // ms pause after typing complete
+  typeSpeed: 50, // ms per character when typing
+  deleteSpeed: 30, // ms per character when deleting
+  pauseDuration: 1800, // ms pause after typing complete
   cursorBlinkRate: 500, // ms cursor blink interval
 };
 
@@ -95,27 +95,21 @@ export const TypewriterHeadline = () => {
 
   // Step 7: Render with accessibility support
   return (
-    <h1 
-      className="min-h-[2.4em] overflow-hidden text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-primary mb-8 leading-[1.2] font-mono"
+    <h1
+      className="min-h-[2.4em] overflow-hidden text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-primary mb-8 leading-[1.1] font-mono"
       aria-label={currentTarget}
     >
       {/* Visible animated text */}
       <span aria-hidden="true">
         {displayText}
         {/* Blinking cursor */}
-        <span 
-          className={`inline-block transition-opacity duration-100 ${
-            cursorVisible ? "opacity-100" : "opacity-0"
-          }`}
-        >
+        <span className={`inline-block transition-opacity duration-100 ${cursorVisible ? "opacity-100" : "opacity-0"}`}>
           _
         </span>
       </span>
-      
+
       {/* SEO fallback - hidden but indexable */}
-      <span className="sr-only">
-        {HEADLINES.join(". ")}
-      </span>
+      <span className="sr-only">{HEADLINES.join(". ")}</span>
     </h1>
   );
 };
