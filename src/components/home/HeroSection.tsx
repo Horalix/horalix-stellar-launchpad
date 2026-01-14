@@ -12,7 +12,7 @@ import { HeroScreenshots } from "./HeroScreenshots";
 
 // Step 1: Default content fallbacks
 const DEFAULTS = {
-  hero_subtitle: "Eliminating margin of error through advanced algorithmic diagnostics. The future of care is binary, precise, and absolute.",
+  hero_subtitle: "Built for real cases. Designed for fast review. Enterprise-ready.",
 };
 
 export const HeroSection = () => {
@@ -34,7 +34,7 @@ export const HeroSection = () => {
             <div className="inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
               <Activity className="w-3 h-3 text-accent" />
               <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-primary">
-                Diagnostics Suite v4.0
+                Horalix Clinical Engine
               </span>
             </div>
 
@@ -49,16 +49,13 @@ export const HeroSection = () => {
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-4">
               <Link to="/#contact">
-                <Button 
-                  size="lg"
-                  className="group text-xs font-bold uppercase tracking-widest"
-                >
+                <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
                   <span>Request Demo</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              
-              <Link to="/#solutions">
+
+              {/* <Link to="/#solutions">
                 <Button 
                   variant="outline"
                   size="lg"
@@ -67,13 +64,13 @@ export const HeroSection = () => {
                   <ScanLine className="w-4 h-4" />
                   View Protocols
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
 
-        {/* Right hero screenshots - full height flex column for 60/40 split */}
-        <div className="lg:col-span-5 bg-card flex flex-col justify-start relative overflow-hidden border-b lg:border-b-0 border-border min-h-[calc(100vh-84px)]">
+        {/* Right hero screenshots */}
+        <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border">
           <HeroScreenshots />
         </div>
       </div>
