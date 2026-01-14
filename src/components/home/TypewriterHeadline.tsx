@@ -7,14 +7,9 @@ import { useState, useEffect, useCallback } from "react";
 
 // Step 1: Define headline messages
 const HEADLINES = [
-  "AI That Thinks Like a Clinician",
-  "From Data to Decisions",
-  "Decision Support at Lightning Speed",
-  "Real-Time Analysis for Real Patients",
-  "Built for Doctors, By Doctors",
-  "AI You Can Trust in Practice",
-  "Powering the Future of Medicine",
-  "Where Medicine meets Technology",
+  "Built for real cases.",
+  "Designed for fast review.",
+  "Enterprise-ready.",
 ];
 
 // Easter egg with 1 in 1 billion chance
