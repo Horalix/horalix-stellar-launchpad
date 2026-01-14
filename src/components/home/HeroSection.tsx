@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, ScanLine, Activity } from "lucide-react";
+import { ArrowRight, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
 import { TypewriterHeadline } from "./TypewriterHeadline";
@@ -34,7 +33,7 @@ export const HeroSection = () => {
             <div className="inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
               <Activity className="w-3 h-3 text-accent" />
               <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-primary">
-                Diagnostics Suite v4.0
+                Horalix Clinical Engine
               </span>
             </div>
 
@@ -46,9 +45,9 @@ export const HeroSection = () => {
               {heroSubtitle}
             </p>
 
-            {/* CTA buttons */}
+            {/* CTA button */}
             <div className="flex flex-wrap gap-4">
-              <Link to="/#contact">
+              <a href="#contact">
                 <Button 
                   size="lg"
                   className="group text-xs font-bold uppercase tracking-widest"
@@ -56,18 +55,7 @@ export const HeroSection = () => {
                   <span>Request Demo</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </Link>
-              
-              <Link to="/#solutions">
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="text-xs font-bold uppercase tracking-widest"
-                >
-                  <ScanLine className="w-4 h-4" />
-                  View Protocols
-                </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
