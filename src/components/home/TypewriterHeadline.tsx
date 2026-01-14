@@ -8,10 +8,10 @@ import { useState, useEffect, useCallback } from "react";
 // Step 1: Define headline messages
 const HEADLINES = [
   "AI That Thinks Like a Clinician",
-  "From Data to Decisions",
+  "From Data to   Decisions",
   "Decision Support at Lightning Speed",
   "Real-Time Analysis for Real Patients",
-  "Built for Doctors, By Doctors",
+  "Built for Doctors,   By Doctors",
   "AI You Can Trust in Practice",
   "Powering the Future of Medicine",
   "Where Medicine meets Technology",
