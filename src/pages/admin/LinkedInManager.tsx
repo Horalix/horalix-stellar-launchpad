@@ -83,7 +83,7 @@ const LinkedInManager = () => {
       const { data, error } = await supabase
         .from("linkedin_posts")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("post_date", { ascending: false, nullsFirst: false });
       if (error) throw error;
       return data;
     },
@@ -284,7 +284,7 @@ const LinkedInManager = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Post ID</TableHead>
-                  <TableHead>Added</TableHead>
+                  <TableHead>Post Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-32">Actions</TableHead>
                 </TableRow>
@@ -311,7 +311,10 @@ const LinkedInManager = () => {
                         </a>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {format(new Date(post.created_at), "MMM d, yyyy")}
+                        {post.post_date 
+                          ? format(new Date(post.post_date), "MMM d, yyyy")
+                          : <span className="text-yellow-500 italic">Not set</span>
+                        }
                       </TableCell>
                       <TableCell>
                         <span

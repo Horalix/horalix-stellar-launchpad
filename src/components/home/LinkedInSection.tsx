@@ -17,7 +17,7 @@ export const LinkedInSection = () => {
         .from("linkedin_posts")
         .select("*")
         .eq("is_visible", true)
-        .order("display_order", { ascending: true });
+        .order("post_date", { ascending: false, nullsFirst: false });
 
       if (error) throw error;
       return data;
