@@ -4,22 +4,31 @@ import screenshotSegmentation from "@/assets/hero/screenshot-segmentation.png";
 
 /**
  * HeroScreenshots - Layered 3D screenshot display for hero section
- * Features three product UI screenshots with overlapping corners and depth
- * Includes subtle fade and clinical text block underneath
+ * Features three product UI screenshots with staggered depth positioning
+ * Back images are clearly visible with meaningful UI shown
  */
+
+// Capability chips data
+const capabilities = [
+  "DICOM Upload",
+  "Viewer Overlays", 
+  "Audit-ready Export"
+];
 
 export const HeroScreenshots = () => {
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-start pt-4 lg:pt-8">
+    <div className="relative w-full h-full flex flex-col items-center justify-start pt-2 lg:pt-4">
       {/* Screenshot stack container - centered with controlled width */}
-      <div className="relative w-full max-w-[660px] mx-auto" style={{ minHeight: "380px" }}>
+      <div className="relative w-full max-w-[660px] mx-auto" style={{ minHeight: "340px" }}>
         
-        {/* Screenshot 1: Top-left position - increased size ~20% */}
+        {/* Screenshot 1 (Back): Dashboard - offset right and up, scaled down */}
         <div 
-          className="absolute top-0 left-0 w-[72%] z-10 rounded-lg overflow-hidden shadow-xl border border-border/40"
+          className="absolute z-10 w-[70%] rounded-lg overflow-hidden border border-border/30"
           style={{ 
-            transform: "perspective(1200px) rotateY(8deg) rotateX(-2deg)",
-            boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.2)"
+            top: "0px",
+            left: "50%",
+            transform: "translateX(-50%) translateX(90px) translateY(-30px) scale(0.92)",
+            boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 6px 12px -6px rgba(0, 0, 0, 0.15)"
           }}
         >
           <img
@@ -30,12 +39,14 @@ export const HeroScreenshots = () => {
           />
         </div>
 
-        {/* Screenshot 2: Center-right position - increased size ~20% */}
+        {/* Screenshot 2 (Middle): Analysis - slight offset, medium scale */}
         <div 
-          className="absolute top-[12%] right-0 w-[78%] z-20 rounded-lg overflow-hidden shadow-2xl border border-border/50"
+          className="absolute z-20 w-[70%] rounded-lg overflow-hidden border border-border/40"
           style={{ 
-            transform: "perspective(1200px) rotateY(-6deg) rotateX(2deg)",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 12px 24px -8px rgba(0, 0, 0, 0.25)"
+            top: "0px",
+            left: "50%",
+            transform: "translateX(-50%) translateX(40px) translateY(-10px) scale(0.96)",
+            boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.2)"
           }}
         >
           <img
@@ -46,12 +57,14 @@ export const HeroScreenshots = () => {
           />
         </div>
 
-        {/* Screenshot 3: Bottom-left position - increased size ~20% */}
+        {/* Screenshot 3 (Front): Segmentation - centered, full scale */}
         <div 
-          className="absolute top-[28%] left-[8%] w-[66%] z-30 rounded-lg overflow-hidden shadow-2xl border border-border/50"
+          className="absolute z-30 w-[70%] rounded-lg overflow-hidden border border-border/50"
           style={{ 
-            transform: "perspective(1200px) rotateY(10deg) rotateX(-3deg)",
-            boxShadow: "0 30px 60px -12px rgba(0, 0, 0, 0.35), 0 16px 32px -8px rgba(0, 0, 0, 0.25)"
+            top: "0px",
+            left: "50%",
+            transform: "translateX(-50%) translateX(0px) translateY(20px) scale(1.0)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 12px 24px -8px rgba(0, 0, 0, 0.25)"
           }}
         >
           <img
@@ -66,15 +79,15 @@ export const HeroScreenshots = () => {
         <div 
           className="absolute bottom-0 left-0 right-0 h-[112px] z-40 pointer-events-none"
           style={{
-            background: "linear-gradient(to top, hsl(var(--background)) 0%, hsl(var(--background) / 0.8) 40%, transparent 100%)"
+            background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background) / 0.6) 50%, hsl(var(--background)) 100%)"
           }}
         />
       </div>
 
       {/* Text block - tight spacing, clinical typography */}
-      <div className="relative z-50 w-full max-w-md mx-auto text-center mt-5 px-4">
+      <div className="relative z-50 w-full max-w-md mx-auto text-center mt-4 px-4">
         {/* Thin divider line for cohesion */}
-        <div className="w-10 h-px bg-border mx-auto mb-4" />
+        <div className="w-10 h-px bg-border mx-auto mb-3" />
         
         {/* Headline - clinical and confident */}
         <h3 className="text-lg font-semibold text-foreground tracking-tight">
@@ -82,9 +95,21 @@ export const HeroScreenshots = () => {
         </h3>
         
         {/* Supporting line - single sentence, no exaggeration */}
-        <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-sm mx-auto">
           DICOM-in, viewer-first, with AI-assisted measurements and visual overlays for fast verification.
         </p>
+
+        {/* Capability chips - compact row */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+          {capabilities.map((chip) => (
+            <span
+              key={chip}
+              className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/50 border border-border/60 rounded-full"
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
