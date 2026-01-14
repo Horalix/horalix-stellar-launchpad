@@ -74,7 +74,7 @@ const News = () => {
                   <div className="flex flex-col md:flex-row md:items-start gap-6">
                     {/* Article image (if available) */}
                     {Array.isArray(article.image_urls) && article.image_urls[0] && (
-                      <div className="md:w-48 md:h-32 shrink-0 overflow-hidden bg-secondary">
+                      <div className="md:w-48 md:h-32 shrink-0 overflow-hidden bg-secondary rounded-lg">
                         <img
                           src={article.image_urls[0] as string}
                           alt={article.title}
