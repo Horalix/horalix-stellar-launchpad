@@ -72,8 +72,8 @@ export const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right hero screenshots */}
-        <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border">
+        {/* Right hero screenshots - full height flex column for 60/40 split */}
+        <div className="lg:col-span-5 bg-card flex flex-col justify-start relative overflow-hidden border-b lg:border-b-0 border-border min-h-[calc(100vh-84px)]">
           <HeroScreenshots />
         </div>
       </div>
