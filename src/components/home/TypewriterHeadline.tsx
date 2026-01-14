@@ -11,7 +11,7 @@ const HEADLINES = [
   "From Data to   Decisions",
   "Decision Support at Lightning Speed",
   "Real-Time Analysis for Real Patients",
-  "Built for Doctors,   By Doctors",
+  "Built for Doctors,\nBy Doctors",
   "AI You Can Trust in Practice",
   "Powering the Future of Medicine",
   "Where Medicine meets Technology",
