@@ -24,7 +24,7 @@ export const NewsPreviewSection = () => {
         .from("news_articles")
         .select("id, slug, title, summary, image_urls, category, location, published_at, display_date")
         .eq("is_published", true)
-        .order("published_at", { ascending: false })
+        .order("display_date", { ascending: false, nullsFirst: false })
         .limit(10);
 
       if (error) throw error;
