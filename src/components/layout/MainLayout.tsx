@@ -16,19 +16,25 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
 
   /**
-   * Handle cross-page hash navigation
-   * Scrolls to target section when navigating to homepage with hash
+   * Handle scroll behavior on navigation
+   * - With hash: scroll to target section (smooth)
+   * - Without hash: scroll to top (instant)
    */
   useEffect(() => {
-    if (location.pathname === "/" && location.hash) {
-      const sectionId = location.hash.substring(1);
-      // Small delay to ensure page has rendered
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
+    if (location.hash) {
+      // Hash navigation: scroll to section (only on homepage)
+      if (location.pathname === "/") {
+        const sectionId = location.hash.substring(1);
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    } else {
+      // No hash: scroll to top of page
+      window.scrollTo({ top: 0, behavior: "instant" });
     }
   }, [location.pathname, location.hash]);
 
