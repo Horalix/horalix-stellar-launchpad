@@ -1,7 +1,7 @@
 /**
  * Edge Function: create-admin-user
  * Securely creates an admin user with credentials from environment secrets
- * This function should only be called once to set up the initial admin
+ * This function requires admin setup key authentication for security
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -10,7 +10,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-admin-setup-key",
 };
 
 Deno.serve(async (req) => {
@@ -20,15 +20,57 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Step 3: Get credentials from environment secrets
+    // Step 3: Validate admin setup key for security
+    const adminSetupKey = Deno.env.get("ADMIN_SETUP_KEY");
+    const providedKey = req.headers.get("x-admin-setup-key");
+    
+    // Admin setup key is REQUIRED for this endpoint
+    if (!adminSetupKey) {
+      console.error("ADMIN_SETUP_KEY not configured");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Admin setup not configured. Please configure ADMIN_SETUP_KEY secret.",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
+    }
+
+    if (!providedKey || providedKey !== adminSetupKey) {
+      console.error("Admin setup key validation failed");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Unauthorized - Invalid admin setup key",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
+    }
+
+    // Step 4: Get credentials from environment secrets
     const adminEmail = Deno.env.get("ADMIN_EMAIL");
     const adminPassword = Deno.env.get("ADMIN_PASSWORD");
 
     if (!adminEmail || !adminPassword) {
-      throw new Error("Admin credentials not configured in secrets");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Admin credentials not configured in secrets",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
 
-    // Step 4: Create Supabase admin client with service role key
+    // Step 5: Create Supabase admin client with service role key
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -39,7 +81,7 @@ Deno.serve(async (req) => {
       },
     });
 
-    // Step 5: Check if admin already exists
+    // Step 6: Check if admin already exists
     const { data: existingUsers, error: listError } =
       await supabaseAdmin.auth.admin.listUsers();
 
@@ -52,7 +94,7 @@ Deno.serve(async (req) => {
     );
 
     if (existingAdmin) {
-      // Step 6a: Check if user already has admin role
+      // Step 7a: Check if user already has admin role
       const { data: existingRole } = await supabaseAdmin
         .from("user_roles")
         .select("role")
@@ -65,7 +107,6 @@ Deno.serve(async (req) => {
           JSON.stringify({
             success: true,
             message: "Admin user already exists with admin role",
-            email: adminEmail,
           }),
           {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -74,7 +115,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Step 6b: Add admin role to existing user
+      // Step 7b: Add admin role to existing user
       const { error: roleError } = await supabaseAdmin
         .from("user_roles")
         .insert({ user_id: existingAdmin.id, role: "admin" });
@@ -87,7 +128,6 @@ Deno.serve(async (req) => {
         JSON.stringify({
           success: true,
           message: "Admin role added to existing user",
-          email: adminEmail,
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -96,19 +136,19 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Step 7: Create new admin user
+    // Step 8: Create new admin user
     const { data: newUser, error: createError } =
       await supabaseAdmin.auth.admin.createUser({
         email: adminEmail,
         password: adminPassword,
-        email_confirm: true, // Auto-confirm the email
+        email_confirm: true,
       });
 
     if (createError) {
       throw createError;
     }
 
-    // Step 8: Assign admin role
+    // Step 9: Assign admin role
     const { error: roleError } = await supabaseAdmin
       .from("user_roles")
       .insert({ user_id: newUser.user.id, role: "admin" });
@@ -117,13 +157,11 @@ Deno.serve(async (req) => {
       throw roleError;
     }
 
-    // Step 9: Return success response
+    // Step 10: Return success response (without exposing sensitive data)
     return new Response(
       JSON.stringify({
         success: true,
         message: "Admin user created successfully",
-        email: adminEmail,
-        userId: newUser.user.id,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -136,7 +174,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || "Failed to create admin user",
+        error: "Failed to create admin user",
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
