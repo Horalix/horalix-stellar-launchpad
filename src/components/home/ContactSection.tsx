@@ -106,13 +106,14 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     setIsSubmitting(true);
 
     try {
-      // Store submission in database
+      // Store submission in database (link to user if logged in)
       const { error } = await supabase
         .from("contact_submissions")
         .insert({
           name: result.data.name,
           email: result.data.email,
           message: result.data.message,
+          user_id: user?.id || null,
         });
 
       if (error) throw error;
