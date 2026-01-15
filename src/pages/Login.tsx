@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import horalixLogo from "@/assets/horalix-logo.png";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,7 +56,8 @@ export default function Login() {
           title: "Welcome Back",
           description: "You have been logged in successfully.",
         });
-        navigate("/");
+        // Redirect to returnTo URL if provided, otherwise go to home
+        navigate(returnTo || "/");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -165,7 +168,7 @@ export default function Login() {
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{" "}
             <Link
-              to="/signup"
+              to={returnTo ? `/signup?returnTo=${encodeURIComponent(returnTo)}` : "/signup"}
               className="text-accent hover:text-accent/80 font-medium"
             >
               Sign up
