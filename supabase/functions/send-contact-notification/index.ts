@@ -1,7 +1,7 @@
 /**
  * Edge function: send-contact-notification
  * Sends email notification when a new contact form submission is received
- * Triggered via database webhook or direct call
+ * Triggered via database webhook with webhook secret validation
  */
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
@@ -10,7 +10,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // CORS headers for cross-origin requests
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-secret",
 };
 
 // Email notification recipient
@@ -38,10 +38,28 @@ serve(async (req) => {
   }
 
   try {
-    // Parse the webhook payload
+    // Step 1: Validate webhook secret to prevent unauthorized access
+    const webhookSecret = Deno.env.get("WEBHOOK_SECRET");
+    const providedSecret = req.headers.get("x-webhook-secret");
+    
+    // If webhook secret is configured, validate it
+    if (webhookSecret) {
+      if (!providedSecret || providedSecret !== webhookSecret) {
+        console.error("Webhook secret validation failed");
+        return new Response(
+          JSON.stringify({ error: "Unauthorized - Invalid webhook secret" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } else {
+      // No webhook secret configured - log warning but allow for backward compatibility
+      console.warn("WEBHOOK_SECRET not configured - endpoint is less secure");
+    }
+
+    // Step 2: Parse the webhook payload
     const payload: WebhookPayload = await req.json();
 
-    // Validate payload
+    // Step 3: Validate payload structure
     if (payload.type !== "INSERT" || payload.table !== "contact_submissions") {
       return new Response(
         JSON.stringify({ message: "Invalid webhook payload" }),
@@ -51,7 +69,15 @@ serve(async (req) => {
 
     const submission = payload.record;
 
-    // Use Lovable AI to generate a professional email summary
+    // Step 4: Validate submission data
+    if (!submission.name || !submission.email || !submission.message) {
+      return new Response(
+        JSON.stringify({ error: "Invalid submission data" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Step 5: Use Lovable AI to generate a professional email summary
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -80,7 +106,7 @@ serve(async (req) => {
       aiSummary = aiData.choices?.[0]?.message?.content || aiSummary;
     }
 
-    // Log the notification (in production, integrate with email service like Resend)
+    // Step 6: Log the notification (in production, integrate with email service like Resend)
     console.log("=== NEW CONTACT FORM SUBMISSION ===");
     console.log(`ID: ${submission.id}`);
     console.log(`From: ${submission.name} <${submission.email}>`);
@@ -89,30 +115,7 @@ serve(async (req) => {
     console.log(`AI Summary: ${aiSummary}`);
     console.log("===================================");
 
-    // For now, we'll return success and log the notification
-    // To send actual emails, integrate with Resend, SendGrid, or similar
-    // Example Resend integration:
-    // const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    // if (resendApiKey) {
-    //   await fetch("https://api.resend.com/emails", {
-    //     method: "POST",
-    //     headers: {
-    //       "Authorization": `Bearer ${resendApiKey}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       from: "Horalix <noreply@horalix.com>",
-    //       to: [NOTIFICATION_EMAIL],
-    //       subject: `New Contact: ${submission.name}`,
-    //       html: `<h2>New Contact Form Submission</h2>
-    //         <p><strong>From:</strong> ${submission.name} (${submission.email})</p>
-    //         <p><strong>Message:</strong></p>
-    //         <p>${submission.message}</p>
-    //         <p><strong>AI Summary:</strong> ${aiSummary}</p>`,
-    //     }),
-    //   });
-    // }
-
+    // Step 7: Return success response
     return new Response(
       JSON.stringify({ 
         success: true, 
