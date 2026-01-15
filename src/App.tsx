@@ -8,6 +8,11 @@ import NotFound from "./pages/NotFound";
 import News from "./pages/News";
 import NewsArticle from "./pages/NewsArticle";
 import SolutionDetail from "./pages/SolutionDetail";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import VerifyEmail from "./pages/VerifyEmail";
+import Profile from "./pages/Profile";
+import ProfileSubmissions from "./pages/ProfileSubmissions";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import NewsManager from "./pages/admin/NewsManager";
@@ -16,6 +21,7 @@ import TeamManager from "./pages/admin/TeamManager";
 import SolutionsManager from "./pages/admin/SolutionsManager";
 import ContentManager from "./pages/admin/ContentManager";
 import ContactsManager from "./pages/admin/ContactsManager";
+import { AuthenticatedRoute } from "./components/auth/AuthenticatedRoute";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +41,29 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsArticle />} />
           <Route path="/solutions/:slug" element={<SolutionDetail />} />
+
+          {/* Authentication routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+
+          {/* Protected user routes */}
+          <Route
+            path="/profile"
+            element={
+              <AuthenticatedRoute>
+                <Profile />
+              </AuthenticatedRoute>
+            }
+          />
+          <Route
+            path="/profile/submissions"
+            element={
+              <AuthenticatedRoute>
+                <ProfileSubmissions />
+              </AuthenticatedRoute>
+            }
+          />
 
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

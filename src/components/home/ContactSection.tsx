@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import horalixLogoGradient from "@/assets/horalix-logo-gradient.jpg";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 
 /**
@@ -36,6 +37,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -43,6 +45,33 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     message: "",
   });
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
+
+  // Pre-fill form with user data if logged in
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("full_name, email")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (data) {
+          setFormData((prev) => ({
+            ...prev,
+            name: data.full_name || prev.name,
+            email: data.email || user.email || prev.email,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, [user]);
 
   // Handle input changes
   const handleChange = (
@@ -77,12 +106,26 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     setIsSubmitting(true);
 
     try {
-      // Store submission in database
-      const { error } = await supabase.from("contact_submissions").insert({
+      // Store submission in database (link to user if logged in)
+      const insertData: {
+        name: string;
+        email: string;
+        message: string;
+        user_id?: string;
+      } = {
         name: result.data.name,
         email: result.data.email,
         message: result.data.message,
-      });
+      };
+
+      // Add user_id if user is logged in
+      if (user?.id) {
+        insertData.user_id = user.id;
+      }
+
+      const { error } = await supabase
+        .from("contact_submissions")
+        .insert(insertData);
 
       if (error) throw error;
 
