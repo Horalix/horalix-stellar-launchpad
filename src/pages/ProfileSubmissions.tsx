@@ -77,18 +77,21 @@ export default function ProfileSubmissions() {
   // Fetch user's submissions
   useEffect(() => {
     const fetchSubmissions = async () => {
-      if (!user) return;
+      const userId = user?.id;
+      if (!userId) return;
 
       try {
-        const { data, error } = await supabase
-          .from("contact_submissions")
-          .select("*")
-          .eq("user_id", user.id)
+        // Fetch submissions linked to this user
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const query = supabase.from("contact_submissions") as any;
+        const { data, error } = await query
+          .select("id, name, email, message, status, created_at, responded_at")
+          .eq("user_id", userId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
 
-        setSubmissions(data || []);
+        setSubmissions((data as Submission[]) || []);
       } catch (error) {
         console.error("Error fetching submissions:", error);
         toast({
@@ -106,19 +109,18 @@ export default function ProfileSubmissions() {
 
   // Handle delete submission
   const handleDelete = async (id: string) => {
+    const userId = user?.id;
+    if (!userId) return;
+    
     setDeletingId(id);
 
     try {
-        const userId = user?.id;
-        if (!userId) return;
-        
-        const { error } = await supabase
-          .from("contact_submissions")
-          .delete()
-          .eq("id", id)
-          .eq("user_id", userId);
+      const { error } = await supabase
+        .from("contact_submissions")
+        .delete()
+        .eq("id", id);
 
-        if (error) throw error;
+      if (error) throw error;
 
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
       toast({
