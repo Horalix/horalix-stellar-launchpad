@@ -1,4 +1,5 @@
 import { useState, useEffect, forwardRef } from "react";
+import { useNavigate } from "react-router-dom";
 import horalixLogoGradient from "@/assets/horalix-logo-gradient.jpg";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
+
+// localStorage key for saving pending contact form data
+const PENDING_CONTACT_KEY = "horalix_pending_contact";
 
 /**
  * ContactSection - Contact form with validation
@@ -38,6 +42,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -46,12 +51,26 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   });
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
 
-  // Pre-fill form with user data if logged in
+  // Pre-fill form with user data and restore saved message if logged in
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!user) return;
 
       try {
+        // Restore saved message from localStorage if it exists
+        const savedData = localStorage.getItem(PENDING_CONTACT_KEY);
+        let savedMessage = "";
+        if (savedData) {
+          try {
+            const parsed = JSON.parse(savedData);
+            savedMessage = parsed.message || "";
+            // Clear localStorage after restoring
+            localStorage.removeItem(PENDING_CONTACT_KEY);
+          } catch {
+            localStorage.removeItem(PENDING_CONTACT_KEY);
+          }
+        }
+
         const { data } = await supabase
           .from("profiles")
           .select("full_name, email")
@@ -63,6 +82,12 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
             ...prev,
             name: data.full_name || prev.name,
             email: data.email || user.email || prev.email,
+            message: savedMessage || prev.message,
+          }));
+        } else if (savedMessage) {
+          setFormData((prev) => ({
+            ...prev,
+            message: savedMessage,
           }));
         }
       } catch (error) {
@@ -90,6 +115,24 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     e.preventDefault();
     setErrors({});
 
+    // Check if user is logged in - require login to submit
+    if (!user) {
+      // Save form data to localStorage so it persists after login
+      localStorage.setItem(
+        PENDING_CONTACT_KEY,
+        JSON.stringify({
+          message: formData.message,
+          savedAt: new Date().toISOString(),
+        })
+      );
+      toast({
+        title: "Login Required",
+        description: "Please log in to submit your inquiry. Your message has been saved.",
+      });
+      navigate("/login?returnTo=/#contact");
+      return;
+    }
+
     // Validate form data
     const result = contactSchema.safeParse(formData);
     if (!result.success) {
@@ -106,17 +149,20 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     setIsSubmitting(true);
 
     try {
-      // Store submission in database (link to user if logged in)
+      // Store submission in database (user is required now)
       const { error } = await supabase
         .from("contact_submissions")
         .insert({
           name: result.data.name,
           email: result.data.email,
           message: result.data.message,
-          user_id: user?.id || null,
+          user_id: user.id,
         });
 
       if (error) throw error;
+
+      // Clear any saved form data
+      localStorage.removeItem(PENDING_CONTACT_KEY);
 
       // Show success message
       toast({

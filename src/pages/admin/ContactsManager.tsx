@@ -28,8 +28,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, Loader2, Mail, Check, Archive } from "lucide-react";
+import { Eye, Loader2, Mail, Check, Archive, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 /**
  * ContactsManager - Admin page for managing contact form submissions
@@ -47,6 +57,7 @@ const STATUS_OPTIONS: { value: ContactStatus; label: string; color: string }[] =
 
 const ContactsManager = () => {
   const [selectedContact, setSelectedContact] = useState<any | null>(null);
+  const [contactToDelete, setContactToDelete] = useState<any | null>(null);
   const [notes, setNotes] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const queryClient = useQueryClient();
@@ -88,6 +99,25 @@ const ContactsManager = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-contacts"] });
       setSelectedContact(null);
       toast({ title: "Contact updated" });
+    },
+    onError: (error: any) => {
+      toast({ variant: "destructive", title: "Error", description: error.message });
+    },
+  });
+
+  // Delete contact mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-contacts"] });
+      setContactToDelete(null);
+      toast({ title: "Contact deleted" });
     },
     onError: (error: any) => {
       toast({ variant: "destructive", title: "Error", description: error.message });
@@ -145,6 +175,7 @@ const ContactsManager = () => {
                   <TableHead>Message</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-16">View</TableHead>
+                  <TableHead className="w-16">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -183,11 +214,21 @@ const ContactsManager = () => {
                           <Eye className="w-4 h-4" />
                         </Button>
                       </TableCell>
+                      <TableCell>
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          onClick={() => setContactToDelete(contact)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       No contact submissions yet.
                     </TableCell>
                   </TableRow>
@@ -293,6 +334,33 @@ const ContactsManager = () => {
               )}
             </DialogContent>
           </Dialog>
+
+          {/* Delete confirmation dialog */}
+          <AlertDialog open={!!contactToDelete} onOpenChange={(open) => !open && setContactToDelete(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Contact Submission?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete the submission from{" "}
+                  <span className="font-medium text-foreground">{contactToDelete?.name}</span>?
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => contactToDelete && deleteMutation.mutate(contactToDelete.id)}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  disabled={deleteMutation.isPending}
+                >
+                  {deleteMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : null}
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </AdminLayout>
     </ProtectedRoute>

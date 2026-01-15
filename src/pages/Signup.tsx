@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,8 @@ const validatePassword = (password: string) => {
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const { toast } = useToast();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -303,7 +305,7 @@ export default function Signup() {
           <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{" "}
             <Link
-              to="/login"
+              to={returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : "/login"}
               className="text-accent hover:text-accent/80 font-medium"
             >
               Sign in
