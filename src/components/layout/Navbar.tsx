@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import { useAuth } from "@/hooks/useAuth";
+import { UserProfileDropdown } from "@/components/layout/UserProfileDropdown";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 /**
@@ -22,6 +24,7 @@ export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const activeSection = useActiveSection();
+  const { user, isLoading } = useAuth();
 
   /**
    * Determine if a nav item should show as active
@@ -104,28 +107,23 @@ export const Navbar = () => {
             })}
           </nav>
 
-          {/* Right section - status and CTA */}
+          {/* Right section - auth */}
           <div className="flex items-center gap-4 md:gap-6">
-            {/* System status indicator (desktop only) */}
-            <div className="hidden lg:flex flex-col items-end">
-              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-                Sys_Status
-              </span>
-              <span className="text-xs font-bold text-green-600 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                ONLINE
-              </span>
-            </div>
-
-            {/* Admin login button */}
-            <Link to="/admin/login">
-              <Button 
-                variant="default"
-                className="hidden sm:flex text-xs font-bold uppercase tracking-widest"
-              >
-                Portal Login
-              </Button>
-            </Link>
+            {/* Show user dropdown if logged in, login button if not */}
+            {!isLoading && (
+              user ? (
+                <UserProfileDropdown />
+              ) : (
+                <Link to="/login">
+                  <Button 
+                    variant="default"
+                    className="hidden sm:flex text-xs font-bold uppercase tracking-widest"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              )
+            )}
 
             {/* Mobile menu toggle */}
             <button
@@ -163,15 +161,17 @@ export const Navbar = () => {
                   </Link>
                 );
               })}
-              <Link
-                to="/admin/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="mx-4 mt-4"
-              >
-                <Button className="w-full text-xs font-bold uppercase tracking-widest">
-                  Portal Login
-                </Button>
-              </Link>
+              {!user && (
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="mx-4 mt-4"
+                >
+                  <Button className="w-full text-xs font-bold uppercase tracking-widest">
+                    Login
+                  </Button>
+                </Link>
+              )}
             </div>
           </nav>
         )}
