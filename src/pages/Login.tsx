@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 /**
  * Login - User login page
  * Supports email/password authentication
+ * Redirects authenticated users to returnTo or home
  */
 
 export default function Login() {
@@ -17,10 +19,36 @@ export default function Login() {
   const [searchParams] = useSearchParams();
   const returnTo = searchParams.get("returnTo");
   const { toast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect authenticated users immediately
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(returnTo || "/", { replace: true });
+    }
+  }, [user, authLoading, navigate, returnTo]);
+
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Don't render form if user is authenticated (will redirect)
+  if (user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   // Handle email/password login
   const handleSubmit = async (e: React.FormEvent) => {
