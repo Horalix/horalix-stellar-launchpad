@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.delete-user-account]
 verify_jwt = true
+
+[functions.send-status-notification]
+verify_jwt = false
