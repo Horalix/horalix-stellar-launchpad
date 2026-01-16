@@ -35,17 +35,14 @@ export default function VerifyEmail() {
     setResendSuccess(false);
 
     try {
-      // Check if there's pending contact form data to preserve returnTo
-      const pendingData = localStorage.getItem("horalix_pending_contact");
-      const returnTo = pendingData ? "/#contact" : "";
+      // Use production domain for magic link redirects
+      const PRODUCTION_URL = "https://horalix.com";
       
       const { error } = await supabase.auth.resend({
         type: "signup",
         email,
         options: {
-          emailRedirectTo: returnTo
-            ? `${window.location.origin}${returnTo}`
-            : window.location.origin,
+          emailRedirectTo: PRODUCTION_URL,
         },
       });
 

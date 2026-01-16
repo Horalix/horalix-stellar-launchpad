@@ -22,6 +22,7 @@ import SolutionsManager from "./pages/admin/SolutionsManager";
 import ContentManager from "./pages/admin/ContentManager";
 import ContactsManager from "./pages/admin/ContactsManager";
 import { AuthenticatedRoute } from "./components/auth/AuthenticatedRoute";
+import { PendingSubmissionHandler } from "./components/home/PendingSubmissionHandler";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <PendingSubmissionHandler />
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Index />} />
