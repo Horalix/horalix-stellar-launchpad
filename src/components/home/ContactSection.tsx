@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect, forwardRef, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import horalixLogoGradient from "@/assets/horalix-logo-gradient.jpg";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
@@ -9,6 +9,15 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // localStorage key for saving pending contact form data
 const PENDING_CONTACT_KEY = "horalix_pending_contact";
@@ -16,6 +25,7 @@ const PENDING_CONTACT_KEY = "horalix_pending_contact";
 /**
  * ContactSection - Contact form with validation
  * Stores submissions to database (email notification handled by edge function)
+ * If user is not logged in, shows dialog and auto-submits after authentication
  */
 
 // Form validation schema
@@ -41,62 +51,118 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: "",
   });
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
+  // Track if we've already auto-submitted to prevent duplicate submissions
+  const hasAutoSubmitted = useRef(false);
 
-  // Pre-fill form with user data and restore saved message if logged in
+  /**
+   * Auto-submit pending form data after user authenticates
+   * This runs when user logs in and has saved form data
+   */
+  const submitPendingForm = async (pendingData: {
+    name: string;
+    email: string;
+    message: string;
+  }) => {
+    if (!user || hasAutoSubmitted.current) return;
+    hasAutoSubmitted.current = true;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: pendingData.name,
+        email: pendingData.email,
+        message: pendingData.message,
+        user_id: user.id,
+      });
+
+      if (error) throw error;
+
+      // Clear saved form data
+      localStorage.removeItem(PENDING_CONTACT_KEY);
+
+      // Show success message
+      toast({
+        title: "Message Transmitted",
+        description:
+          "Your inquiry has been automatically submitted. We'll respond shortly.",
+      });
+
+      // Reset form
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Auto-submit error:", error);
+      toast({
+        title: "Transmission Failed",
+        description: "Unable to send message. Please try submitting again.",
+        variant: "destructive",
+      });
+      // Reset flag so user can try manual submit
+      hasAutoSubmitted.current = false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Pre-fill form with user data and auto-submit if pending data exists
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!user) return;
+    const handlePendingSubmission = async () => {
+      // Wait for auth to finish loading
+      if (authLoading) return;
 
-      try {
-        // Restore saved message from localStorage if it exists
-        const savedData = localStorage.getItem(PENDING_CONTACT_KEY);
-        let savedMessage = "";
-        if (savedData) {
-          try {
-            const parsed = JSON.parse(savedData);
-            savedMessage = parsed.message || "";
-            // Clear localStorage after restoring
-            localStorage.removeItem(PENDING_CONTACT_KEY);
-          } catch {
-            localStorage.removeItem(PENDING_CONTACT_KEY);
+      // Check for pending form data
+      const savedData = localStorage.getItem(PENDING_CONTACT_KEY);
+
+      if (user && savedData) {
+        // User just logged in with pending form data - auto submit
+        try {
+          const parsed = JSON.parse(savedData);
+          if (parsed.name && parsed.email && parsed.message) {
+            await submitPendingForm({
+              name: parsed.name,
+              email: parsed.email,
+              message: parsed.message,
+            });
+            return; // Don't pre-fill form since we're auto-submitting
           }
+        } catch {
+          localStorage.removeItem(PENDING_CONTACT_KEY);
         }
+      }
 
-        const { data } = await supabase
-          .from("profiles")
-          .select("full_name, email")
-          .eq("user_id", user.id)
-          .maybeSingle();
+      // Pre-fill form with user profile data if logged in
+      if (user) {
+        try {
+          const { data } = await supabase
+            .from("profiles")
+            .select("full_name, email")
+            .eq("user_id", user.id)
+            .maybeSingle();
 
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            name: data.full_name || prev.name,
-            email: data.email || user.email || prev.email,
-            message: savedMessage || prev.message,
-          }));
-        } else if (savedMessage) {
-          setFormData((prev) => ({
-            ...prev,
-            message: savedMessage,
-          }));
+          if (data) {
+            setFormData((prev) => ({
+              ...prev,
+              name: data.full_name || prev.name,
+              email: data.email || user.email || prev.email,
+            }));
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
         }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
       }
     };
 
-    fetchUserProfile();
-  }, [user]);
+    handlePendingSubmission();
+  }, [user, authLoading]);
 
   // Handle input changes
   const handleChange = (
@@ -110,30 +176,18 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     }
   };
 
+  // Handle dialog continue to login
+  const handleContinueToLogin = () => {
+    setShowLoginDialog(false);
+    navigate("/login?returnTo=/#contact");
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
-    // Check if user is logged in - require login to submit
-    if (!user) {
-      // Save form data to localStorage so it persists after login
-      localStorage.setItem(
-        PENDING_CONTACT_KEY,
-        JSON.stringify({
-          message: formData.message,
-          savedAt: new Date().toISOString(),
-        })
-      );
-      toast({
-        title: "Login Required",
-        description: "Please log in to submit your inquiry. Your message has been saved.",
-      });
-      navigate("/login?returnTo=/#contact");
-      return;
-    }
-
-    // Validate form data
+    // Validate form data first (so we save valid data)
     const result = contactSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<ContactFormData> = {};
@@ -145,6 +199,25 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
       setErrors(fieldErrors);
       return;
     }
+
+    // Check if user is logged in - require login to submit
+    if (!user) {
+      // Save complete form data to localStorage for auto-submit after login
+      localStorage.setItem(
+        PENDING_CONTACT_KEY,
+        JSON.stringify({
+          name: result.data.name,
+          email: result.data.email,
+          message: result.data.message,
+          savedAt: new Date().toISOString(),
+        })
+      );
+      // Show dialog instead of immediate redirect
+      setShowLoginDialog(true);
+      return;
+    }
+
+    // Form data already validated above
 
     setIsSubmitting(true);
 
@@ -325,6 +398,28 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
           </form>
         </div>
       </div>
+
+      {/* Login required dialog */}
+      <AlertDialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign In Required</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your message has been saved. Please sign in or create an account
+              to submit your inquiry. Once you're signed in, your form will be
+              automatically submitted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>
+              Cancel
+            </Button>
+            <AlertDialogAction onClick={handleContinueToLogin}>
+              Continue to Sign In
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 });
