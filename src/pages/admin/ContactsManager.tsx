@@ -82,9 +82,63 @@ const ContactsManager = () => {
     },
   });
 
-  // Update status mutation
+  // Step 1: Send status notification to user
+  const sendStatusNotification = async (
+    contact: any,
+    newStatus: string
+  ) => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
+      if (!accessToken) {
+        console.error("No access token for status notification");
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-status-notification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            submission_id: contact.id,
+            user_email: contact.email,
+            user_name: contact.name,
+            new_status: newStatus,
+            original_message: contact.message,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Status notification failed:", errorData);
+      } else {
+        console.log("Status notification sent successfully");
+      }
+    } catch (error) {
+      console.error("Error sending status notification:", error);
+    }
+  };
+
+  // Step 2: Update status mutation with notification
   const updateMutation = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: string; status: string; notes: string }) => {
+    mutationFn: async ({ 
+      id, 
+      status, 
+      notes, 
+      contact 
+    }: { 
+      id: string; 
+      status: string; 
+      notes: string; 
+      contact: any;
+    }) => {
+      // Update the database first
       const { error } = await supabase
         .from("contact_submissions")
         .update({
@@ -94,11 +148,14 @@ const ContactsManager = () => {
         })
         .eq("id", id);
       if (error) throw error;
+
+      // Send notification to user (don't fail if this fails)
+      await sendStatusNotification(contact, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-contacts"] });
       setSelectedContact(null);
-      toast({ title: "Contact updated" });
+      toast({ title: "Contact updated", description: "User has been notified of the status change." });
     },
     onError: (error: any) => {
       toast({ variant: "destructive", title: "Error", description: error.message });
@@ -292,6 +349,7 @@ const ContactsManager = () => {
                           id: selectedContact.id,
                           status: "in_progress",
                           notes,
+                          contact: selectedContact,
                         })
                       }
                       disabled={updateMutation.isPending}
@@ -307,6 +365,7 @@ const ContactsManager = () => {
                           id: selectedContact.id,
                           status: "responded",
                           notes,
+                          contact: selectedContact,
                         })
                       }
                       disabled={updateMutation.isPending}
@@ -322,6 +381,7 @@ const ContactsManager = () => {
                           id: selectedContact.id,
                           status: "archived",
                           notes,
+                          contact: selectedContact,
                         })
                       }
                       disabled={updateMutation.isPending}
