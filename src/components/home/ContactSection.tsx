@@ -64,55 +64,6 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   // Track if we've already auto-submitted to prevent duplicate submissions
   const hasAutoSubmitted = useRef(false);
 
-  /**
-   * Auto-submit pending form data after user authenticates
-   * This runs when user logs in and has saved form data
-   */
-  const submitPendingForm = async (pendingData: {
-    name: string;
-    email: string;
-    message: string;
-  }) => {
-    if (!user || hasAutoSubmitted.current) return;
-    hasAutoSubmitted.current = true;
-
-    setIsSubmitting(true);
-    try {
-      const { error } = await supabase.from("contact_submissions").insert({
-        name: pendingData.name,
-        email: pendingData.email,
-        message: pendingData.message,
-        user_id: user.id,
-      });
-
-      if (error) throw error;
-
-      // Clear saved form data
-      localStorage.removeItem(PENDING_CONTACT_KEY);
-
-      // Show success message
-      toast({
-        title: "Message Transmitted",
-        description:
-          "Your inquiry has been automatically submitted. We'll respond shortly.",
-      });
-
-      // Reset form
-      setFormData({ name: "", email: "", message: "" });
-    } catch (error) {
-      console.error("Auto-submit error:", error);
-      toast({
-        title: "Transmission Failed",
-        description: "Unable to send message. Please try submitting again.",
-        variant: "destructive",
-      });
-      // Reset flag so user can try manual submit
-      hasAutoSubmitted.current = false;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   // Pre-fill form with user data and auto-submit if pending data exists
   useEffect(() => {
     const handlePendingSubmission = async () => {
@@ -122,19 +73,47 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
       // Check for pending form data
       const savedData = localStorage.getItem(PENDING_CONTACT_KEY);
 
-      if (user && savedData) {
-        // User just logged in with pending form data - auto submit
+      // User just logged in with pending form data - auto submit
+      if (user && savedData && !hasAutoSubmitted.current) {
         try {
           const parsed = JSON.parse(savedData);
           if (parsed.name && parsed.email && parsed.message) {
-            await submitPendingForm({
+            hasAutoSubmitted.current = true;
+            setIsSubmitting(true);
+
+            const { error } = await supabase.from("contact_submissions").insert({
               name: parsed.name,
               email: parsed.email,
               message: parsed.message,
+              user_id: user.id,
             });
-            return; // Don't pre-fill form since we're auto-submitting
+
+            if (error) throw error;
+
+            // Clear saved form data
+            localStorage.removeItem(PENDING_CONTACT_KEY);
+
+            // Show success message
+            toast({
+              title: "Message Transmitted",
+              description:
+                "Your inquiry has been automatically submitted. We'll respond shortly.",
+            });
+
+            // Reset form
+            setFormData({ name: "", email: "", message: "" });
+            setIsSubmitting(false);
+            return; // Don't pre-fill form since we auto-submitted
           }
-        } catch {
+        } catch (error) {
+          console.error("Auto-submit error:", error);
+          hasAutoSubmitted.current = false;
+          setIsSubmitting(false);
+          toast({
+            title: "Transmission Failed",
+            description: "Unable to send message. Please try submitting again.",
+            variant: "destructive",
+          });
           localStorage.removeItem(PENDING_CONTACT_KEY);
         }
       }
@@ -162,7 +141,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     };
 
     handlePendingSubmission();
-  }, [user, authLoading]);
+  }, [user, authLoading, toast]);
 
   // Handle input changes
   const handleChange = (
