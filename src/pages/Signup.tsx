@@ -111,10 +111,9 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      // Build redirect URL with returnTo parameter preserved
-      const redirectUrl = returnTo 
-        ? `${window.location.origin}${returnTo}` 
-        : window.location.origin;
+      // Use production domain for magic link redirects
+      const PRODUCTION_URL = "https://horalix.com";
+      const redirectUrl = PRODUCTION_URL;
 
       const { error } = await supabase.auth.signUp({
         email: email.trim(),

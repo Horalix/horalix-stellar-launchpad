@@ -158,7 +158,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   // Handle dialog continue to login
   const handleContinueToLogin = () => {
     setShowLoginDialog(false);
-    navigate("/login?returnTo=/#contact");
+    // Navigate to login without hash - PendingSubmissionHandler will auto-submit
+    navigate("/login?returnTo=/");
   };
 
   // Handle form submission
