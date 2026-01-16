@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
+import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
 
 // localStorage key for pending contact form data
 const PENDING_CONTACT_KEY = "horalix_pending_contact";
@@ -15,6 +16,7 @@ export const PendingSubmissionHandler = () => {
   const { toast } = useToast();
   const { user, isLoading: authLoading } = useAuth();
   const hasSubmitted = useRef(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const handlePendingSubmission = async () => {
@@ -56,12 +58,8 @@ export const PendingSubmissionHandler = () => {
         // Step 8: Clear saved form data
         localStorage.removeItem(PENDING_CONTACT_KEY);
 
-        // Step 9: Show success notification
-        toast({
-          title: "Message Transmitted",
-          description:
-            "Your inquiry has been automatically submitted. We'll respond shortly.",
-        });
+        // Step 9: Show prominent success modal
+        setShowSuccessModal(true);
       } catch (error) {
         console.error("PendingSubmissionHandler: Auto-submit error:", error);
         // Reset flag so ContactSection can try again if needed
@@ -77,6 +75,11 @@ export const PendingSubmissionHandler = () => {
     handlePendingSubmission();
   }, [user, authLoading, toast]);
 
-  // This component doesn't render anything
-  return null;
+  // Step 10: Render success modal when submission completes
+  return (
+    <SubmissionSuccessModal
+      open={showSuccessModal}
+      onClose={() => setShowSuccessModal(false)}
+    />
+  );
 };
