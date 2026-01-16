@@ -1,15 +1,17 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 /**
  * Signup - User registration page
  * Includes password validation and email verification flow
+ * Redirects authenticated users to returnTo or home
  */
 
 // Password validation rules
@@ -26,6 +28,7 @@ export default function Signup() {
   const [searchParams] = useSearchParams();
   const returnTo = searchParams.get("returnTo");
   const { toast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +36,31 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect authenticated users immediately
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(returnTo || "/", { replace: true });
+    }
+  }, [user, authLoading, navigate, returnTo]);
+
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Don't render form if user is authenticated (will redirect)
+  if (user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   // Password validation state
   const passwordValidation = useMemo(
@@ -83,11 +111,16 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
+      // Build redirect URL with returnTo parameter preserved
+      const redirectUrl = returnTo 
+        ? `${window.location.origin}${returnTo}` 
+        : window.location.origin;
+
       const { error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName.trim(),
           },
