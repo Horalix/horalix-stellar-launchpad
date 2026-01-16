@@ -37,6 +37,19 @@ export default function Signup() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Password validation state - MUST be before any early returns
+  const passwordValidation = useMemo(
+    () => validatePassword(password),
+    [password]
+  );
+
+  const isPasswordValid =
+    passwordValidation.minLength &&
+    passwordValidation.hasLetter &&
+    passwordValidation.hasNumber;
+
+  const passwordsMatch = password === confirmPassword && confirmPassword !== "";
+
   // Redirect authenticated users immediately
   useEffect(() => {
     if (!authLoading && user) {
@@ -61,19 +74,6 @@ export default function Signup() {
       </div>
     );
   }
-
-  // Password validation state
-  const passwordValidation = useMemo(
-    () => validatePassword(password),
-    [password]
-  );
-
-  const isPasswordValid =
-    passwordValidation.minLength &&
-    passwordValidation.hasLetter &&
-    passwordValidation.hasNumber;
-
-  const passwordsMatch = password === confirmPassword && confirmPassword !== "";
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
