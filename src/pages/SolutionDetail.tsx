@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Waves, ScanLine, Microscope, Activity, CheckCircle, Bone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEO from "@/components/SEO";
 
 /**
  * SolutionDetail - Individual solution/product page
@@ -60,6 +61,12 @@ const SolutionDetail = () => {
   if (error || !solution) {
     return (
       <MainLayout>
+        {/* Set SEO for not found page */}
+        <SEO
+          title="Solution Not Found | Horalix"
+          description="The solution you're looking for doesn't exist or has been removed."
+          canonical={`/solutions/${slug ?? ""}`}
+        />
         <div className="pt-32 pb-24 px-6 lg:px-12 text-center">
           <div className="max-w-xl mx-auto">
             <h1 className="text-4xl font-bold font-space mb-4">Solution Not Found</h1>
@@ -83,8 +90,43 @@ const SolutionDetail = () => {
   const features = (solution.features as string[]) || [];
   const IconComponent = ICON_MAP[solution.icon_name] || Activity;
 
+  // Metadata for SEO / GEO
+  const title = `${solution.name} | Horalix`;
+  const description =
+    solution.short_description ||
+    "Discover more about this innovative solution by Horalix.";
+  const canonical = `/solutions/${solution.slug}`;
+  // Attempt to extract the first image from image_urls if present
+  // Casting to any since image_urls might not be defined on type
+  const image =
+    Array.isArray((solution as any).image_urls) &&
+    (solution as any).image_urls.length > 0
+      ? (solution as any).image_urls[0]
+      : undefined;
+  // Construct structured data for this product
+  const jsonLd: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: solution.name,
+    description: solution.short_description,
+    image: image ? [image] : undefined,
+    url: canonical,
+    brand: {
+      "@type": "Organization",
+      name: "Horalix",
+    },
+  };
+  
   return (
     <MainLayout>
+      <SEO
+        title={title}
+        description={description}
+        canonical={canonical}
+        image={image}
+        type="product"
+        jsonLd={jsonLd}
+      />
       <article className="pt-32 pb-24 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           {/* Back navigation */}
