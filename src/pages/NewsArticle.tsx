@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageSlider } from "@/components/ui/image-slider";
 import { format } from "date-fns";
+import SEO from "@/components/SEO";
 
 /**
  * NewsArticle - Individual news article page
@@ -56,6 +57,12 @@ const NewsArticle = () => {
   if (error || !article) {
     return (
       <MainLayout>
+        {/* SEO for not found article */}
+        <SEO
+          title="Article Not Found | Horalix"
+          description="The article you're looking for doesn't exist or has been removed."
+          canonical={`/news/${slug ?? ""}`}
+        />
         <div className="pt-32 pb-24 px-6 lg:px-12 text-center">
           <div className="max-w-xl mx-auto">
             <h1 className="text-4xl font-bold font-space mb-4">Article Not Found</h1>
@@ -74,8 +81,49 @@ const NewsArticle = () => {
     );
   }
 
+  // Build SEO metadata when article exists
+  const title = `${article.title} | Horalix`;
+  const description =
+    article.summary ||
+    (article.content?.split("\n\n")[0] as string) ||
+    "Read this update from Horalix.";
+  const canonical = `/news/${article.slug}`;
+  const image =
+    Array.isArray((article as any).image_urls) &&
+    (article as any).image_urls.length > 0
+      ? (article as any).image_urls[0]
+      : undefined;
+  const jsonLd: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: article.title,
+    description: article.summary,
+    image: image ? [image] : undefined,
+    datePublished: article.display_date || article.published_at || undefined,
+    dateModified: article.updated_at || undefined,
+    author: article.author
+      ? {
+          "@type": "Person",
+          name: article.author,
+        }
+      : undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "Horalix",
+    },
+    url: canonical,
+  };
+
   return (
     <MainLayout>
+      <SEO
+        title={title}
+        description={description}
+        canonical={canonical}
+        image={image}
+        type="article"
+        jsonLd={jsonLd}
+      />
       <article className="pt-32 pb-24 px-6 lg:px-12">
         <div className="max-w-3xl mx-auto">
           {/* Back navigation */}
