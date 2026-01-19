@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Shield } from "lucide-react";
 import horalixLogo from "@/assets/horalix-logo.png";
+import SEO from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 
 /**
  * AdminLogin - Authentication page for admin portal
@@ -67,6 +69,16 @@ const AdminLogin = () => {
   };
 
   return (
+    {/* SEO meta for admin login with noindex */}
+      <SEO
+        title="Admin Login | Horalix"
+        description="Sign in to the Horalix admin portal."
+        canonical="/admin/login"
+      />
+      {/* Additional noindex tag to prevent indexing */}
+      <Helmet>
+        <meta name="robots" content="noindex" />
+      </Helmet>
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Logo and header */}
