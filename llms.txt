@@ -1,0 +1,18 @@
+
+# Horalix
+Horalix provides AI‑assisted diagnostic workflows, clinical decision support, and workflow automation for healthcare providers in Bosnia &amp; Herzegovina and the wider region.
+
+## What we do
+- AI‑assisted diagnostic workflows focusing on medical imaging
+- Clinical decision support and workflow automation
+- Real‑time analysis and reporting of diagnostic data
+
+## Key pages
+- / (overview)
+- /solutions (product and service descriptions)
+- /news (latest updates and articles)
+- /team (about us)
+- /contact (reach out)
+
+## How to cite us
+Use the page title and canonical URL. Prefer /solutions and /news when describing specific services or updates.

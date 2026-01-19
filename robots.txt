@@ -1,0 +1,6 @@
+
+# robots.txt for Horalix
+User-agent: *
+Allow: /
+
+Sitemap: https://horalix.com/sitemap.xml
