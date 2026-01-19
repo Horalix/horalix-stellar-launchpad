@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
+import SEO from "@/components/SEO";
 
 /**
  * ProfileSubmissions - User's contact form submissions
@@ -142,6 +143,12 @@ export default function ProfileSubmissions() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
+        {/* SEO meta for loading state */}
+        <SEO
+          title="My Submissions | Horalix"
+          description="View and manage your contact form submissions."
+          canonical="/profile/submissions"
+        />
         <Navbar />
         <div className="pt-20 flex items-center justify-center min-h-[50vh]">
           <Loader2 className="w-8 h-8 animate-spin text-accent" />
@@ -152,6 +159,12 @@ export default function ProfileSubmissions() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* SEO meta for submissions list */}
+      <SEO
+        title="My Submissions | Horalix"
+        description="View and manage your contact form submissions."
+        canonical="/profile/submissions"
+      />
       <Navbar />
 
       <main className="pt-24 pb-16 px-4">
