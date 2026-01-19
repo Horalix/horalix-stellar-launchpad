@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import SEO from "@/components/SEO";
 
 /**
  * Profile - User profile settings page
@@ -296,6 +297,12 @@ export default function Profile() {
   if (isLoadingProfile) {
     return (
       <div className="min-h-screen bg-background">
+        {/* SEO meta for loading state */}
+        <SEO
+          title="Profile Settings | Horalix"
+          description="Manage your account settings and preferences."
+          canonical="/profile"
+        />
         <Navbar />
         <div className="pt-20 flex items-center justify-center min-h-[50vh]">
           <Loader2 className="w-8 h-8 animate-spin text-accent" />
@@ -306,6 +313,12 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* SEO meta for profile page */}
+      <SEO
+        title="Profile Settings | Horalix"
+        description="Manage your account settings and preferences."
+        canonical="/profile"
+      />
       <Navbar />
       
       <main className="pt-24 pb-16 px-4">
