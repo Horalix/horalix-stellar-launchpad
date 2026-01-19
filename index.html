@@ -3,69 +3,148 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/horalix-logo-white.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/horalix-logo-white.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/horalix-logo-white.png" />
+    <link rel="mask-icon" href="/assets/my-new-icon.png" color="#0A2540" />
+    <meta name="msapplication‑TileImage" content="/assets/horalix-logo-white.png" />
+    
     <!-- Primary Meta Tags -->
     <title>Horalix – AI‑driven healthcare software</title>
-    <meta name="description" content="Horalix provides AI‑assisted diagnostic workflows, clinical decision support, and workflow automation solutions for healthcare providers in Bosnia &amp; Herzegovina and beyond." />
+    <meta name="description" content="Horalix provides AI‑enabled diagnostic workflows, clinical decision support and workflow automation solutions for healthcare providers. Learn how our platform streamlines medical imaging and decision making." />
     <meta name="author" content="Horalix" />
     <link rel="canonical" href="https://horalix.com/" />
+    <!-- Hreflang declarations: declare the default English version and alternate language variants for search engines -->
+    <link rel="alternate" hreflang="en" href="https://horalix.com/" />
+    <link rel="alternate" hreflang="bs" href="https://horalix.com/" />
+    <link rel="alternate" hreflang="ar" href="https://horalix.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://horalix.com/" />
+
+    <!-- Keywords: include relevant terms in English, Bosnian and Arabic. Avoid keyword stuffing; keep list concise. -->
+    <meta name="keywords" content="Horalix, medical software, AI diagnostics, healthcare automation, Bosnia healthcare, medicinski softver, medicinska dijagnostika, softver za kliničku podršku, الذكاء الاصطناعي في الطب, برامج طبية, التشخيص الطبي بالذكاء الاصطناعي" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:title" content="Horalix – AI‑driven healthcare software" />
-    <meta property="og:description" content="Horalix provides AI‑assisted diagnostic workflows, clinical decision support, and workflow automation solutions for healthcare providers in Bosnia &amp; Herzegovina and beyond." />
+    <meta property="og:description" content="Horalix provides AI‑enabled diagnostic workflows, clinical decision support and workflow automation solutions for healthcare providers." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://horalix.com/" />
-    <meta property="og:image" content="https://horalix.com/assets/og-image.png" />
-    <meta property="og:image:alt" content="Screenshot of the Horalix platform" />
+    <meta property="og:image" content="https://horalix.com/assets/horalix-logo-white.png" />
+    <meta property="og:image:alt" content="Horalix logo" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:site_name" content="Horalix" />
+    <!-- Provide alternate locales for Bosnian (bs_BA) and Arabic (ar_EG) so social platforms & LLMs know we support queries in those languages -->
+    <meta property="og:locale:alternate" content="bs_BA" />
+    <meta property="og:locale:alternate" content="ar_EG" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Horalix" />
-    <meta name="twitter:title" content="Horalix – AI‑driven healthcare software" />
-    <meta name="twitter:description" content="Horalix provides AI‑assisted diagnostic workflows, clinical decision support, and workflow automation solutions for healthcare providers in Bosnia &amp; Herzegovina and beyond." />
-    <meta name="twitter:image" content="https://horalix.com/assets/og-image.png" />
-    <meta name="twitter:image:alt" content="Screenshot of the Horalix platform" />
+    <meta name="twitter:title" content="Horalix – AI‑driven healthcare platform" />
+    <meta name="twitter:description" content="AI‑enabled diagnostic workflows and clinical decision support for healthcare providers." />
+    <meta name="twitter:image" content="https://horalix.com/assets/horalix-logo-white.png" />
+    <meta name="twitter:image:alt" content="Horalix logo" />
+
+    <!-- Favicon and app icons. Use the existing Horalix logo for all sizes. Browsers will resize the image as needed. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/horalix-logo-white.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/horalix-logo-white.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/horalix-logo-white.png" />
+    <!-- Safari pinned tabs can use a mask icon; reuse the logo file. -->
+    <link rel="mask-icon" href="/assets/horalix-logo-white.png" color="#0A2540" />
+    <meta name="msapplication-TileImage" content="/assets/horalix-logo-white.png" />
+
+    <!-- Preconnect to fonts and load the chosen font. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- Geo metadata: specify region and location for geographic relevance. Although the content is in English, we operate out of Sarajevo, Bosnia and Herzegovina. -->
+    <meta name="geo.region" content="BA" />
+    <meta name="geo.placename" content="Sarajevo" />
+    <meta name="geo.position" content="43.8563;18.4131" />
 
     <!-- Organization structured data -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "@id": "https://horalix.com/#organization",
-      "name": "Horalix",
-      "url": "https://horalix.com",
-      "logo": "https://horalix.com/assets/logo.png",
-      "sameAs": [
-        "https://www.linkedin.com/company/horalix"
-      ],
-      "contactPoint": [
-        {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Horalix",
+        "alternateName": [
+          "Horalix",                    /* English name */
+          "Horalix",                    /* Bosnian name (same as English) */
+          "هوراليكس"                    /* Arabic transliteration */
+        ],
+        "description": "Horalix provides AI-enabled diagnostic workflows, clinical decision support and workflow automation solutions for healthcare providers.",
+        "url": "https://horalix.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://horalix.com/assets/horalix-logo-white.png"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/horalix/",
+          "https://twitter.com/horalix"
+        ],
+        "knowsLanguage": ["en", "bs", "ar"],
+        "areaServed": [
+          {
+            "@type": "Country",
+            "name": "Bosnia and Herzegovina"
+          },
+          {
+            "@type": "Country",
+            "name": "Croatia"
+          },
+          {
+            "@type": "Country",
+            "name": "Serbia"
+          }
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "",
+          "addressLocality": "Sarajevo",
+          "addressCountry": "BA"
+        },
+        "contactPoint": {
           "@type": "ContactPoint",
+          "telephone": "+387-62-340020",
           "contactType": "customer support",
-          "email": "info@horalix.com",
-          "telephone": "+387-XX-XXXXXX",
-          "areaServed": "BA"
+          "areaServed": "EU",
+          "availableLanguage": ["English", "Bosnian", "Arabic"]
         }
-      ]
-    }
+      }
     </script>
     <!-- WebSite structured data -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "url": "https://horalix.com",
-      "name": "Horalix",
-      "description": "Horalix provides AI‑assisted diagnostic workflows, clinical decision support, and workflow automation solutions for healthcare providers in Bosnia &amp; Herzegovina and beyond.",
-      "inLanguage": "en",
-      "publisher": {
-        "@id": "https://horalix.com/#organization"
+        "@context": "https://schema.org",
+        "@type": "MedicalWebPage",
+        "url": "https://horalix.com/",
+        "name": "Horalix – AI‑driven healthcare platform",
+        "description": "Horalix provides AI-enabled diagnostic workflows, clinical decision support and workflow automation solutions for healthcare providers.",
+        "datePublished": "2024-07-06",
+        "lastReviewed": "2024-01-019",
+        "specialty": {
+          "@type": "Specialty",
+          "name": "Medical Informatics"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Horalix"
+        },
+        "mainContentOfPage": {
+          "@type": "WebPageElement",
+          "name": "AI‑enabled diagnostic workflows and clinical decision support",
+          "cssSelector": "main"
+        }
       }
-    }
     </script>
   </head>
   <body>
+    <noscript>
+      <strong>We're sorry but Horalix doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
