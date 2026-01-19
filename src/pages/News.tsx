@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Newspaper, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import SEO from "@/components/SEO";
 
 /**
  * News - News listing page
@@ -32,8 +33,32 @@ const News = () => {
     return article.display_date || article.published_at;
   };
 
+  // SEO metadata for the news listing page
+  const title = "News | Horalix";
+  const description =
+    "The latest updates, announcements, and insights from Horalix.";
+  const canonical = "/news";
+  const jsonLd: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "News",
+    description,
+    url: canonical,
+    publisher: {
+      "@type": "Organization",
+      name: "Horalix",
+    },
+  };
+
   return (
     <MainLayout>
+      <SEO
+        title={title}
+        description={description}
+        canonical={canonical}
+        type="website"
+        jsonLd={jsonLd}
+      />
       <div className="pt-32 pb-24 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
           {/* Page header */}
