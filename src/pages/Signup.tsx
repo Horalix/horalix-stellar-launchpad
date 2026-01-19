@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import horalixLogo from "@/assets/horalix-logo.png";
+import SEO from "@/components/SEO";
 
 /**
  * Signup - User registration page
@@ -168,6 +169,12 @@ export default function Signup() {
   );
 
   return (
+    {/* SEO meta for signup page */}
+      <SEO
+        title="Sign Up | Horalix"
+        description="Create your Horalix account to get started."
+        canonical="/signup"
+      />
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo and header */}
