@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import horalixLogo from "@/assets/horalix-logo.png";
+import SEO from "@/components/SEO";
 
 /**
  * VerifyEmail - Email verification pending page
@@ -73,6 +74,12 @@ export default function VerifyEmail() {
   };
 
   return (
+    {/* SEO meta for verify email page */}
+      <SEO
+        title="Verify Email | Horalix"
+        description="Check your email to verify your Horalix account."
+        canonical="/verify-email"
+      />
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md text-center">
         {/* Logo */}
