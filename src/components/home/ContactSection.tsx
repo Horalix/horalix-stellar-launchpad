@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import horalixLogoWhite from "@/assets/horalix-logo-white.jpg";
+import horalixLogoWhite from "@/assets/horalix-logo-white.png";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
