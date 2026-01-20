@@ -60,23 +60,23 @@ export const HeroSection = () => {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-4">
-              <Link to="/#contact" onClick={handleDemoClick}>
-                <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
-                  <span>Request Demo</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-
-              {/* <Link to="/#solutions">
+              <Link to="/#solutions">
                 <Button 
                   variant="outline"
                   size="lg"
                   className="text-xs font-bold uppercase tracking-widest"
                 >
                   <ScanLine className="w-4 h-4" />
-                  View Protocols
+                  Learn more about Solutions
                 </Button>
-              </Link> */}
+              </Link>
+              
+              <Link to="/#contact" onClick={handleDemoClick}>
+                <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
+                  <span>Request Demo</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
