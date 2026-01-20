@@ -255,10 +255,10 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
           <div className="flex justify-between items-start mb-8">
             <div>
               <h2 className="text-3xl font-bold font-space text-primary">
-                Inquiry Form
+                Contact Us
               </h2>
               <p className="text-sm font-mono text-muted-foreground mt-1 uppercase">
-                Transmission Secure // Encrypted
+                Your information is encrypted and secure.
               </p>
             </div>
             <div className="hidden md:block text-right">
@@ -281,7 +281,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                   htmlFor="name"
                   className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
                 >
-                  Subject Name
+                  Name
                 </label>
                 <Input
                   id="name"
@@ -306,7 +306,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                   htmlFor="email"
                   className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
                 >
-                  Contact Vector
+                  Email
                 </label>
                 <Input
                   id="email"
@@ -332,7 +332,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                 htmlFor="message"
                 className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
               >
-                Inquiry Data
+                Message
               </label>
               <Textarea
                 id="message"
@@ -365,11 +365,11 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Transmitting...
+                    Sending...
                   </>
                 ) : (
                   <>
-                    Transmit Data
+                    Submit
                     <Send className="w-4 h-4" />
                   </>
                 )}
