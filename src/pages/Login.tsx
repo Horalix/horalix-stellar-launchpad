@@ -101,123 +101,125 @@ export default function Login() {
   };
 
   return (
-    {/* SEO meta for login page */}
+    <>
+      {/* SEO meta for login page */}
       <SEO
         title="Log In | Horalix"
         description="Sign in to access your Horalix account."
         canonical="/login"
       />
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Logo and header */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-6">
-            <img src={horalixLogo} alt="Horalix" className="h-12 mx-auto" />
-          </Link>
-          <h1 className="text-2xl font-bold font-space text-foreground">
-            Welcome Back
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Sign in to access your account
-          </p>
-        </div>
-
-        {/* Login form card */}
-        <div className="bg-card border border-border shadow-lg p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Email Address
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                disabled={isLoading}
-                className="bg-secondary border-border"
-              />
-            </div>
-
-            {/* Password field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Password
-              </label>
-              <div className="relative">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Logo and header */}
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-block mb-6">
+              <img src={horalixLogo} alt="Horalix" className="h-12 mx-auto" />
+            </Link>
+            <h1 className="text-2xl font-bold font-space text-foreground">
+              Welcome Back
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Sign in to access your account
+            </p>
+          </div>
+  
+          {/* Login form card */}
+          <div className="bg-card border border-border shadow-lg p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Email Address
+                </label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
                   required
                   disabled={isLoading}
-                  className="bg-secondary border-border pr-10"
+                  className="bg-secondary border-border"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
               </div>
-            </div>
-
-            {/* Submit button */}
-            <Button
-              type="submit"
-              className="w-full text-xs font-bold uppercase tracking-widest"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  Signing In...
-                </>
-              ) : (
-                <>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Sign In with Email
-                </>
-              )}
-            </Button>
-          </form>
-
-          {/* Sign up link */}
+  
+              {/* Password field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    disabled={isLoading}
+                    className="bg-secondary border-border pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+  
+              {/* Submit button */}
+              <Button
+                type="submit"
+                className="w-full text-xs font-bold uppercase tracking-widest"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4 mr-2" />
+                    Sign In with Email
+                  </>
+                )}
+              </Button>
+            </form>
+  
+            {/* Sign up link */}
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Don't have an account?{" "}
+              <Link
+                to={returnTo ? `/signup?returnTo=${encodeURIComponent(returnTo)}` : "/signup"}
+                className="text-accent hover:text-accent/80 font-medium"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
+  
+          {/* Back to home link */}
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{" "}
-            <Link
-              to={returnTo ? `/signup?returnTo=${encodeURIComponent(returnTo)}` : "/signup"}
-              className="text-accent hover:text-accent/80 font-medium"
-            >
-              Sign up
+            <Link to="/" className="hover:text-foreground transition-colors">
+              ← Back to Home
             </Link>
           </p>
         </div>
-
-        {/* Back to home link */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          <Link to="/" className="hover:text-foreground transition-colors">
-            ← Back to Home
-          </Link>
-        </p>
       </div>
-    </div>
+    </>
   );
 }
