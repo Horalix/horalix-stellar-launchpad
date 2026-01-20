@@ -61,7 +61,7 @@ export const HeroSection = () => {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-4">
-              <Link to="/#solutions" onClick={handleHeroClick}>
+              <Link to="/#solutions" onClick={(e) => handleHeroClick(e, "/#solutions")}>
                 <Button 
                   variant="outline"
                   size="lg"
@@ -72,7 +72,7 @@ export const HeroSection = () => {
                 </Button>
               </Link>
               
-              <Link to="/#contact" onClick={handleHeroClick}>
+              <Link to="/#contact" onClick={(e) => handleHeroClick(e, "/#contact")}>
                 <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
                   <span>Request Demo</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
