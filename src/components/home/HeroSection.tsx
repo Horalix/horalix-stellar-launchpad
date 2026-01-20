@@ -22,11 +22,12 @@ export const HeroSection = () => {
 
   const heroSubtitle = content.hero_subtitle || DEFAULTS.hero_subtitle;
 
-  // Step 3: Handle smooth scroll for contact section
-  const handleDemoClick = (e: React.MouseEvent) => {
-    if (location.pathname === "/") {
+  // Step 3: Handle smooth scroll for solutions and contact section
+  const handleHeroClick = (e: React.MouseEvent, href: string) => {
+    if (href.startsWith("/#") && location.pathname === "/") {
       e.preventDefault();
-      const element = document.getElementById("contact");
+      const sectionId = href.substring(2);
+      const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
       }
@@ -60,7 +61,7 @@ export const HeroSection = () => {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-4">
-              <Link to="/#solutions">
+              <Link to="/#solutions" onClick={handleHeroClick}>
                 <Button 
                   variant="outline"
                   size="lg"
@@ -71,7 +72,7 @@ export const HeroSection = () => {
                 </Button>
               </Link>
               
-              <Link to="/#contact" onClick={handleDemoClick}>
+              <Link to="/#contact" onClick={handleHeroClick}>
                 <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
                   <span>Request Demo</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
