@@ -169,196 +169,198 @@ export default function Signup() {
   );
 
   return (
-    {/* SEO meta for signup page */}
+    <>
+      {/* SEO meta for signup page */}
       <SEO
         title="Sign Up | Horalix"
         description="Create your Horalix account to get started."
         canonical="/signup"
       />
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Logo and header */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-6">
-            <img src={horalixLogo} alt="Horalix" className="h-12 mx-auto" />
-          </Link>
-          <h1 className="text-2xl font-bold font-space text-foreground">
-            Create Account
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Join Horalix to get started
-          </p>
-        </div>
-
-        {/* Signup form card */}
-        <div className="bg-card border border-border shadow-lg p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Full name field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="fullName"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Full Name
-              </label>
-              <Input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="John Doe"
-                required
-                disabled={isLoading}
-                className="bg-secondary border-border"
-              />
-            </div>
-
-            {/* Email field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Email Address
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                disabled={isLoading}
-                className="bg-secondary border-border"
-              />
-            </div>
-
-            {/* Password field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Password
-              </label>
-              <div className="relative">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Logo and header */}
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-block mb-6">
+              <img src={horalixLogo} alt="Horalix" className="h-12 mx-auto" />
+            </Link>
+            <h1 className="text-2xl font-bold font-space text-foreground">
+              Create Account
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Join Horalix to get started
+            </p>
+          </div>
+  
+          {/* Signup form card */}
+          <div className="bg-card border border-border shadow-lg p-8">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Full name field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="fullName"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Full Name
+                </label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="John Doe"
                   required
                   disabled={isLoading}
-                  className="bg-secondary border-border pr-10"
+                  className="bg-secondary border-border"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
               </div>
-              {/* Password requirements */}
-              {password && (
-                <div className="space-y-1 mt-2">
-                  <RequirementIndicator
-                    met={passwordValidation.minLength}
-                    label="At least 8 characters"
+  
+              {/* Email field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Email Address
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  disabled={isLoading}
+                  className="bg-secondary border-border"
+                />
+              </div>
+  
+              {/* Password field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    disabled={isLoading}
+                    className="bg-secondary border-border pr-10"
                   />
-                  <RequirementIndicator
-                    met={passwordValidation.hasLetter}
-                    label="At least one letter"
-                  />
-                  <RequirementIndicator
-                    met={passwordValidation.hasNumber}
-                    label="At least one number"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
-              )}
-            </div>
-
-            {/* Confirm password field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="confirmPassword"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  disabled={isLoading}
-                  className={`bg-secondary border-border pr-10 ${
-                    confirmPassword && !passwordsMatch ? "border-destructive" : ""
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  tabIndex={-1}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
+                {/* Password requirements */}
+                {password && (
+                  <div className="space-y-1 mt-2">
+                    <RequirementIndicator
+                      met={passwordValidation.minLength}
+                      label="At least 8 characters"
+                    />
+                    <RequirementIndicator
+                      met={passwordValidation.hasLetter}
+                      label="At least one letter"
+                    />
+                    <RequirementIndicator
+                      met={passwordValidation.hasNumber}
+                      label="At least one number"
+                    />
+                  </div>
+                )}
               </div>
-              {confirmPassword && !passwordsMatch && (
-                <p className="text-xs text-destructive">Passwords don't match</p>
-              )}
-            </div>
-
-            {/* Submit button */}
-            <Button
-              type="submit"
-              className="w-full text-xs font-bold uppercase tracking-widest"
-              disabled={isLoading || !isPasswordValid || !passwordsMatch}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  Creating Account...
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
-          </form>
-
-          {/* Login link */}
+  
+              {/* Confirm password field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="confirmPassword"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    disabled={isLoading}
+                    className={`bg-secondary border-border pr-10 ${
+                      confirmPassword && !passwordsMatch ? "border-destructive" : ""
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+                {confirmPassword && !passwordsMatch && (
+                  <p className="text-xs text-destructive">Passwords don't match</p>
+                )}
+              </div>
+  
+              {/* Submit button */}
+              <Button
+                type="submit"
+                className="w-full text-xs font-bold uppercase tracking-widest"
+                disabled={isLoading || !isPasswordValid || !passwordsMatch}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Creating Account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
+              </Button>
+            </form>
+  
+            {/* Login link */}
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Already have an account?{" "}
+              <Link
+                to={returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : "/login"}
+                className="text-accent hover:text-accent/80 font-medium"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+  
+          {/* Back to home link */}
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Already have an account?{" "}
-            <Link
-              to={returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : "/login"}
-              className="text-accent hover:text-accent/80 font-medium"
-            >
-              Sign in
+            <Link to="/" className="hover:text-foreground transition-colors">
+              ← Back to Home
             </Link>
           </p>
         </div>
-
-        {/* Back to home link */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          <Link to="/" className="hover:text-foreground transition-colors">
-            ← Back to Home
-          </Link>
-        </p>
       </div>
-    </div>
+    </>
   );
 }
