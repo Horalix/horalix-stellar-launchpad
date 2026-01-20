@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import horalixLogoGradient from "@/assets/horalix-logo-gradient.jpg";
+import horalixLogoWhite from "@/assets/horalix-logo-white.jpg";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -264,7 +264,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
             <div className="hidden md:block text-right">
               <div className="w-24 h-24 border border-border flex items-center justify-center bg-secondary overflow-hidden">
                 <img 
-                  src={horalixLogoGradient} 
+                  src={horalixLogoWhite} 
                   alt="Horalix" 
                   className="w-20 h-20 object-contain"
                 />
