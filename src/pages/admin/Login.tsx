@@ -69,7 +69,8 @@ const AdminLogin = () => {
   };
 
   return (
-    {/* SEO meta for admin login with noindex */}
+    <>
+      {/* SEO meta for admin login with noindex */}
       <SEO
         title="Admin Login | Horalix"
         description="Sign in to the Horalix admin portal."
@@ -79,83 +80,84 @@ const AdminLogin = () => {
       <Helmet>
         <meta name="robots" content="noindex" />
       </Helmet>
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        {/* Logo and header */}
-        <div className="text-center mb-8">
-          <img
-            src={horalixLogo}
-            alt="Horalix"
-            className="h-12 mx-auto mb-6"
-          />
-          <div className="flex items-center justify-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-2">
-            <Shield className="w-4 h-4" />
-            <span>Admin Portal</span>
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          {/* Logo and header */}
+          <div className="text-center mb-8">
+            <img
+              src={horalixLogo}
+              alt="Horalix"
+              className="h-12 mx-auto mb-6"
+            />
+            <div className="flex items-center justify-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-2">
+              <Shield className="w-4 h-4" />
+              <span>Admin Portal</span>
+            </div>
+            <h1 className="text-2xl font-bold font-space">Sign In</h1>
           </div>
-          <h1 className="text-2xl font-bold font-space">Sign In</h1>
+  
+          {/* Login form */}
+          <form onSubmit={handleSubmit} className="bg-card border border-border p-8">
+            <div className="space-y-4">
+              {/* Email field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@horalix.com"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+  
+              {/* Password field */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-xs font-bold uppercase tracking-widest">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+  
+              {/* Submit button */}
+              <Button
+                type="submit"
+                className="w-full font-bold uppercase tracking-widest"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </div>
+          </form>
+  
+          {/* Back to homepage */}
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            <a href="/" className="hover:text-accent transition-colors">
+              ← Back to homepage
+            </a>
+          </p>
         </div>
-
-        {/* Login form */}
-        <form onSubmit={handleSubmit} className="bg-card border border-border p-8">
-          <div className="space-y-4">
-            {/* Email field */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@horalix.com"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Password field */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs font-bold uppercase tracking-widest">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Submit button */}
-            <Button
-              type="submit"
-              className="w-full font-bold uppercase tracking-widest"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Signing In...
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-          </div>
-        </form>
-
-        {/* Back to homepage */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          <a href="/" className="hover:text-accent transition-colors">
-            ← Back to homepage
-          </a>
-        </p>
       </div>
-    </div>
+    </>
   );
 };
 
