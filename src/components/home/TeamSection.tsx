@@ -55,7 +55,7 @@ export const TeamSection = () => {
             <span>Personnel Manifest</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-primary font-space">
-            Leadership
+            Founding Team
           </h2>
         </div>
 
