@@ -51,7 +51,11 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
                 </Link>
               </li>
               <li>
-                <Link to="/news" className="text-sm text-primary-foreground/70 hover:text-accent transition-colors">
+                <Link
+                  to="/#news"
+                  onClick={(e) => handleNavClick(e, "/#news")}
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
                   News
                 </Link>
               </li>
