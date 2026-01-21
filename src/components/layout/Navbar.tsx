@@ -15,7 +15,7 @@ import horalixLogo from "@/assets/horalix-logo.png";
 // Navigation items configuration
 const NAV_ITEMS = [
   { label: "Solutions", href: "/#solutions", sectionId: "solutions" },
-  { label: "News", href: "/news", sectionId: null },
+  { label: "News", href: "/#news", sectionId: "news" },
   { label: "Team", href: "/#team", sectionId: "team" },
   { label: "Contact", href: "/#contact", sectionId: "contact" },
 ];
@@ -31,15 +31,15 @@ export const Navbar = () => {
    */
   const getIsActive = (item: typeof NAV_ITEMS[number]): boolean => {
     // Handle /news route
-    if (item.href === "/news") {
-      return location.pathname === "/news" || location.pathname.startsWith("/news/");
-    }
-    
-    // Handle hash links - only when on homepage
     if (item.sectionId && location.pathname === "/") {
       return activeSection === item.sectionId;
     }
     
+    // Handle /news route; even though we link to #news on the homepage, the /news route
+    // is still used for the full news listing when the user clicks “View all reports”.
+    // if (item.href === "/#news") {
+    //   return location.pathname === "/#news" || location.pathname.startswith("/news/");
+    // }
     return false;
   };
 
