@@ -34,12 +34,6 @@ export const Navbar = () => {
     if (item.sectionId && location.pathname === "/") {
       return activeSection === item.sectionId;
     }
-    
-    // Handle /news route; even though we link to #news on the homepage, the /news route
-    // is still used for the full news listing when the user clicks “View all reports”.
-    // if (item.href === "/#news") {
-    //   return location.pathname === "/#news" || location.pathname.startswith("/news/");
-    // }
     return false;
   };
 
