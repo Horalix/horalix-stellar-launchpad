@@ -110,7 +110,7 @@ export const HeroScreenshots = () => {
                 <img
                   src={shots[id].src}
                   alt={shots[id].alt}
-                  className="w-full h-full object-cover object-top block"
+                  className="w-full h-full object-contain block"
                   loading="eager"
                 />
               </div>
@@ -127,7 +127,7 @@ export const HeroScreenshots = () => {
             <img
               src={screenshotAnalysis}
               alt="AI Measurements Analysis"
-              className="w-full h-full object-cover object-top block"
+              className="w-full h-full object-contain block"
               loading="eager"
             />
           </div>
