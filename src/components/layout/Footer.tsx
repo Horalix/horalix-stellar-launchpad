@@ -32,8 +32,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
           <div className="md:col-span-2">
             <img src={horalixLogo} alt="Horalix" className="h-10 w-auto mb-4 brightness-0 invert" />
             <p className="text-sm text-primary-foreground/70 max-w-md leading-relaxed">
-              Precision medicine quantified. Eliminating margin of error through advanced algorithmic diagnostics for
-              clinical excellence.
+              We build AI‑powered software that helps clinicians make faster, more accurate diagnoses.
             </p>
           </div>
 
@@ -84,8 +83,21 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
           <div>
             <h4 className="font-bold text-xs uppercase tracking-widest mb-4 text-accent">Contact</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li className="font-mono text-xs">support@horalix.com</li>
-              <li className="font-mono text-xs">Techstars Accelerator</li>
+              <li className="font-mono text-xs">
+                <a href="mailto:support@horalix.com?subject=Horalix%20Inquiry"
+                  className="hover:text-primary-foreground underline underline-offset-4"
+                >
+                  support@horalix.com
+                </a>
+              </li>
+              <li className="font-mono text-xs">
+                <a
+                  href="tel:+38762340020"
+                  className="hover:text-primary-foreground underline underline-offset-4"
+                >
+                  +387 62 340 020
+                </a>
+              </li>
             </ul>
           </div>
         </div>
