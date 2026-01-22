@@ -94,7 +94,7 @@ export const HeroScreenshots = () => {
                 onClick={() => bringToFront(id)}
                 onKeyDown={makeKeyHandlers(id)}
                 className={[
-                  "absolute aspect-[16/10] rounded-lg overflow-hidden bg-card",
+                  "absolute rounded-lg overflow-hidden bg-card",
                   "border cursor-pointer select-none",
                   // Smooth “deck shuffle” feel:
                   "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -110,7 +110,7 @@ export const HeroScreenshots = () => {
                 <img
                   src={shots[id].src}
                   alt={shots[id].alt}
-                  className="w-full h-full object-contain block"
+                  className="w-full h-full block"
                   loading="eager"
                 />
               </div>
@@ -127,7 +127,7 @@ export const HeroScreenshots = () => {
             <img
               src={screenshotAnalysis}
               alt="AI Measurements Analysis"
-              className="w-full h-full object-contain block"
+              className="w-full h-full block"
               loading="eager"
             />
           </div>
