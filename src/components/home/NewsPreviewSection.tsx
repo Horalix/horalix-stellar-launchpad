@@ -96,13 +96,13 @@ export const NewsPreviewSection = () => {
               <span>System Logs</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-primary font-space">
-              Intelligence Reports
+              News
             </h2>
           </div>
           <div className="mt-4 md:mt-0">
             <Link to="/news">
               <Button variant="outline" className="text-xs font-bold uppercase tracking-widest">
-                View All Reports
+                View All News
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -119,7 +119,7 @@ export const NewsPreviewSection = () => {
         {/* Step 6: Empty state */}
         {!isLoading && (!articles || articles.length === 0) && (
           <div className="text-center py-16 text-muted-foreground font-mono text-sm">
-            No intelligence reports available.
+            No news available.
           </div>
         )}
 
