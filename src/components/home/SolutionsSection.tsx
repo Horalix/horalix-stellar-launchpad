@@ -133,7 +133,7 @@ export const SolutionsSection = () => {
           </div>
           <div className="text-right hidden md:block">
             <p className="font-mono text-xs text-muted-foreground max-w-xs">
-              Deployed across 40+ institutions.
+              Pilots underway with leading regional healthcare providers.
               <br />
               Select a module for specification details.
             </p>
