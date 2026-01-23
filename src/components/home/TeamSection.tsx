@@ -49,7 +49,7 @@ export const TeamSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="mb-16">
+        <div className="mb-16 text-left">
           <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
             <Users className="w-4 h-4" />
             <span>Personnel Manifest</span>

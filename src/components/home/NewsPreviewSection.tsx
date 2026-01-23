@@ -89,8 +89,8 @@ export const NewsPreviewSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+          <div className="text-left">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
               <Globe className="w-4 h-4" />
               <span>System Logs</span>
@@ -99,7 +99,7 @@ export const NewsPreviewSection = () => {
               Intelligence Reports
             </h2>
           </div>
-          <div className="mt-4 md:mt-0">
+          <div className="mt-4 md:mt-0 self-end md:self-auto">
             <Link to="/news">
               <Button variant="outline" className="text-xs font-bold uppercase tracking-widest">
                 View All Reports

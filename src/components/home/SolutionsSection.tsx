@@ -121,8 +121,8 @@ export const SolutionsSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-border pb-6">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-border pb-6">
+          <div className="text-left">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
               <Layers className="w-4 h-4" />
               <span>Product Ecosystem</span>

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Linkedin, ArrowRight, Loader2, ExternalLink } from "lucide-react";
@@ -7,6 +8,77 @@ import { ContentSlider } from "@/components/ui/content-slider";
  * LinkedInSection - Homepage section displaying LinkedIn posts
  * Fetches visible posts from database and renders as cards with external links
  */
+
+type LinkedInPost = {
+  id: number | string;
+  post_id: string;
+  post_url: string;
+};
+
+const LinkedInPostCard = ({ post }: { post: LinkedInPost }) => {
+  const [showFallback, setShowFallback] = useState(false);
+  const loadedRef = useRef(false);
+
+  useEffect(() => {
+    loadedRef.current = false;
+    setShowFallback(false);
+
+    const timer = setTimeout(() => {
+      if (!loadedRef.current) {
+        setShowFallback(true);
+      }
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [post.post_id]);
+
+  return (
+    <div className="border border-border bg-secondary hover:border-primary transition-all duration-300 flex flex-col h-full">
+      {/* LinkedIn embed iframe - interactive */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden border-b border-border bg-background">
+        <iframe
+          src={`https://www.linkedin.com/embed/feed/update/urn:li:activity:${post.post_id}`}
+          className={`w-full h-full transition-opacity duration-300 ${showFallback ? "opacity-0" : "opacity-100"}`}
+          frameBorder="0"
+          allowFullScreen
+          title="LinkedIn Post"
+          onLoad={() => {
+            loadedRef.current = true;
+            setShowFallback(false);
+          }}
+          onError={() => {
+            setShowFallback(true);
+          }}
+        />
+        {showFallback && (
+          <div className="absolute inset-0 flex items-center justify-center p-4 text-center text-sm text-muted-foreground bg-background/95">
+            LinkedIn embeds are blocked by your browser's privacy settings. View
+            the post on LinkedIn.
+          </div>
+        )}
+      </div>
+
+      {/* Footer with link */}
+      <a
+        href={post.post_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group p-4 flex items-center justify-between hover:bg-card transition-colors"
+      >
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Linkedin className="w-4 h-4" />
+          <span className="text-xs font-mono uppercase tracking-wider">
+            LinkedIn
+          </span>
+        </div>
+        <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-primary group-hover:text-accent transition-colors">
+          View Post
+          <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </div>
+      </a>
+    </div>
+  );
+};
 
 export const LinkedInSection = () => {
   // Step 1: Fetch visible LinkedIn posts
@@ -31,38 +103,7 @@ export const LinkedInSection = () => {
 
   // Step 3: Render post card
   const renderPostCard = (post: NonNullable<typeof posts>[number]) => (
-    <div
-      key={post.id}
-      className="border border-border bg-secondary hover:border-primary transition-all duration-300 flex flex-col h-full"
-    >
-      {/* LinkedIn embed iframe - interactive */}
-      <div className="aspect-[4/5] w-full overflow-hidden border-b border-border bg-background">
-        <iframe
-          src={`https://www.linkedin.com/embed/feed/update/urn:li:activity:${post.post_id}`}
-          className="w-full h-full"
-          frameBorder="0"
-          allowFullScreen
-          title="LinkedIn Post"
-        />
-      </div>
-
-      {/* Footer with link */}
-      <a
-        href={post.post_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group p-4 flex items-center justify-between hover:bg-card transition-colors"
-      >
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Linkedin className="w-4 h-4" />
-          <span className="text-xs font-mono uppercase tracking-wider">LinkedIn</span>
-        </div>
-        <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-primary group-hover:text-accent transition-colors">
-          View Post
-          <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-        </div>
-      </a>
-    </div>
+    <LinkedInPostCard key={post.id} post={post} />
   );
 
   return (
@@ -72,8 +113,8 @@ export const LinkedInSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+          <div className="text-left">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
               <Linkedin className="w-4 h-4" />
               <span>Social Feed</span>
@@ -82,7 +123,7 @@ export const LinkedInSection = () => {
               Latest Updates
             </h2>
           </div>
-          <div className="mt-4 md:mt-0">
+          <div className="mt-4 md:mt-0 self-end md:self-auto">
             <a
               href="https://www.linkedin.com/company/horalix"
               target="_blank"
