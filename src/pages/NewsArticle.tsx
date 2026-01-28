@@ -101,12 +101,6 @@ const NewsArticle = () => {
     image: image ? [image] : undefined,
     datePublished: article.display_date || article.published_at || undefined,
     dateModified: article.updated_at || undefined,
-    author: article.author
-      ? {
-          "@type": "Person",
-          name: article.author,
-        }
-      : undefined,
     publisher: {
       "@type": "Organization",
       name: "Horalix",

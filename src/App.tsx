@@ -21,6 +21,7 @@ import TeamManager from "./pages/admin/TeamManager";
 import SolutionsManager from "./pages/admin/SolutionsManager";
 import ContentManager from "./pages/admin/ContentManager";
 import ContactsManager from "./pages/admin/ContactsManager";
+import FAQManager from "./pages/admin/FAQManager";
 import { AuthenticatedRoute } from "./components/auth/AuthenticatedRoute";
 import { PendingSubmissionHandler } from "./components/home/PendingSubmissionHandler";
 
@@ -76,6 +77,7 @@ const App = () => (
           <Route path="/admin/solutions" element={<SolutionsManager />} />
           <Route path="/admin/content" element={<ContentManager />} />
           <Route path="/admin/contacts" element={<ContactsManager />} />
+          <Route path="/admin/faq" element={<FAQManager />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
