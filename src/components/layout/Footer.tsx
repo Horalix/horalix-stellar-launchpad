@@ -69,6 +69,15 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               </li>
               <li>
                 <Link
+                  to="/#faq"
+                  onClick={(e) => handleNavClick(e, "/#faq")}
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/#contact"
                   onClick={(e) => handleNavClick(e, "/#contact")}
                   className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"

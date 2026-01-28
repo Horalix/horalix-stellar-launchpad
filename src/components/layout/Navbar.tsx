@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { label: "Solutions", href: "/#solutions", sectionId: "solutions" },
   { label: "News", href: "/#news", sectionId: "news" },
   { label: "Team", href: "/#team", sectionId: "team" },
+  { label: "FAQ", href: "/#faq", sectionId: "faq" },
   { label: "Contact", href: "/#contact", sectionId: "contact" },
 ];
 
