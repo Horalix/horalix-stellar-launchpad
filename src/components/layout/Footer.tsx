@@ -69,20 +69,20 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               </li>
               <li>
                 <Link
-                  to="/#faq"
-                  onClick={(e) => handleNavClick(e, "/#faq")}
-                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
-                >
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/#contact"
                   onClick={(e) => handleNavClick(e, "/#contact")}
                   className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
                 >
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/#faq"
+                  onClick={(e) => handleNavClick(e, "/#faq")}
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
+                  FAQ
                 </Link>
               </li>
             </ul>
@@ -93,17 +93,15 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
             <h4 className="font-bold text-xs uppercase tracking-widest mb-4 text-accent">Contact</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li className="font-mono text-xs">
-                <a href="mailto:support@horalix.com?subject=Horalix%20Inquiry"
+                <a
+                  href="mailto:support@horalix.com?subject=Horalix%20Inquiry"
                   className="hover:text-primary-foreground underline underline-offset-4"
                 >
                   support@horalix.com
                 </a>
               </li>
               <li className="font-mono text-xs">
-                <a
-                  href="tel:+38762340020"
-                  className="hover:text-primary-foreground underline underline-offset-4"
-                >
+                <a href="tel:+38762340020" className="hover:text-primary-foreground underline underline-offset-4">
                   +387 62 340 020
                 </a>
               </li>

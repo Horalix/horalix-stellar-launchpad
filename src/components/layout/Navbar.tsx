@@ -17,8 +17,8 @@ const NAV_ITEMS = [
   { label: "Solutions", href: "/#solutions", sectionId: "solutions" },
   { label: "News", href: "/#news", sectionId: "news" },
   { label: "Team", href: "/#team", sectionId: "team" },
-  { label: "FAQ", href: "/#faq", sectionId: "faq" },
   { label: "Contact", href: "/#contact", sectionId: "contact" },
+  { label: "FAQ", href: "/#faq", sectionId: "faq" },
 ];
 
 export const Navbar = () => {
@@ -30,7 +30,7 @@ export const Navbar = () => {
   /**
    * Determine if a nav item should show as active
    */
-  const getIsActive = (item: typeof NAV_ITEMS[number]): boolean => {
+  const getIsActive = (item: (typeof NAV_ITEMS)[number]): boolean => {
     // Handle /news route
     if (item.sectionId && location.pathname === "/") {
       return activeSection === item.sectionId;
@@ -41,10 +41,10 @@ export const Navbar = () => {
   // Handle smooth scroll for hash links on homepage
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
-    
+
     if (href.startsWith("/#")) {
       const sectionId = href.substring(2);
-      
+
       // If already on homepage, scroll to section
       if (location.pathname === "/") {
         const element = document.getElementById(sectionId);
@@ -61,8 +61,8 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="flex justify-between items-stretch h-16 md:h-20">
           {/* Logo section */}
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             onClick={(e) => {
               if (location.pathname === "/") {
                 e.preventDefault();
@@ -71,11 +71,7 @@ export const Navbar = () => {
             }}
             className="flex items-center gap-3 pr-6 hover:opacity-80 transition-opacity"
           >
-            <img 
-              src={horalixLogo} 
-              alt="Horalix" 
-              className="h-8 md:h-10 w-auto"
-            />
+            <img src={horalixLogo} alt="Horalix" className="h-8 md:h-10 w-auto" />
           </Link>
 
           {/* Desktop navigation */}
@@ -92,10 +88,10 @@ export const Navbar = () => {
                   }`}
                 >
                   {item.label}
-                  <span 
+                  <span
                     className={`absolute -bottom-7 left-0 w-full h-0.5 bg-accent transition-transform ${
                       isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                    }`} 
+                    }`}
                   />
                 </Link>
               );
@@ -105,20 +101,16 @@ export const Navbar = () => {
           {/* Right section - auth */}
           <div className="flex items-center gap-4 md:gap-6">
             {/* Show user dropdown if logged in, login button if not */}
-            {!isLoading && (
-              user ? (
+            {!isLoading &&
+              (user ? (
                 <UserProfileDropdown />
               ) : (
                 <Link to="/login">
-                  <Button 
-                    variant="default"
-                    className="hidden sm:flex text-xs font-bold uppercase tracking-widest"
-                  >
+                  <Button variant="default" className="hidden sm:flex text-xs font-bold uppercase tracking-widest">
                     Login
                   </Button>
                 </Link>
-              )
-            )}
+              ))}
 
             {/* Mobile menu toggle */}
             <button
@@ -126,11 +118,7 @@ export const Navbar = () => {
               className="md:hidden p-2 hover:bg-secondary transition-colors"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -147,8 +135,8 @@ export const Navbar = () => {
                     to={item.href}
                     onClick={() => handleNavClick(item.href)}
                     className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors ${
-                      isActive 
-                        ? "text-accent bg-secondary border-l-2 border-accent" 
+                      isActive
+                        ? "text-accent bg-secondary border-l-2 border-accent"
                         : "text-muted-foreground hover:text-accent hover:bg-secondary"
                     }`}
                   >
@@ -157,14 +145,8 @@ export const Navbar = () => {
                 );
               })}
               {!user && (
-                <Link
-                  to="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="mx-4 mt-4"
-                >
-                  <Button className="w-full text-xs font-bold uppercase tracking-widest">
-                    Login
-                  </Button>
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="mx-4 mt-4">
+                  <Button className="w-full text-xs font-bold uppercase tracking-widest">Login</Button>
                 </Link>
               )}
             </div>
