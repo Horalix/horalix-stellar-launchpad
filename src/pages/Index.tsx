@@ -6,6 +6,7 @@ import { NewsPreviewSection } from "@/components/home/NewsPreviewSection";
 import { LinkedInSection } from "@/components/home/LinkedInSection";
 import { TeamSection } from "@/components/home/TeamSection";
 import { ContactSection } from "@/components/home/ContactSection";
+import { FAQSection } from "@/components/home/FAQSection";
 
 /**
  * Index - Homepage for Horalix website
@@ -21,6 +22,7 @@ const Index = () => {
       <LinkedInSection />
       <TeamSection />
       <ContactSection />
+      <FAQSection />
     </MainLayout>
   );
 };

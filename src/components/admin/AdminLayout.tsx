@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Linkedin,
+  HelpCircle,
 } from "lucide-react";
 import { useState } from "react";
 import horalixLogo from "@/assets/horalix-logo.png";
@@ -34,6 +35,7 @@ const NAV_ITEMS = [
   { label: "Team", href: "/admin/team", icon: Users },
   { label: "Solutions", href: "/admin/solutions", icon: Layers },
   { label: "Site Content", href: "/admin/content", icon: FileText },
+  { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
   { label: "Contact Submissions", href: "/admin/contacts", icon: Mail },
 ];
 
