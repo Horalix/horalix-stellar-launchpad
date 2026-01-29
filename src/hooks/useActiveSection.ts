@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
  * Returns null when at the top of page (hero section)
  */
 
-const SECTION_IDS = ["solutions", "news", "team", "contact"] as const;
+const SECTION_IDS = ["solutions", "news", "team", "contact", "faq"] as const;
 type SectionId = typeof SECTION_IDS[number];
 
 export const useActiveSection = (): SectionId | null => {

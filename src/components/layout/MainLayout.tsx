@@ -50,7 +50,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       <Navbar />
       
       {/* Main content */}
-      <main className="flex-1 pt-[68px] md:pt-[84px]">
+      <main className="relative z-10 flex-1 pt-[68px] md:pt-[84px]">
         {children}
       </main>
       

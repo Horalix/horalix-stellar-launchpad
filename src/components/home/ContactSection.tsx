@@ -241,7 +241,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     <section
       ref={ref}
       id="contact"
-      className="py-24 px-6 lg:px-12 bg-muted relative z-10"
+      className="py-24 px-6 lg:px-12 bg-card relative z-10"
     >
       <div className="max-w-4xl mx-auto bg-card border border-border shadow-2xl relative">
         {/* Decorative paper holes */}

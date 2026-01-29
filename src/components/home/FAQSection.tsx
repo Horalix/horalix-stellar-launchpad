@@ -38,61 +38,81 @@ export const FAQSection = () => {
     },
   });
 
-  // Step 2: Don't render anything if no items or still loading
-  if (isLoading || !faqItems || faqItems.length === 0) {
-    return null;
-  }
+  const hasFaqItems = !!faqItems && faqItems.length > 0;
 
-  // Step 3: Build JSON-LD structured data for FAQPage
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqItems.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
+  // Step 2: Build JSON-LD structured data for FAQPage
+  const jsonLd = hasFaqItems
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
+      }
+    : null;
 
   return (
-    <section id="faq" className="py-24 px-6 lg:px-12 border-t border-border">
+    <section
+      id="faq"
+      className="py-24 px-6 lg:px-12 bg-secondary/30 border-t border-border relative z-10"
+    >
       {/* JSON-LD Schema injection */}
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-      </Helmet>
+      {jsonLd && (
+        <Helmet>
+          <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        </Helmet>
+      )}
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="text-center mb-12">
-          <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground mb-4">
+        <div className="flex flex-col items-start text-left mb-12">
+          <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-accent mb-4">
             <HelpCircle className="w-4 h-4" />
             Frequently Asked Questions
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold font-space tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-bold font-space tracking-tight text-primary">
             Questions & Answers
           </h2>
         </div>
 
         {/* FAQ Accordion */}
-        <Accordion type="single" collapsible className="w-full space-y-2">
-          {faqItems.map((item) => (
-            <AccordionItem
-              key={item.id}
-              value={item.id}
-              className="border border-border rounded-lg px-4 data-[state=open]:bg-secondary/30"
-            >
-              <AccordionTrigger className="text-left font-medium hover:no-underline">
-                {item.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        {isLoading && (
+          <div className="py-12 text-left text-muted-foreground font-mono text-sm">
+            Loading FAQs...
+          </div>
+        )}
+
+        {!isLoading && !hasFaqItems && (
+          <div className="py-12 text-left text-muted-foreground font-mono text-sm">
+            No FAQs available.
+          </div>
+        )}
+
+        {!isLoading && hasFaqItems && (
+          <div className="max-w-7xl mx-auto">
+            <Accordion type="single" collapsible className="w-full space-y-0">
+              {faqItems.map((item) => (
+                <AccordionItem
+                  key={item.id}
+                  value={item.id}
+                  className="border-b border-border/60 last:border-b-0"
+                >
+                  <AccordionTrigger className="text-left text-lg md:text-xl lg:text-2xl font-semibold leading-snug hover:no-underline py-5">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm md:text-base lg:text-lg text-muted-foreground/80 leading-relaxed pt-2 pb-5">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        )}
       </div>
     </section>
   );
