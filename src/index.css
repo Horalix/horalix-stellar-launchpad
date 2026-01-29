@@ -125,6 +125,12 @@
   }
 }
 
+@media (min-width: 1920px) {
+  html {
+    font-size: clamp(16px, 0.833333vw, 32px);
+  }
+}
+
 /* Custom scrollbar for clinical feel */
 @layer utilities {
   .scrollbar-clinical::-webkit-scrollbar {
@@ -142,6 +148,44 @@
 
   .scrollbar-clinical::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground/50;
+  }
+}
+
+@layer utilities {
+  @media (min-width: 1920px) {
+    .max-w-xs {
+      max-width: 24rem;
+    }
+    .max-w-sm {
+      max-width: 28.8rem;
+    }
+    .max-w-md {
+      max-width: 33.6rem;
+    }
+    .max-w-lg {
+      max-width: 38.4rem;
+    }
+    .max-w-xl {
+      max-width: 43.2rem;
+    }
+    .max-w-2xl {
+      max-width: 50.4rem;
+    }
+    .max-w-3xl {
+      max-width: 57.6rem;
+    }
+    .max-w-4xl {
+      max-width: 67.2rem;
+    }
+    .max-w-5xl {
+      max-width: 76.8rem;
+    }
+    .max-w-6xl {
+      max-width: 86.4rem;
+    }
+    .max-w-7xl {
+      max-width: 96rem;
+    }
   }
 }
 
