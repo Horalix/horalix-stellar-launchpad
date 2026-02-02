@@ -15,7 +15,7 @@ import horalixLogo from "@/assets/horalix-logo.png";
 // Navigation items configuration
 const NAV_ITEMS = [
   { label: "Solutions", href: "/#solutions", sectionId: "solutions" },
-  { label: "News", href: "/#news", sectionId: "news" },
+  { label: "News", href: "/news", sectionId: null }, // Direct link for crawler visibility
   { label: "Team", href: "/#team", sectionId: "team" },
   { label: "Contact", href: "/#contact", sectionId: "contact" },
   { label: "FAQ", href: "/#faq", sectionId: "faq" },

@@ -51,8 +51,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               </li>
               <li>
                 <Link
-                  to="/#news"
-                  onClick={(e) => handleNavClick(e, "/#news")}
+                  to="/news"
                   className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
                 >
                   News
@@ -84,6 +83,47 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
                 >
                   FAQ
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Solutions links for crawlers */}
+          <div>
+            <h4 className="font-bold text-xs uppercase tracking-widest mb-4 text-accent">Solutions</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  to="/solutions/cardiology-ai"
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
+                  Cardiology AI
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/solutions/pathology-ai"
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
+                  Pathology AI
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/solutions/radiology-ai"
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
+                  Radiology AI
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://www.techstars.com/newsroom/announcing-techstars-sarajevo-2025"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+                >
+                  Techstars Sarajevo ↗
+                </a>
               </li>
             </ul>
           </div>
