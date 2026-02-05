@@ -4,10 +4,7 @@
  * Requires JWT authentication and admin role
  */
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// Step 1: CORS headers for cross-origin requests
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -23,7 +20,7 @@ interface StatusNotificationRequest {
   original_message?: string;
 }
 
-// Step 2: Status-specific messaging
+// Status-specific messaging
 const STATUS_MESSAGES: Record<string, { subject: string; heading: string; body: string }> = {
   in_progress: {
     subject: "We're Reviewing Your Inquiry",
@@ -42,14 +39,14 @@ const STATUS_MESSAGES: Record<string, { subject: string; heading: string; body: 
   },
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Step 3: Get authorization token from request
+    // Step 1: Get authorization token from request
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
@@ -58,20 +55,17 @@ serve(async (req) => {
       );
     }
 
-    // Step 4: Initialize Supabase clients
+    // Step 2: Initialize Supabase clients
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     
-    // Client for user authentication check
     const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-
-    // Service client for admin role check
     const supabaseService = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Step 5: Verify the user is authenticated
+    // Step 3: Verify the user is authenticated
     const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !user) {
       console.error("Auth error:", authError);
@@ -81,7 +75,7 @@ serve(async (req) => {
       );
     }
 
-    // Step 6: Verify user has admin or editor role
+    // Step 4: Verify user has admin or editor role
     const { data: roleData, error: roleError } = await supabaseService
       .from("user_roles")
       .select("role")
@@ -97,11 +91,11 @@ serve(async (req) => {
       );
     }
 
-    // Step 7: Parse request body
+    // Step 5: Parse request body
     const requestData: StatusNotificationRequest = await req.json();
     const { submission_id, user_email, user_name, new_status, original_message } = requestData;
 
-    // Step 8: Validate required fields
+    // Step 6: Validate required fields
     if (!submission_id || !user_email || !user_name || !new_status) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
@@ -109,7 +103,7 @@ serve(async (req) => {
       );
     }
 
-    // Step 9: Get status-specific messaging
+    // Step 7: Get status-specific messaging
     const statusMessage = STATUS_MESSAGES[new_status];
     if (!statusMessage) {
       console.log(`No notification configured for status: ${new_status}`);
@@ -119,7 +113,7 @@ serve(async (req) => {
       );
     }
 
-    // Step 10: Create email HTML content
+    // Step 8: Create email HTML content
     const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -174,7 +168,7 @@ serve(async (req) => {
       </html>
     `;
 
-    // Step 11: Send email to user via Resend REST API
+    // Step 9: Send email to user via Resend
     try {
       const emailResponse = await fetch("https://api.resend.com/emails", {
         method: "POST",

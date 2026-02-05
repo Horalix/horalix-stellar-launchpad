@@ -4,8 +4,7 @@
  * Includes idempotency check to prevent duplicate sends
  */
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 // CORS headers
 const corsHeaders = {
@@ -19,7 +18,7 @@ interface NewsletterRequest {
   article_id: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -121,7 +120,6 @@ serve(async (req) => {
     }
 
     if (!subscribers || subscribers.length === 0) {
-      // Record the send even with no subscribers to maintain idempotency
       await supabaseService.from("newsletter_sends").insert({
         article_id: article_id,
         recipients_count: 0,
@@ -194,7 +192,6 @@ serve(async (req) => {
     let successCount = 0;
     let failCount = 0;
 
-    // Send in batches of 50 to avoid rate limits
     const batchSize = 50;
     for (let i = 0; i < recipientEmails.length; i += batchSize) {
       const batch = recipientEmails.slice(i, i + batchSize);

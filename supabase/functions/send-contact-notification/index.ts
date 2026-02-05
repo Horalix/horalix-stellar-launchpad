@@ -4,10 +4,7 @@
  * Triggered via database webhook with webhook secret validation
  */
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// Step 1: CORS headers for cross-origin requests
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -30,14 +27,14 @@ interface WebhookPayload {
   schema: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Step 2: Validate webhook secret to prevent unauthorized access
+    // Step 1: Validate webhook secret to prevent unauthorized access
     const webhookSecret = Deno.env.get("WEBHOOK_SECRET");
     const providedSecret = req.headers.get("x-webhook-secret");
     
@@ -57,10 +54,10 @@ serve(async (req) => {
       );
     }
 
-    // Step 3: Parse the webhook payload
+    // Step 2: Parse the webhook payload
     const payload: WebhookPayload = await req.json();
 
-    // Step 4: Validate payload structure
+    // Step 3: Validate payload structure
     if (payload.type !== "INSERT" || payload.table !== "contact_submissions") {
       return new Response(
         JSON.stringify({ message: "Invalid webhook payload" }),
@@ -70,7 +67,7 @@ serve(async (req) => {
 
     const submission = payload.record;
 
-    // Step 5: Validate submission data
+    // Step 4: Validate submission data
     if (!submission.name || !submission.email || !submission.message) {
       return new Response(
         JSON.stringify({ error: "Invalid submission data" }),
@@ -78,7 +75,7 @@ serve(async (req) => {
       );
     }
 
-    // Step 6: Hardcoded team email addresses
+    // Step 5: Team email addresses
     const teamEmails = [
       "support@horalix.com",
       "horalixai@gmail.com",
@@ -88,36 +85,50 @@ serve(async (req) => {
 
     console.log(`Will notify ${teamEmails.length} team members`);
 
-    // Step 9: Use Lovable AI to generate a professional email summary
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
-        messages: [
-          {
-            role: "system",
-            content: "You are a professional email assistant. Generate a brief, professional summary of the contact form submission for internal team notification. Keep it concise - 2-3 sentences max."
-          },
-          {
-            role: "user",
-            content: `Summarize this contact form submission:\nName: ${submission.name}\nEmail: ${submission.email}\nMessage: ${submission.message}`
-          }
-        ],
-        max_tokens: 150,
-      }),
-    });
-
+    // Step 6: Generate AI summary using Lovable AI
     let aiSummary = "Unable to generate summary.";
-    if (aiResponse.ok) {
-      const aiData = await aiResponse.json();
-      aiSummary = aiData.choices?.[0]?.message?.content || aiSummary;
+    try {
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-lite",
+          messages: [
+            {
+              role: "system",
+              content: "You are a professional email assistant. Generate a brief, professional summary of the contact form submission for internal team notification. Keep it concise - 2-3 sentences max."
+            },
+            {
+              role: "user",
+              content: `Summarize this contact form submission:\nName: ${submission.name}\nEmail: ${submission.email}\nMessage: ${submission.message}`
+            }
+          ],
+          max_tokens: 150,
+        }),
+      });
+
+      if (aiResponse.ok) {
+        const aiData = await aiResponse.json();
+        aiSummary = aiData.choices?.[0]?.message?.content || aiSummary;
+      }
+    } catch (aiError) {
+      console.error("AI summary error:", aiError);
     }
 
-    // Step 10: Create email HTML content
+    // Step 7: Format submission date
+    const submittedDate = new Date(submission.created_at).toLocaleString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    // Step 8: Create email HTML content
     const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -172,7 +183,7 @@ serve(async (req) => {
       </html>
     `;
 
-    // Step 11: Send email to team via Resend REST API
+    // Step 9: Send email to team via Resend
     try {
       const emailResponse = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -195,12 +206,11 @@ serve(async (req) => {
         const errorData = await emailResponse.json();
         console.error("Resend API error:", errorData);
       }
-    } catch (emailError: any) {
+    } catch (emailError) {
       console.error("Error sending email:", emailError);
-      // Don't fail the webhook if email fails - log and continue
     }
 
-    // Step 12: Log the notification for monitoring
+    // Step 10: Log for monitoring
     console.log("=== NEW CONTACT FORM SUBMISSION ===");
     console.log(`ID: ${submission.id}`);
     console.log(`From: ${submission.name} <${submission.email}>`);
@@ -210,7 +220,7 @@ serve(async (req) => {
     console.log(`Notified team: ${teamEmails.join(", ")}`);
     console.log("===================================");
 
-    // Step 13: Return success response
+    // Step 11: Return success response
     return new Response(
       JSON.stringify({ 
         success: true, 
@@ -218,54 +228,6 @@ serve(async (req) => {
         submission_id: submission.id,
         summary: aiSummary,
         team_notified: teamEmails.length
-      }),
-      { 
-        status: 200, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      }
-    );
-  } catch (error) {
-    console.error("Error processing contact notification:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process notification" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-});
-
-        if (emailResponse.ok) {
-          const emailData = await emailResponse.json();
-          console.log("Email sent successfully to admins:", emailData);
-        } else {
-          const errorData = await emailResponse.json();
-          console.error("Resend API error:", errorData);
-        }
-      } catch (emailError: any) {
-        console.error("Error sending email:", emailError);
-        // Don't fail the webhook if email fails - log and continue
-      }
-    } else {
-      console.warn("No admin emails found - skipping email notification");
-    }
-
-    // Step 13: Log the notification for monitoring
-    console.log("=== NEW CONTACT FORM SUBMISSION ===");
-    console.log(`ID: ${submission.id}`);
-    console.log(`From: ${submission.name} <${submission.email}>`);
-    console.log(`Received: ${submission.created_at}`);
-    console.log(`Message: ${submission.message}`);
-    console.log(`AI Summary: ${aiSummary}`);
-    console.log(`Notified admins: ${adminEmails.join(", ") || "none"}`);
-    console.log("===================================");
-
-    // Step 14: Return success response
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: "Notification processed",
-        submission_id: submission.id,
-        summary: aiSummary,
-        admins_notified: adminEmails.length
       }),
       { 
         status: 200, 
