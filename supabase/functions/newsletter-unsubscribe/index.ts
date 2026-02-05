@@ -3,8 +3,7 @@
  * Handles newsletter unsubscribe requests from email links
  */
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -17,7 +16,7 @@ interface UnsubscribeRequest {
   token?: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
