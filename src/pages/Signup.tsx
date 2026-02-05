@@ -3,16 +3,17 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import horalixLogo from "@/assets/horalix-logo.png";
 import SEO from "@/components/SEO";
+import { SITE_URL } from "@/lib/constants";
 
 /**
  * Signup - User registration page
- * Includes password validation and email verification flow
- * Redirects authenticated users to returnTo or home
+ * Includes password validation, terms agreement, and newsletter opt-in
  */
 
 // Password validation rules
@@ -37,6 +38,8 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
 
   // Password validation state - MUST be before any early returns
   const passwordValidation = useMemo(
@@ -90,6 +93,15 @@ export default function Signup() {
       return;
     }
 
+    if (!agreedToTerms) {
+      toast({
+        title: "Terms Required",
+        description: "Please agree to the Terms and Conditions to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!isPasswordValid) {
       toast({
         title: "Invalid Password",
@@ -112,11 +124,10 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      // Use production domain for magic link redirects
-      const PRODUCTION_URL = "https://horalix.com";
-      const redirectUrl = PRODUCTION_URL;
+      // Use constant SITE_URL for redirect
+      const redirectUrl = `${SITE_URL}/verify-email`;
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
@@ -134,6 +145,20 @@ export default function Signup() {
           variant: "destructive",
         });
         return;
+      }
+
+      // If user opted into newsletter, create subscription
+      if (subscribeNewsletter && data.user) {
+        try {
+          await supabase.from("newsletter_subscriptions").insert({
+            user_id: data.user.id,
+            email: email.trim().toLowerCase(),
+            is_subscribed: true,
+          });
+        } catch (subError) {
+          console.error("Failed to create newsletter subscription:", subError);
+          // Don't fail signup if newsletter subscription fails
+        }
       }
 
       // Navigate to verification page
@@ -323,12 +348,44 @@ export default function Signup() {
                   <p className="text-xs text-destructive">Passwords don't match</p>
                 )}
               </div>
+
+              {/* Terms and Conditions checkbox (required) */}
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="terms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  disabled={isLoading}
+                  className="mt-0.5"
+                />
+                <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
+                  I agree to the{" "}
+                  <Link to="/terms" className="text-accent hover:text-accent/80 underline" target="_blank">
+                    Terms and Conditions
+                  </Link>
+                  <span className="text-destructive ml-1">*</span>
+                </label>
+              </div>
+
+              {/* Newsletter checkbox (optional) */}
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="newsletter"
+                  checked={subscribeNewsletter}
+                  onCheckedChange={(checked) => setSubscribeNewsletter(checked === true)}
+                  disabled={isLoading}
+                  className="mt-0.5"
+                />
+                <label htmlFor="newsletter" className="text-sm text-muted-foreground cursor-pointer">
+                  Email me new reports and product updates
+                </label>
+              </div>
   
               {/* Submit button */}
               <Button
                 type="submit"
                 className="w-full text-xs font-bold uppercase tracking-widest"
-                disabled={isLoading || !isPasswordValid || !passwordsMatch}
+                disabled={isLoading || !isPasswordValid || !passwordsMatch || !agreedToTerms}
               >
                 {isLoading ? (
                   <>

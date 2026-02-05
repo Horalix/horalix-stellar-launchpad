@@ -173,6 +173,68 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_sends: {
+        Row: {
+          article_id: string
+          id: string
+          recipients_count: number
+          sent_at: string
+        }
+        Insert: {
+          article_id: string
+          id?: string
+          recipients_count?: number
+          sent_at?: string
+        }
+        Update: {
+          article_id?: string
+          id?: string
+          recipients_count?: number
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_sends_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: true
+            referencedRelation: "news_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_subscriptions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_subscribed: boolean
+          subscribed_at: string
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_subscribed?: boolean
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_subscribed?: boolean
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

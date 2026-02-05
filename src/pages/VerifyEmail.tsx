@@ -36,14 +36,14 @@ export default function VerifyEmail() {
     setResendSuccess(false);
 
     try {
-      // Use production domain for magic link redirects
-      const PRODUCTION_URL = "https://horalix.com";
+      // Import constant for redirect URL
+      const { SITE_URL } = await import("@/lib/constants");
       
       const { error } = await supabase.auth.resend({
         type: "signup",
         email,
         options: {
-          emailRedirectTo: PRODUCTION_URL,
+          emailRedirectTo: `${SITE_URL}/verify-email`,
         },
       });
 
