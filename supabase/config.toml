@@ -2,7 +2,7 @@ project_id = "yyzrwjocniepskofoehu"
 
 [auth]
 site_url = "https://horalix.com"
-additional_redirect_urls = ["https://horalix.com", "https://www.horalix.com"]
+additional_redirect_urls = ["https://horalix.com", "https://www.horalix.com", "https://horalix.com/verify-email"]
 
 [functions.send-contact-notification]
 verify_jwt = false
@@ -14,4 +14,10 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.send-status-notification]
+verify_jwt = false
+
+[functions.newsletter-unsubscribe]
+verify_jwt = false
+
+[functions.send-newsletter]
 verify_jwt = false

@@ -78,30 +78,15 @@ serve(async (req) => {
       );
     }
 
-    // Step 6: Initialize Supabase client to fetch admin emails
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Step 6: Hardcoded team email addresses
+    const teamEmails = [
+      "support@horalix.com",
+      "horalixai@gmail.com",
+      "neuman.alkhalil@outlook.com",
+      "kerim.sabic@gmail.com",
+    ];
 
-    // Step 7: Fetch all admin email addresses from user_roles + profiles
-    const { data: adminProfiles, error: adminError } = await supabase
-      .from("user_roles")
-      .select(`
-        user_id,
-        profiles!inner(email)
-      `)
-      .eq("role", "admin");
-
-    if (adminError) {
-      console.error("Error fetching admin emails:", adminError);
-    }
-
-    // Step 8: Extract admin emails
-    const adminEmails: string[] = adminProfiles
-      ?.filter((admin: any) => admin.profiles?.email)
-      .map((admin: any) => admin.profiles.email) || [];
-
-    console.log(`Found ${adminEmails.length} admin(s) to notify`);
+    console.log(`Will notify ${teamEmails.length} team members`);
 
     // Step 9: Use Lovable AI to generate a professional email summary
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -132,17 +117,7 @@ serve(async (req) => {
       aiSummary = aiData.choices?.[0]?.message?.content || aiSummary;
     }
 
-    // Step 10: Format submission date
-    const submittedDate = new Date(submission.created_at).toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    // Step 11: Create email HTML content
+    // Step 10: Create email HTML content
     const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -197,22 +172,66 @@ serve(async (req) => {
       </html>
     `;
 
-    // Step 12: Send email to all admins via Resend REST API
-    if (adminEmails.length > 0) {
-      try {
-        const emailResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Horalix <notifications@horalix.com>",
-            to: adminEmails,
-            subject: `New Contact Inquiry from ${submission.name}`,
-            html: emailHtml,
-          }),
-        });
+    // Step 11: Send email to team via Resend REST API
+    try {
+      const emailResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Horalix <notifications@horalix.com>",
+          to: teamEmails,
+          subject: `New Contact Inquiry from ${submission.name}`,
+          html: emailHtml,
+        }),
+      });
+
+      if (emailResponse.ok) {
+        const emailData = await emailResponse.json();
+        console.log("Email sent successfully to team:", emailData);
+      } else {
+        const errorData = await emailResponse.json();
+        console.error("Resend API error:", errorData);
+      }
+    } catch (emailError: any) {
+      console.error("Error sending email:", emailError);
+      // Don't fail the webhook if email fails - log and continue
+    }
+
+    // Step 12: Log the notification for monitoring
+    console.log("=== NEW CONTACT FORM SUBMISSION ===");
+    console.log(`ID: ${submission.id}`);
+    console.log(`From: ${submission.name} <${submission.email}>`);
+    console.log(`Received: ${submission.created_at}`);
+    console.log(`Message: ${submission.message}`);
+    console.log(`AI Summary: ${aiSummary}`);
+    console.log(`Notified team: ${teamEmails.join(", ")}`);
+    console.log("===================================");
+
+    // Step 13: Return success response
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        message: "Notification processed",
+        submission_id: submission.id,
+        summary: aiSummary,
+        team_notified: teamEmails.length
+      }),
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      }
+    );
+  } catch (error) {
+    console.error("Error processing contact notification:", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to process notification" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});
 
         if (emailResponse.ok) {
           const emailData = await emailResponse.json();

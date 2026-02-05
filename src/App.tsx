@@ -13,6 +13,8 @@ import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
 import Profile from "./pages/Profile";
 import ProfileSubmissions from "./pages/ProfileSubmissions";
+import Terms from "./pages/Terms";
+import Unsubscribe from "./pages/Unsubscribe";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import NewsManager from "./pages/admin/NewsManager";
@@ -44,6 +46,8 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsArticle />} />
           <Route path="/solutions/:slug" element={<SolutionDetail />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
 
           {/* Authentication routes */}
           <Route path="/login" element={<Login />} />

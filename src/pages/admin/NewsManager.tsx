@@ -99,6 +99,8 @@ const NewsManager = () => {
         is_published: article.is_published,
       };
 
+      let articleId = article.id;
+
       if (isEditing && article.id) {
         const { error } = await supabase
           .from("news_articles")
@@ -106,8 +108,45 @@ const NewsManager = () => {
           .eq("id", article.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("news_articles").insert(payload);
+        const { data, error } = await supabase
+          .from("news_articles")
+          .insert(payload)
+          .select("id")
+          .single();
         if (error) throw error;
+        articleId = data.id;
+      }
+
+      // If article is published, trigger newsletter send
+      if (article.is_published && articleId) {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const accessToken = sessionData?.session?.access_token;
+
+          if (accessToken) {
+            const response = await fetch(
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-newsletter`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({ article_id: articleId }),
+              }
+            );
+
+            const result = await response.json();
+            if (result.skipped) {
+              console.log("Newsletter already sent for this article");
+            } else if (result.success) {
+              console.log(`Newsletter sent to ${result.recipients} subscribers`);
+            }
+          }
+        } catch (newsletterError) {
+          console.error("Failed to send newsletter:", newsletterError);
+          // Don't fail the save if newsletter fails
+        }
       }
     },
     onSuccess: () => {
