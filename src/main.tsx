@@ -1,9 +1,13 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { HelmetProvider } from "react-helmet-async";
+import { enforceCanonicalHost } from "./lib/canonical";
 import "./index.css";
 
-// Wrap the application in a HelmetProvider to enable dynamic SEO tags
+// Step 1: Redirect blocked hosts to canonical domain before rendering
+enforceCanonicalHost();
+
+// Step 2: Wrap the application in a HelmetProvider to enable dynamic SEO tags
 const root = createRoot(document.getElementById("root")!);
 root.render(
   <HelmetProvider>

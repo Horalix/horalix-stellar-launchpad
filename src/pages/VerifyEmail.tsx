@@ -36,14 +36,14 @@ export default function VerifyEmail() {
     setResendSuccess(false);
 
     try {
-      // Import constant for redirect URL
-      const { SITE_URL } = await import("@/lib/constants");
+      // Use canonical URL helper for email redirect
+      const { authRedirectUrl } = await import("@/lib/canonical");
       
       const { error } = await supabase.auth.resend({
         type: "signup",
         email,
         options: {
-          emailRedirectTo: `${SITE_URL}/verify-email`,
+          emailRedirectTo: authRedirectUrl("/verify-email"),
         },
       });
 

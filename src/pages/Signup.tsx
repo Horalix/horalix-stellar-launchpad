@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import horalixLogo from "@/assets/horalix-logo.png";
 import SEO from "@/components/SEO";
-import { SITE_URL } from "@/lib/constants";
+import { authRedirectUrl } from "@/lib/canonical";
 
 /**
  * Signup - User registration page
@@ -124,14 +124,12 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      // Use constant SITE_URL for redirect
-      const redirectUrl = `${SITE_URL}/verify-email`;
-
+      // Use canonical URL for email redirect - never window.location.origin
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
-          emailRedirectTo: redirectUrl,
+          emailRedirectTo: authRedirectUrl("/verify-email"),
           data: {
             full_name: fullName.trim(),
           },
