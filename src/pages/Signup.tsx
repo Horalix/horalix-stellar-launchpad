@@ -125,13 +125,14 @@ export default function Signup() {
 
     try {
       // Use canonical URL for email redirect - never window.location.origin
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
           emailRedirectTo: authRedirectUrl("/verify-email"),
           data: {
             full_name: fullName.trim(),
+            newsletter_opt_in: subscribeNewsletter,
           },
         },
       });
@@ -143,20 +144,6 @@ export default function Signup() {
           variant: "destructive",
         });
         return;
-      }
-
-      // If user opted into newsletter, create subscription
-      if (subscribeNewsletter && data.user) {
-        try {
-          await supabase.from("newsletter_subscriptions").insert({
-            user_id: data.user.id,
-            email: email.trim().toLowerCase(),
-            is_subscribed: true,
-          });
-        } catch (subError) {
-          console.error("Failed to create newsletter subscription:", subError);
-          // Don't fail signup if newsletter subscription fails
-        }
       }
 
       // Navigate to verification page

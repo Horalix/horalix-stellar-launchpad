@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef, useRef } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import horalixLogoWhite from "@/assets/horalix-logo-white.png";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
@@ -61,69 +61,11 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     message: "",
   });
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
-  // Track if we've already auto-submitted to prevent duplicate submissions
-  const hasAutoSubmitted = useRef(false);
-
-  // Pre-fill form with user data and auto-submit if pending data exists
+  // Pre-fill form with user data
   useEffect(() => {
-    const handlePendingSubmission = async () => {
+    const prefillFromProfile = async () => {
       // Wait for auth to finish loading
       if (authLoading) return;
-
-      // Check for pending form data
-      const savedData = localStorage.getItem(PENDING_CONTACT_KEY);
-
-      // User just logged in with pending form data - auto submit
-      if (user && savedData && !hasAutoSubmitted.current) {
-        try {
-          const parsed = JSON.parse(savedData);
-          if (parsed.name && parsed.email && parsed.message) {
-            hasAutoSubmitted.current = true;
-            setIsSubmitting(true);
-
-            const { data: insertData, error } = await supabase.from("contact_submissions").insert({
-              name: parsed.name,
-              email: parsed.email,
-              message: parsed.message,
-              user_id: user.id,
-            }).select("id").single();
-
-            if (error) throw error;
-
-            // Invoke notification edge function (non-blocking)
-            supabase.functions.invoke("send-contact-notification", {
-              body: { submission_id: insertData.id },
-            }).then(({ error: fnError }) => {
-              if (fnError) console.error("Contact notification failed:", fnError);
-            });
-
-            // Clear saved form data
-            localStorage.removeItem(PENDING_CONTACT_KEY);
-
-            // Show success message
-            toast({
-              title: "Message Transmitted",
-              description:
-                "Your inquiry has been automatically submitted. We'll respond shortly.",
-            });
-
-            // Reset form
-            setFormData({ name: "", email: "", message: "" });
-            setIsSubmitting(false);
-            return; // Don't pre-fill form since we auto-submitted
-          }
-        } catch (error) {
-          console.error("Auto-submit error:", error);
-          hasAutoSubmitted.current = false;
-          setIsSubmitting(false);
-          toast({
-            title: "Transmission Failed",
-            description: "Unable to send message. Please try submitting again.",
-            variant: "destructive",
-          });
-          localStorage.removeItem(PENDING_CONTACT_KEY);
-        }
-      }
 
       // Pre-fill form with user profile data if logged in
       if (user) {
@@ -147,8 +89,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
       }
     };
 
-    handlePendingSubmission();
-  }, [user, authLoading, toast]);
+    prefillFromProfile();
+  }, [user, authLoading]);
 
   // Handle input changes
   const handleChange = (
@@ -223,21 +165,26 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
 
       if (error) throw error;
 
-      // Invoke notification edge function (non-blocking)
-      supabase.functions
-        .invoke("send-contact-notification", {
+      // Invoke notification edge function and surface errors to the user
+      const { data: notificationResult, error: notificationError } =
+        await supabase.functions.invoke("send-contact-notification", {
           body: { submission_id: insertData.id },
-        })
-        .then(({ error: fnError }) => {
-          if (fnError) {
-            console.error("Contact notification failed:", fnError);
-            toast({
-              title: "Notification Warning",
-              description: "Your message was saved but the email notification may have failed.",
-              variant: "destructive",
-            });
-          }
         });
+
+      if (
+        notificationError ||
+        notificationResult?.error ||
+        notificationResult?.team_notified === false ||
+        notificationResult?.user_notified === false
+      ) {
+        console.error("Contact notification failed:", notificationError || notificationResult);
+        toast({
+          title: "Notification Warning",
+          description:
+            "Your message was saved, but one or more email notifications failed.",
+          variant: "destructive",
+        });
+      }
 
       // Clear any saved form data
       localStorage.removeItem(PENDING_CONTACT_KEY);

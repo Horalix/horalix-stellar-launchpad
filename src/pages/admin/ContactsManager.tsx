@@ -86,7 +86,7 @@ const ContactsManager = () => {
   const sendStatusNotification = async (
     submissionId: string,
     newStatus: string
-  ) => {
+  ): Promise<{ ok: boolean; error?: string }> => {
     const { data: result, error: fnError } = await supabase.functions.invoke(
       "send-status-notification",
       { body: { submission_id: submissionId, new_status: newStatus } }
@@ -94,25 +94,22 @@ const ContactsManager = () => {
 
     if (fnError) {
       console.error("Status notification function error:", fnError);
-      toast({
-        title: "Notification Failed",
-        description: `Status updated but email notification failed: ${fnError.message}`,
-        variant: "destructive",
-      });
-      return;
+      return {
+        ok: false,
+        error: fnError.message,
+      };
     }
 
     if (result?.error) {
       console.error("Status notification error:", result.error);
-      toast({
-        title: "Notification Failed",
-        description: `Status updated but email failed: ${result.error}`,
-        variant: "destructive",
-      });
-      return;
+      return {
+        ok: false,
+        error: String(result.error),
+      };
     }
 
     console.log("Status notification sent:", result);
+    return { ok: true };
   };
 
   // Step 2: Update status mutation with notification
@@ -138,15 +135,24 @@ const ContactsManager = () => {
       if (error) throw error;
 
       // Send notification to user
-      await sendStatusNotification(id, status);
+      return await sendStatusNotification(id, status);
     },
-    onSuccess: () => {
+    onSuccess: (notificationResult) => {
       queryClient.invalidateQueries({ queryKey: ["admin-contacts"] });
       setSelectedContact(null);
-      toast({
-        title: "Contact updated",
-        description: "User has been notified of the status change.",
-      });
+
+      if (notificationResult.ok) {
+        toast({
+          title: "Contact updated",
+          description: "The user was notified of the status change.",
+        });
+      } else {
+        toast({
+          title: "Notification Failed",
+          description: `Status was updated, but the email notification failed: ${notificationResult.error || "Unknown error"}`,
+          variant: "destructive",
+        });
+      }
     },
     onError: (error: any) => {
       toast({

@@ -63,12 +63,20 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { data: roleData } = await supabaseService
+    const { data: roleData, error: roleError } = await supabaseService
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .in("role", ["admin", "editor"])
-      .single();
+      .limit(1)
+      .maybeSingle();
+
+    if (roleError) {
+      return new Response(
+        JSON.stringify({ error: "Unable to verify role" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     if (!roleData) {
       return new Response(

@@ -46,19 +46,43 @@ export const PendingSubmissionHandler = () => {
         hasSubmitted.current = true;
 
         // Step 7: Submit the form data
-        const { error } = await supabase.from("contact_submissions").insert({
-          name: parsed.name,
-          email: parsed.email,
-          message: parsed.message,
-          user_id: user.id,
-        });
+        const { data: createdSubmission, error } = await supabase
+          .from("contact_submissions")
+          .insert({
+            name: parsed.name,
+            email: parsed.email,
+            message: parsed.message,
+            user_id: user.id,
+          })
+          .select("id")
+          .single();
 
         if (error) throw error;
 
-        // Step 8: Clear saved form data
+        // Step 8: Send contact notification emails
+        const { data: notificationResult, error: notificationError } =
+          await supabase.functions.invoke("send-contact-notification", {
+            body: { submission_id: createdSubmission.id },
+          });
+
+        if (
+          notificationError ||
+          notificationResult?.error ||
+          notificationResult?.team_notified === false ||
+          notificationResult?.user_notified === false
+        ) {
+          toast({
+            title: "Notification Warning",
+            description:
+              "Your message was submitted, but one or more email notifications failed.",
+            variant: "destructive",
+          });
+        }
+
+        // Step 9: Clear saved form data
         localStorage.removeItem(PENDING_CONTACT_KEY);
 
-        // Step 9: Show prominent success modal
+        // Step 10: Show prominent success modal
         setShowSuccessModal(true);
       } catch (error) {
         console.error("PendingSubmissionHandler: Auto-submit error:", error);

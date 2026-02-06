@@ -10,6 +10,17 @@ export const CANONICAL_SITE_URL = "https://horalix.com";
 const BLOCKED_PUBLIC_HOSTS = [
   "horalix-stellar-launchpad.lovable.app",
 ];
+const BLOCKED_HOST_SUFFIXES = [".lovable.app"];
+
+function isBlockedHost(hostname: string): boolean {
+  if (BLOCKED_PUBLIC_HOSTS.includes(hostname)) {
+    return true;
+  }
+
+  return BLOCKED_HOST_SUFFIXES.some((suffix) =>
+    hostname === suffix.slice(1) || hostname.endsWith(suffix)
+  );
+}
 
 /**
  * enforceCanonicalHost
@@ -21,7 +32,7 @@ export function enforceCanonicalHost(): void {
 
   const currentHost = window.location.hostname;
 
-  if (BLOCKED_PUBLIC_HOSTS.includes(currentHost)) {
+  if (isBlockedHost(currentHost)) {
     // Preserve the path and search params on redirect
     const targetUrl = `${CANONICAL_SITE_URL}${window.location.pathname}${window.location.search}${window.location.hash}`;
     window.location.replace(targetUrl);

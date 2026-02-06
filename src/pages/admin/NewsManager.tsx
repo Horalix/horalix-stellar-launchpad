@@ -117,6 +117,8 @@ const NewsManager = () => {
         articleId = data.id;
       }
 
+      let newsletterWarning: string | null = null;
+
       // If article is published, trigger newsletter send
       if (article.is_published && articleId) {
         try {
@@ -127,31 +129,40 @@ const NewsManager = () => {
 
           if (fnError) {
             console.error("Newsletter function error:", fnError);
-            throw new Error(`Newsletter send failed: ${fnError.message}`);
-          }
-
-          if (result?.skipped) {
+            newsletterWarning = `Newsletter send failed: ${fnError.message}`;
+          } else if (result?.error) {
+            console.error("Newsletter error:", result.error);
+            newsletterWarning = `Newsletter failed: ${result.error}`;
+          } else if (typeof result?.failed === "number" && result.failed > 0) {
+            newsletterWarning = `Newsletter partially sent, ${result.failed} deliveries failed`;
+          } else if (result?.skipped) {
             console.log("Newsletter already sent for this article");
           } else if (result?.success) {
             console.log(`Newsletter sent to ${result.recipients} subscribers`);
-          } else if (result?.error) {
-            console.error("Newsletter error:", result.error);
-            throw new Error(`Newsletter: ${result.error}`);
           }
         } catch (newsletterError: any) {
           console.error("Failed to send newsletter:", newsletterError);
-          // Re-throw so onError surfaces it in the UI
-          throw new Error(
-            `Article saved but newsletter failed: ${newsletterError.message}`
-          );
+          newsletterWarning = `Newsletter failed: ${newsletterError.message}`;
         }
       }
+
+      return { newsletterWarning };
     },
-    onSuccess: () => {
+    onSuccess: ({ newsletterWarning }) => {
       queryClient.invalidateQueries({ queryKey: ["admin-news"] });
       setIsDialogOpen(false);
       setForm(defaultForm);
       setIsEditing(false);
+
+      if (newsletterWarning) {
+        toast({
+          variant: "destructive",
+          title: isEditing ? "Article updated with warnings" : "Article created with warnings",
+          description: newsletterWarning,
+        });
+        return;
+      }
+
       toast({ title: isEditing ? "Article updated" : "Article created" });
     },
     onError: (error: any) => {

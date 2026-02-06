@@ -89,12 +89,17 @@ Deno.serve(async (req) => {
     }
 
     // Step 5: Verify admin/editor role
-    const { data: roleData } = await supabaseService
+    const { data: roleData, error: roleError } = await supabaseService
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .in("role", ["admin", "editor"])
-      .single();
+      .limit(1)
+      .maybeSingle();
+
+    if (roleError) {
+      return jsonResponse({ error: "Unable to verify role" }, 500);
+    }
 
     if (!roleData) {
       return jsonResponse(
