@@ -2,7 +2,7 @@ project_id = "yyzrwjocniepskofoehu"
 
 [auth]
 site_url = "https://horalix.com"
-additional_redirect_urls = ["https://horalix.com", "https://www.horalix.com", "https://horalix.com/verify-email"]
+additional_redirect_urls = ["https://horalix.com/**", "https://www.horalix.com/**"]
 
 [functions.send-contact-notification]
 verify_jwt = false

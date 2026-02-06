@@ -1,7 +1,7 @@
 /**
  * Edge function: send-contact-notification
- * Sends email notification to all admins when a new contact form submission is received
- * Triggered via database webhook with webhook secret validation
+ * Sends email notification to team + confirmation to user after contact form submission
+ * Called directly from frontend after insert, requires JWT auth
  */
 
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -9,236 +9,189 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 // CORS headers for cross-origin requests
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-secret",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
-interface ContactSubmission {
-  id: string;
-  name: string;
-  email: string;
-  message: string;
-  created_at: string;
-}
-
-interface WebhookPayload {
-  type: "INSERT";
-  table: string;
-  record: ContactSubmission;
-  schema: string;
+// Step 1: Helper to build JSON responses
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 }
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Step 1: Validate webhook secret to prevent unauthorized access
-    const webhookSecret = Deno.env.get("WEBHOOK_SECRET");
-    const providedSecret = req.headers.get("x-webhook-secret");
-    
-    if (!webhookSecret) {
-      console.error("WEBHOOK_SECRET not configured");
-      return new Response(
-        JSON.stringify({ error: "Server configuration error - WEBHOOK_SECRET not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    // Step 2: Validate required secrets
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const resendFrom = Deno.env.get("RESEND_FROM") || "Horalix <notifications@horalix.com>";
+    const siteUrl = Deno.env.get("SITE_URL") || "https://horalix.com";
+    const teamEmailsRaw = Deno.env.get("TEAM_NOTIFICATION_EMAILS") || "";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY not configured");
+      return jsonResponse({ error: "RESEND_API_KEY not configured" }, 500);
     }
-    
-    if (!providedSecret || providedSecret !== webhookSecret) {
-      console.error("Webhook secret validation failed");
-      return new Response(
-        JSON.stringify({ error: "Unauthorized - Invalid webhook secret" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Supabase credentials not configured");
+      return jsonResponse({ error: "Supabase credentials not configured" }, 500);
     }
 
-    // Step 2: Parse the webhook payload
-    const payload: WebhookPayload = await req.json();
+    // Step 3: Parse team emails
+    const teamEmails = teamEmailsRaw
+      .split(",")
+      .map((e) => e.trim())
+      .filter((e) => e.length > 0);
 
-    // Step 3: Validate payload structure
-    if (payload.type !== "INSERT" || payload.table !== "contact_submissions") {
-      return new Response(
-        JSON.stringify({ message: "Invalid webhook payload" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (teamEmails.length === 0) {
+      console.error("TEAM_NOTIFICATION_EMAILS is empty");
+      return jsonResponse({ error: "No team emails configured" }, 500);
     }
 
-    const submission = payload.record;
-
-    // Step 4: Validate submission data
-    if (!submission.name || !submission.email || !submission.message) {
-      return new Response(
-        JSON.stringify({ error: "Invalid submission data" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    // Step 4: Parse request body
+    const { submission_id } = await req.json();
+    if (!submission_id) {
+      return jsonResponse({ error: "submission_id is required" }, 400);
     }
 
-    // Step 5: Team email addresses
-    const teamEmails = [
-      "support@horalix.com",
-      "horalixai@gmail.com",
-      "neuman.alkhalil@outlook.com",
-      "kerim.sabic@gmail.com",
-    ];
+    // Step 5: Fetch submission from database
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log(`Will notify ${teamEmails.length} team members`);
+    const { data: submission, error: fetchError } = await supabase
+      .from("contact_submissions")
+      .select("*")
+      .eq("id", submission_id)
+      .single();
 
-    // Step 6: Generate AI summary using Lovable AI
-    let aiSummary = "Unable to generate summary.";
-    try {
-      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash-lite",
-          messages: [
-            {
-              role: "system",
-              content: "You are a professional email assistant. Generate a brief, professional summary of the contact form submission for internal team notification. Keep it concise - 2-3 sentences max."
-            },
-            {
-              role: "user",
-              content: `Summarize this contact form submission:\nName: ${submission.name}\nEmail: ${submission.email}\nMessage: ${submission.message}`
-            }
-          ],
-          max_tokens: 150,
-        }),
-      });
-
-      if (aiResponse.ok) {
-        const aiData = await aiResponse.json();
-        aiSummary = aiData.choices?.[0]?.message?.content || aiSummary;
-      }
-    } catch (aiError) {
-      console.error("AI summary error:", aiError);
+    if (fetchError || !submission) {
+      console.error("Submission not found:", fetchError);
+      return jsonResponse({ error: "Submission not found" }, 404);
     }
 
-    // Step 7: Format submission date
-    const submittedDate = new Date(submission.created_at).toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    // Step 8: Create email HTML content
-    const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #00D4FF, #00B4E6); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
-          .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
-          .summary { background: #e8f4f8; padding: 15px; border-left: 4px solid #00D4FF; margin: 15px 0; border-radius: 0 4px 4px 0; }
-          .message-box { background: white; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 15px 0; }
-          .detail { margin: 10px 0; }
-          .label { font-weight: 600; color: #555; }
-          .footer { text-align: center; margin-top: 20px; color: #888; font-size: 12px; }
-          .btn { display: inline-block; background: #00D4FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin-top: 15px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">New Contact Inquiry</h1>
-            <p style="margin: 5px 0 0 0; opacity: 0.9;">Horalix Contact Form</p>
-          </div>
-          <div class="content">
-            <div class="summary">
-              <strong>AI Summary:</strong><br/>
-              ${aiSummary}
-            </div>
-            
-            <div class="detail">
-              <span class="label">From:</span> ${submission.name}
-            </div>
-            <div class="detail">
-              <span class="label">Email:</span> <a href="mailto:${submission.email}">${submission.email}</a>
-            </div>
-            <div class="detail">
-              <span class="label">Received:</span> ${submittedDate}
-            </div>
-            
-            <div class="message-box">
-              <span class="label">Full Message:</span>
-              <p style="white-space: pre-wrap;">${submission.message}</p>
-            </div>
-            
-            <a href="https://horalix.com/admin/contacts" class="btn">View in Admin Panel</a>
-          </div>
-          <div class="footer">
-            <p>This is an automated notification from Horalix.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-
-    // Step 9: Send email to team via Resend
-    try {
-      const emailResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Horalix <notifications@horalix.com>",
-          to: teamEmails,
-          subject: `New Contact Inquiry from ${submission.name}`,
-          html: emailHtml,
-        }),
-      });
-
-      if (emailResponse.ok) {
-        const emailData = await emailResponse.json();
-        console.log("Email sent successfully to team:", emailData);
-      } else {
-        const errorData = await emailResponse.json();
-        console.error("Resend API error:", errorData);
-      }
-    } catch (emailError) {
-      console.error("Error sending email:", emailError);
-    }
-
-    // Step 10: Log for monitoring
-    console.log("=== NEW CONTACT FORM SUBMISSION ===");
-    console.log(`ID: ${submission.id}`);
-    console.log(`From: ${submission.name} <${submission.email}>`);
-    console.log(`Received: ${submission.created_at}`);
-    console.log(`Message: ${submission.message}`);
-    console.log(`AI Summary: ${aiSummary}`);
-    console.log(`Notified team: ${teamEmails.join(", ")}`);
-    console.log("===================================");
-
-    // Step 11: Return success response
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: "Notification processed",
-        submission_id: submission.id,
-        summary: aiSummary,
-        team_notified: teamEmails.length
-      }),
-      { 
-        status: 200, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    // Step 6: Format date for emails
+    const submittedDate = new Date(submission.created_at).toLocaleString(
+      "en-US",
+      {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       }
     );
+
+    // Step 7: Send team notification email
+    const teamHtml = `<!DOCTYPE html><html><head><style>
+      body{font-family:'Segoe UI',sans-serif;line-height:1.6;color:#333}
+      .container{max-width:600px;margin:0 auto;padding:20px}
+      .header{background:linear-gradient(135deg,#00D4FF,#00B4E6);color:#fff;padding:20px;border-radius:8px 8px 0 0}
+      .content{background:#f9f9f9;padding:20px;border-radius:0 0 8px 8px}
+      .detail{margin:10px 0}.label{font-weight:600;color:#555}
+      .message-box{background:#fff;padding:15px;border:1px solid #ddd;border-radius:4px;margin:15px 0}
+      .btn{display:inline-block;background:#00D4FF;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;margin-top:15px}
+    </style></head><body><div class="container">
+      <div class="header"><h1 style="margin:0">New Contact Inquiry</h1><p style="margin:5px 0 0;opacity:.9">Horalix Contact Form</p></div>
+      <div class="content">
+        <div class="detail"><span class="label">From:</span> ${submission.name}</div>
+        <div class="detail"><span class="label">Email:</span> <a href="mailto:${submission.email}">${submission.email}</a></div>
+        <div class="detail"><span class="label">Received:</span> ${submittedDate}</div>
+        <div class="message-box"><span class="label">Message:</span><p style="white-space:pre-wrap">${submission.message}</p></div>
+        <a href="${siteUrl}/admin/contacts" class="btn">View in Admin Panel</a>
+      </div>
+    </div></body></html>`;
+
+    let teamSent = false;
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: resendFrom,
+          to: teamEmails,
+          subject: `New Contact Inquiry from ${submission.name}`,
+          html: teamHtml,
+        }),
+      });
+      teamSent = res.ok;
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Resend team error:", err);
+      }
+    } catch (e) {
+      console.error("Team email error:", e);
+    }
+
+    // Step 8: Send user confirmation email
+    const userHtml = `<!DOCTYPE html><html><head><style>
+      body{font-family:'Segoe UI',sans-serif;line-height:1.6;color:#333;margin:0;padding:0}
+      .container{max-width:600px;margin:0 auto;padding:20px}
+      .header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:30px 20px;border-radius:8px 8px 0 0;text-align:center}
+      .header .logo{color:#00D4FF;font-weight:bold;font-size:28px;margin-bottom:10px}
+      .content{background:#f9f9f9;padding:30px 20px}
+      .footer{background:#1a1a2e;color:#888;padding:20px;text-align:center;border-radius:0 0 8px 8px;font-size:12px}
+      .footer a{color:#00D4FF;text-decoration:none}
+    </style></head><body><div class="container">
+      <div class="header"><div class="logo">HORALIX</div><h1 style="margin:0;font-size:20px">We Received Your Message</h1></div>
+      <div class="content">
+        <p>Hi ${submission.name},</p>
+        <p>Thank you for reaching out to Horalix. We've received your inquiry and our team will review it shortly.</p>
+        <p>You'll receive an update once we've reviewed your message. You can also track the status of your inquiry by logging in to your account.</p>
+      </div>
+      <div class="footer"><p>Thank you for contacting Horalix.</p><p><a href="${siteUrl}">horalix.com</a></p></div>
+    </div></body></html>`;
+
+    let userSent = false;
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: resendFrom,
+          to: [submission.email],
+          subject: "Horalix: We Received Your Message",
+          html: userHtml,
+        }),
+      });
+      userSent = res.ok;
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Resend user error:", err);
+      }
+    } catch (e) {
+      console.error("User email error:", e);
+    }
+
+    // Step 9: Return explicit result
+    console.log(
+      `Contact notification: team=${teamSent}, user=${userSent}, id=${submission_id}`
+    );
+
+    return jsonResponse({
+      ok: true,
+      team_notified: teamSent,
+      user_notified: userSent,
+      submission_id,
+    });
   } catch (error) {
-    console.error("Error processing contact notification:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process notification" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    console.error("Error in send-contact-notification:", error);
+    return jsonResponse(
+      { error: "Failed to process notification", details: String(error) },
+      500
     );
   }
 });

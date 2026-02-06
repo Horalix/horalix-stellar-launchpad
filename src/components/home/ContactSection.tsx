@@ -81,14 +81,21 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
             hasAutoSubmitted.current = true;
             setIsSubmitting(true);
 
-            const { error } = await supabase.from("contact_submissions").insert({
+            const { data: insertData, error } = await supabase.from("contact_submissions").insert({
               name: parsed.name,
               email: parsed.email,
               message: parsed.message,
               user_id: user.id,
-            });
+            }).select("id").single();
 
             if (error) throw error;
+
+            // Invoke notification edge function (non-blocking)
+            supabase.functions.invoke("send-contact-notification", {
+              body: { submission_id: insertData.id },
+            }).then(({ error: fnError }) => {
+              if (fnError) console.error("Contact notification failed:", fnError);
+            });
 
             // Clear saved form data
             localStorage.removeItem(PENDING_CONTACT_KEY);
@@ -203,16 +210,34 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
 
     try {
       // Store submission in database (user is required now)
-      const { error } = await supabase
+      const { data: insertData, error } = await supabase
         .from("contact_submissions")
         .insert({
           name: result.data.name,
           email: result.data.email,
           message: result.data.message,
           user_id: user.id,
-        });
+        })
+        .select("id")
+        .single();
 
       if (error) throw error;
+
+      // Invoke notification edge function (non-blocking)
+      supabase.functions
+        .invoke("send-contact-notification", {
+          body: { submission_id: insertData.id },
+        })
+        .then(({ error: fnError }) => {
+          if (fnError) {
+            console.error("Contact notification failed:", fnError);
+            toast({
+              title: "Notification Warning",
+              description: "Your message was saved but the email notification may have failed.",
+              variant: "destructive",
+            });
+          }
+        });
 
       // Clear any saved form data
       localStorage.removeItem(PENDING_CONTACT_KEY);

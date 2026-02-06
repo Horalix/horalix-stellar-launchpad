@@ -120,32 +120,30 @@ const NewsManager = () => {
       // If article is published, trigger newsletter send
       if (article.is_published && articleId) {
         try {
-          const { data: sessionData } = await supabase.auth.getSession();
-          const accessToken = sessionData?.session?.access_token;
+          const { data: result, error: fnError } = await supabase.functions.invoke(
+            "send-newsletter",
+            { body: { article_id: articleId } }
+          );
 
-          if (accessToken) {
-            const response = await fetch(
-              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-newsletter`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({ article_id: articleId }),
-              }
-            );
-
-            const result = await response.json();
-            if (result.skipped) {
-              console.log("Newsletter already sent for this article");
-            } else if (result.success) {
-              console.log(`Newsletter sent to ${result.recipients} subscribers`);
-            }
+          if (fnError) {
+            console.error("Newsletter function error:", fnError);
+            throw new Error(`Newsletter send failed: ${fnError.message}`);
           }
-        } catch (newsletterError) {
+
+          if (result?.skipped) {
+            console.log("Newsletter already sent for this article");
+          } else if (result?.success) {
+            console.log(`Newsletter sent to ${result.recipients} subscribers`);
+          } else if (result?.error) {
+            console.error("Newsletter error:", result.error);
+            throw new Error(`Newsletter: ${result.error}`);
+          }
+        } catch (newsletterError: any) {
           console.error("Failed to send newsletter:", newsletterError);
-          // Don't fail the save if newsletter fails
+          // Re-throw so onError surfaces it in the UI
+          throw new Error(
+            `Article saved but newsletter failed: ${newsletterError.message}`
+          );
         }
       }
     },

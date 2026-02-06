@@ -12,7 +12,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SITE_URL = "https://horalix.com";
+const RESEND_FROM_DEFAULT = "Horalix <newsletter@horalix.com>";
 
 interface NewsletterRequest {
   article_id: string;
@@ -34,10 +34,20 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Step 2: Initialize Supabase clients
+    // Step 2: Initialize Supabase clients and validate secrets
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const resendFrom = Deno.env.get("RESEND_FROM") || RESEND_FROM_DEFAULT;
+    const siteUrl = Deno.env.get("SITE_URL") || "https://horalix.com";
+
+    if (!resendApiKey) {
+      return new Response(
+        JSON.stringify({ error: "RESEND_API_KEY not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
@@ -132,7 +142,7 @@ Deno.serve(async (req) => {
     }
 
     // Step 8: Prepare email content
-    const articleUrl = `${SITE_URL}/news/${article.slug}`;
+    const articleUrl = `${siteUrl}/news/${article.slug}`;
     const imageUrl = article.image_urls?.[0] || "";
 
     const emailHtml = `
@@ -177,9 +187,9 @@ Deno.serve(async (req) => {
           </div>
           <div class="footer">
             <p>Thank you for being part of the Horalix community.</p>
-            <p><a href="${SITE_URL}">horalix.com</a></p>
+            <p><a href="${siteUrl}">horalix.com</a></p>
             <p class="unsubscribe">
-              <a href="${SITE_URL}/unsubscribe?email={{EMAIL}}">Unsubscribe from newsletter</a>
+              <a href="${siteUrl}/unsubscribe?email={{EMAIL}}">Unsubscribe from newsletter</a>
             </p>
           </div>
         </div>
@@ -203,11 +213,11 @@ Deno.serve(async (req) => {
           const response = await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
+              "Authorization": `Bearer ${resendApiKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              from: "Horalix <newsletter@horalix.com>",
+              from: resendFrom,
               to: [email],
               subject: `New from Horalix: ${article.title}`,
               html: personalizedHtml,
