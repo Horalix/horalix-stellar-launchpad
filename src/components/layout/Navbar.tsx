@@ -1,25 +1,21 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useAuth } from "@/hooks/useAuth";
 import { UserProfileDropdown } from "@/components/layout/UserProfileDropdown";
+import { cn } from "@/lib/utils";
 import horalixLogo from "@/assets/horalix-logo.png";
 
-/**
- * Navbar - Main navigation component
- * Includes logo, navigation links, mobile menu, and active section highlighting
- */
-
-// Navigation items configuration
 const NAV_ITEMS = [
+  { label: "Time to Value", href: "/#time-to-value", sectionId: "time-to-value" },
   { label: "Solutions", href: "/#solutions", sectionId: "solutions" },
-  { label: "News", href: "/news", sectionId: null }, // Direct link for crawler visibility
+  { label: "News", href: "/#news", sectionId: "news" },
   { label: "Team", href: "/#team", sectionId: "team" },
   { label: "Contact", href: "/#contact", sectionId: "contact" },
-  { label: "FAQ", href: "/#faq", sectionId: "faq" },
-];
+] as const;
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,118 +23,108 @@ export const Navbar = () => {
   const activeSection = useActiveSection();
   const { user, isLoading } = useAuth();
 
-  /**
-   * Determine if a nav item should show as active
-   */
-  const getIsActive = (item: (typeof NAV_ITEMS)[number]): boolean => {
-    // Handle /news route
-    if (item.sectionId && location.pathname === "/") {
-      return activeSection === item.sectionId;
+  const getIsActive = (item: (typeof NAV_ITEMS)[number]) => {
+    if (location.pathname !== "/") {
+      return false;
     }
-    return false;
+
+    return location.hash === `#${item.sectionId}` || activeSection === item.sectionId;
   };
 
-  // Handle smooth scroll for hash links on homepage
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
 
-    if (href.startsWith("/#")) {
+    if (href.startsWith("/#") && location.pathname === "/") {
       const sectionId = href.substring(2);
-
-      // If already on homepage, scroll to section
-      if (location.pathname === "/") {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
       }
-      // Otherwise let the Link handle navigation
     }
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-40 border-b border-border bg-card/90 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        <div className="flex justify-between items-stretch h-16 md:h-20">
-          {/* Logo section */}
+    <header className="fixed left-0 top-0 z-40 w-full border-b border-border bg-card/90 backdrop-blur-md">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="flex h-16 items-stretch justify-between md:h-20">
           <Link
             to="/"
-            onClick={(e) => {
+            onClick={(event) => {
               if (location.pathname === "/") {
-                e.preventDefault();
+                event.preventDefault();
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            className="flex items-center gap-3 pr-6 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 pr-6 transition-opacity hover:opacity-80"
           >
-            <img src={horalixLogo} alt="Horalix" className="h-8 md:h-10 w-auto" />
+            <img src={horalixLogo} alt="Horalix" className="h-8 w-auto md:h-10" />
           </Link>
 
-          {/* Desktop navigation */}
-          <nav className="hidden md:flex items-center gap-8 px-8">
+          <nav className="hidden items-center gap-8 px-8 md:flex">
             {NAV_ITEMS.map((item) => {
               const isActive = getIsActive(item);
+
               return (
                 <Link
                   key={item.label}
                   to={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className={`text-xs font-bold uppercase tracking-widest transition-colors relative group ${
-                    isActive ? "text-accent" : "text-muted-foreground hover:text-accent"
-                  }`}
+                  className={cn(
+                    "group relative text-xs font-bold uppercase tracking-widest transition-colors",
+                    isActive ? "text-accent" : "text-muted-foreground hover:text-accent",
+                  )}
                 >
                   {item.label}
                   <span
-                    className={`absolute -bottom-7 left-0 w-full h-0.5 bg-accent transition-transform ${
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                    }`}
+                    className={cn(
+                      "absolute -bottom-7 left-0 h-0.5 w-full bg-accent transition-transform",
+                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                    )}
                   />
                 </Link>
               );
             })}
           </nav>
 
-          {/* Right section - auth */}
           <div className="flex items-center gap-4 md:gap-6">
-            {/* Show user dropdown if logged in, login button if not */}
             {!isLoading &&
               (user ? (
                 <UserProfileDropdown />
               ) : (
                 <Link to="/login">
-                  <Button variant="default" className="hidden sm:flex text-xs font-bold uppercase tracking-widest">
+                  <Button variant="default" className="hidden text-xs font-bold uppercase tracking-widest sm:flex">
                     Login
                   </Button>
                 </Link>
               ))}
 
-            {/* Mobile menu toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-secondary transition-colors"
+              className="p-2 transition-colors hover:bg-secondary md:hidden"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile navigation menu */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden bg-card border-t border-border animate-fade-in-up">
+          <nav className="animate-fade-in-up border-t border-border bg-card md:hidden">
             <div className="flex flex-col py-4">
               {NAV_ITEMS.map((item) => {
                 const isActive = getIsActive(item);
+
                 return (
                   <Link
                     key={item.label}
                     to={item.href}
                     onClick={() => handleNavClick(item.href)}
-                    className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors ${
+                    className={cn(
+                      "px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors",
                       isActive
-                        ? "text-accent bg-secondary border-l-2 border-accent"
-                        : "text-muted-foreground hover:text-accent hover:bg-secondary"
-                    }`}
+                        ? "border-l-2 border-accent bg-secondary text-accent"
+                        : "text-muted-foreground hover:bg-secondary hover:text-accent",
+                    )}
                   >
                     {item.label}
                   </Link>

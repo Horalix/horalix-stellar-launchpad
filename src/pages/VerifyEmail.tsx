@@ -80,6 +80,7 @@ export default function VerifyEmail() {
         title="Verify Email | Horalix"
         description="Check your email to verify your Horalix account."
         canonical="/verify-email"
+        noindex
       />
       <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center">

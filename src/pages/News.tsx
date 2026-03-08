@@ -6,6 +6,7 @@ import { Newspaper, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import SEO from "@/components/SEO";
+import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
 
 /**
  * News - News listing page
@@ -38,17 +39,28 @@ const News = () => {
   const description =
     "The latest updates, announcements, and insights from Horalix.";
   const canonical = "/news";
-  const jsonLd: Record<string, any> = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "News",
-    description,
-    url: canonical,
-    publisher: {
-      "@type": "Organization",
-      name: "Horalix",
+  const canonicalUrl = "https://horalix.com/news";
+  // [SEO] CollectionPage + BreadcrumbList (was missing breadcrumb — all other listing pages have it)
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${canonicalUrl}#collection`,
+      name: "Horalix News",
+      description,
+      url: canonicalUrl,
+      publisher: {
+        "@type": "Organization",
+        "@id": "https://horalix.com/#organization",
+        name: "Horalix",
+        url: "https://horalix.com/",
+      },
     },
-  };
+    buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "News", path: "/news" },
+    ]),
+  ];
 
   return (
     <MainLayout>

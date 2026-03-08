@@ -1,5 +1,6 @@
 import { Users, ExternalLink, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 // Import team member photos as fallbacks
@@ -19,6 +20,13 @@ const PHOTO_FALLBACKS: Record<string, string> = {
   "/assets/team/affan.jpg": affanPhoto,
   "/assets/team/neuman.jpg": neumanPhoto,
   "/assets/team/amr.jpg": amrPhoto,
+};
+
+const TEAM_PROFILE_SLUGS: Record<string, string> = {
+  "Kerim Sabic": "kerim-sabic",
+  "Amr Husain": "amr-husain",
+  "Affan Kapidzic": "affan-kapidzic",
+  "Neuman Alkhalil": "neuman-alkhalil",
 };
 
 const getPhotoUrl = (photoUrl: string | null): string => {
@@ -76,47 +84,60 @@ export const TeamSection = () => {
         {/* Step 5: Team members grid */}
         {!isLoading && teamMembers && teamMembers.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teamMembers.map((member, i) => (
-              <a
-                key={member.id}
-                href={member.linkedin_url || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group border border-border bg-card hover:border-accent transition-all duration-300"
-              >
-                {/* Photo area */}
-                <div className="aspect-[4/5] w-full overflow-hidden border-b border-border relative grayscale group-hover:grayscale-0 transition-all">
-                  <img
-                    src={getPhotoUrl(member.photo_url)}
-                    alt={member.name}
-                    className="w-full h-full object-cover object-top"
-                  />
-                  {/* ID badge overlay */}
-                  <div className="absolute bottom-0 left-0 bg-card/90 backdrop-blur px-3 py-1 border-t border-r border-border text-[10px] font-mono font-bold uppercase">
-                    ID: HX-0{i + 1}
-                  </div>
-                  {/* LinkedIn indicator */}
-                  {member.linkedin_url && (
-                    <div className="absolute top-4 right-4 w-8 h-8 bg-accent text-accent-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ExternalLink className="w-4 h-4" />
+            {teamMembers.map((member, i) => {
+              const profileSlug = TEAM_PROFILE_SLUGS[member.name];
+              const cardContent = (
+                <>
+                  <div className="aspect-[4/5] w-full overflow-hidden border-b border-border relative grayscale group-hover:grayscale-0 transition-all">
+                    <img
+                      src={getPhotoUrl(member.photo_url)}
+                      alt={member.name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                    <div className="absolute bottom-0 left-0 bg-card/90 backdrop-blur px-3 py-1 border-t border-r border-border text-[10px] font-mono font-bold uppercase">
+                      ID: HX-0{i + 1}
                     </div>
-                  )}
-                </div>
-
-                {/* Info section */}
-                <div className="p-6">
-                  <h4 className="font-space font-bold text-lg mb-1 group-hover:text-accent transition-colors">
-                    {member.name}
-                  </h4>
-                  <div className="text-xs font-mono text-accent uppercase mb-4 tracking-wider">
-                    {member.role}
+                    {member.linkedin_url && (
+                      <div className="absolute top-4 right-4 w-8 h-8 bg-accent text-accent-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ExternalLink className="w-4 h-4" />
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-4">
-                    {member.bio}
-                  </p>
-                </div>
-              </a>
-            ))}
+
+                  <div className="p-6">
+                    <h4 className="font-space font-bold text-lg mb-1 group-hover:text-accent transition-colors">
+                      {member.name}
+                    </h4>
+                    <div className="text-xs font-mono text-accent uppercase mb-4 tracking-wider">
+                      {member.role}
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-4">
+                      {member.bio}
+                    </p>
+                  </div>
+                </>
+              );
+
+              return profileSlug ? (
+                <Link
+                  key={member.id}
+                  to={`/team/${profileSlug}`}
+                  className="group border border-border bg-card hover:border-accent transition-all duration-300"
+                >
+                  {cardContent}
+                </Link>
+              ) : (
+                <a
+                  key={member.id}
+                  href={member.linkedin_url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group border border-border bg-card hover:border-accent transition-all duration-300"
+                >
+                  {cardContent}
+                </a>
+              );
+            })}
           </div>
         )}
       </div>

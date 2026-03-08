@@ -68,6 +68,7 @@ export default function Unsubscribe() {
         title="Unsubscribe | Horalix"
         description="Unsubscribe from Horalix newsletter."
         canonical="/unsubscribe"
+        noindex
       />
       <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center">

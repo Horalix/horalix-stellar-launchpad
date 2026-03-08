@@ -148,6 +148,7 @@ export default function ProfileSubmissions() {
           title="My Submissions | Horalix"
           description="View and manage your contact form submissions."
           canonical="/profile/submissions"
+          noindex
         />
         <Navbar />
         <div className="pt-20 flex items-center justify-center min-h-[50vh]">
@@ -164,6 +165,7 @@ export default function ProfileSubmissions() {
         title="My Submissions | Horalix"
         description="View and manage your contact form submissions."
         canonical="/profile/submissions"
+        noindex
       />
       <Navbar />
 

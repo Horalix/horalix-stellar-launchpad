@@ -107,6 +107,7 @@ export default function Login() {
         title="Log In | Horalix"
         description="Sign in to access your Horalix account."
         canonical="/login"
+        noindex
       />
       <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">

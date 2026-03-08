@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import horalixLogo from "@/assets/horalix-logo.png";
 import SEO from "@/components/SEO";
+import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
 
 /**
  * Terms - Terms and Conditions page
@@ -8,12 +9,20 @@ import SEO from "@/components/SEO";
  */
 
 export default function Terms() {
+  const jsonLd = [
+    buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Terms", path: "/terms" },
+    ]),
+  ];
+
   return (
     <>
       <SEO
         title="Terms and Conditions | Horalix"
         description="Read the Horalix terms and conditions for using our services."
         canonical="/terms"
+        jsonLd={jsonLd}
       />
       <div className="min-h-screen bg-background">
         {/* Header */}

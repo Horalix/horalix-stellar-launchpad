@@ -302,6 +302,7 @@ export default function Profile() {
           title="Profile Settings | Horalix"
           description="Manage your account settings and preferences."
           canonical="/profile"
+          noindex
         />
         <Navbar />
         <div className="pt-20 flex items-center justify-center min-h-[50vh]">
@@ -318,6 +319,7 @@ export default function Profile() {
         title="Profile Settings | Horalix"
         description="Manage your account settings and preferences."
         canonical="/profile"
+        noindex
       />
       <Navbar />
       

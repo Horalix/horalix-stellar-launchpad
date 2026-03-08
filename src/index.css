@@ -220,3 +220,81 @@
 .animate-fade-in-up {
   animation: fade-in-up 0.6s ease-out forwards;
 }
+
+/* Time-to-value section reveal animation */
+@keyframes ttv-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ttv-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.ttv-reveal-visible {
+  animation: ttv-reveal-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--ttv-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.ttv-hover-lift {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.ttv-hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* [PERF][ART] Progress bar fill — GPU-accelerated via scaleX transform */
+@keyframes ttv-progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.ttv-progress-bar {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.ttv-progress-bar-visible {
+  animation: ttv-progress-fill 900ms cubic-bezier(0.22, 1, 0.36, 1) 600ms both;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ttv-reveal,
+  .ttv-reveal-visible {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    will-change: auto;
+  }
+
+  .ttv-hover-lift,
+  .ttv-hover-lift:hover {
+    transform: none;
+    transition: none;
+  }
+
+  /* [A11Y] Immediately show full bar when motion is reduced */
+  .ttv-progress-bar,
+  .ttv-progress-bar-visible {
+    transform: scaleX(1) !important;
+    animation: none !important;
+    will-change: auto;
+  }
+}

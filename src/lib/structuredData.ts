@@ -1,0 +1,238 @@
+import { CANONICAL_SITE_URL } from "@/lib/canonical";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
+
+type ContributorInput = {
+  name: string;
+  role: string;
+  bioLong: string;
+  slug: string;
+  focusAreas: string[];
+  sameAs: string[];
+};
+
+type ResourceInput = {
+  title: string;
+  summary: string;
+  publishedAt: string;
+  updatedAt: string;
+  slug: string;
+};
+
+type SolutionInput = {
+  name: string;
+  slug: string;
+  short_description: string;
+  icon_name?: string;
+};
+
+type CollectionItem = {
+  name: string;
+  url?: string;
+  path?: string;
+  description?: string;
+};
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+
+export const absoluteUrl = (path: string) => {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${CANONICAL_SITE_URL}${normalizedPath}`;
+};
+
+// ─── Schema Builders ──────────────────────────────────────────────────────────
+
+export const buildBreadcrumbJsonLd = (items: BreadcrumbItem[]) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: items.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.name,
+    item: absoluteUrl(item.path),
+  })),
+});
+
+// [SEO] Full Organization with @id, contactPoint, logo as ImageObject
+export const buildOrganizationJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${CANONICAL_SITE_URL}/#organization`,
+  name: "Horalix",
+  url: `${CANONICAL_SITE_URL}/`,
+  logo: {
+    "@type": "ImageObject",
+    "@id": `${CANONICAL_SITE_URL}/#logo`,
+    url: `${CANONICAL_SITE_URL}/assets/horalix-logo-white.png`,
+    contentUrl: `${CANONICAL_SITE_URL}/assets/horalix-logo-white.png`,
+  },
+  description:
+    "Horalix builds AI-powered clinical workflow software for faster, more structured echocardiography reporting.",
+  foundingDate: "2024",
+  areaServed: "Europe",
+  industry: "Medical Software",
+  sameAs: ["https://www.linkedin.com/company/horalix/"],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    email: "support@horalix.com",
+    areaServed: "Europe",
+  },
+});
+
+// [SEO] WebSite with @id and publisher reference
+export const buildWebSiteJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${CANONICAL_SITE_URL}/#website`,
+  name: "Horalix",
+  url: `${CANONICAL_SITE_URL}/`,
+  inLanguage: "en",
+  publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+});
+
+// [SEO][E-E-A-T] Person with @id, worksFor reference, knowsAbout
+export const buildPersonJsonLd = (contributor: ContributorInput) => ({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": absoluteUrl(`/team/${contributor.slug}#person`),
+  name: contributor.name,
+  jobTitle: contributor.role,
+  description: contributor.bioLong,
+  url: absoluteUrl(`/team/${contributor.slug}`),
+  worksFor: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+  knowsAbout: contributor.focusAreas,
+  sameAs: contributor.sameAs,
+});
+
+// [SEO] Article with @id, author as Person reference, publisher reference
+export const buildArticleJsonLd = (
+  resource: ResourceInput,
+  authorName: string,
+  authorSlug: string,
+) => ({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "@id": absoluteUrl(`/resources/${resource.slug}#article`),
+  headline: resource.title,
+  description: resource.summary,
+  datePublished: resource.publishedAt,
+  dateModified: resource.updatedAt,
+  url: absoluteUrl(`/resources/${resource.slug}`),
+  inLanguage: "en",
+  author: {
+    "@type": "Person",
+    "@id": absoluteUrl(`/team/${authorSlug}#person`),
+    name: authorName,
+    url: absoluteUrl(`/team/${authorSlug}`),
+  },
+  publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+  isPartOf: { "@id": absoluteUrl("/resources#collection") },
+});
+
+// [SEO] CollectionPage with ItemList enumeration for rich results
+export const buildCollectionWithItemsJsonLd = (
+  name: string,
+  description: string,
+  path: string,
+  items: CollectionItem[],
+) => ({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": absoluteUrl(`${path}#collection`),
+  name,
+  description,
+  url: absoluteUrl(path),
+  publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+  mainEntity: {
+    "@type": "ItemList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: item.url || absoluteUrl(item.path || "/"),
+      ...(item.description ? { description: item.description } : {}),
+    })),
+  },
+});
+
+// [SEO] SoftwareApplication for solution detail pages
+export const buildSoftwareApplicationJsonLd = (solution: SolutionInput) => ({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": absoluteUrl(`/solutions/${solution.slug}#software`),
+  name: solution.name,
+  description: solution.short_description,
+  url: absoluteUrl(`/solutions/${solution.slug}`),
+  applicationCategory: "HealthApplication",
+  operatingSystem: "Web",
+  publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+});
+
+// [SEO] ProfilePage for team member detail pages
+export const buildProfilePageJsonLd = (contributor: ContributorInput) => ({
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": absoluteUrl(`/team/${contributor.slug}#profile`),
+  url: absoluteUrl(`/team/${contributor.slug}`),
+  description: contributor.bioLong,
+  mainEntity: {
+    "@type": "Person",
+    "@id": absoluteUrl(`/team/${contributor.slug}#person`),
+    name: contributor.name,
+    jobTitle: contributor.role,
+    description: contributor.bioLong,
+    url: absoluteUrl(`/team/${contributor.slug}`),
+    worksFor: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+    knowsAbout: contributor.focusAreas,
+    sameAs: contributor.sameAs,
+  },
+});
+
+// [SEO] NewsArticle schema
+export const buildNewsArticleJsonLd = (article: {
+  title: string;
+  summary: string;
+  slug: string;
+  published_at?: string;
+  display_date?: string;
+  updated_at?: string;
+  image_urls?: string[];
+  authorName?: string;
+  authorSlug?: string;
+}) => {
+  const datePublished = article.display_date ?? article.published_at ?? new Date().toISOString();
+  const author =
+    article.authorName && article.authorSlug
+      ? {
+          "@type": "Person" as const,
+          "@id": absoluteUrl(`/team/${article.authorSlug}#person`),
+          name: article.authorName,
+          url: absoluteUrl(`/team/${article.authorSlug}`),
+        }
+      : {
+          "@type": "Organization" as const,
+          "@id": `${CANONICAL_SITE_URL}/#organization`,
+          name: "Horalix",
+          url: `${CANONICAL_SITE_URL}/`,
+        };
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "@id": absoluteUrl(`/news/${article.slug}#article`),
+    headline: article.title,
+    description: article.summary,
+    datePublished,
+    ...(article.updated_at ? { dateModified: article.updated_at } : {}),
+    ...(article.image_urls?.length ? { image: article.image_urls } : {}),
+    url: absoluteUrl(`/news/${article.slug}`),
+    author,
+    publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+  };
+};

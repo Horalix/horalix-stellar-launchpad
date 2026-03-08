@@ -49,3 +49,19 @@ export function authRedirectUrl(path: string): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${CANONICAL_SITE_URL}${normalizedPath}`;
 }
+
+/**
+ * toCanonicalUrl
+ * Resolves relative or absolute URLs to the canonical site host.
+ */
+export function toCanonicalUrl(input?: string): string | undefined {
+  if (!input) return undefined;
+
+  try {
+    // Resolve relative and absolute inputs against canonical host.
+    const parsed = new URL(input, CANONICAL_SITE_URL);
+    return `${CANONICAL_SITE_URL}${parsed.pathname}${parsed.search}`;
+  } catch {
+    return undefined;
+  }
+}

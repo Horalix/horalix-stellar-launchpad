@@ -185,6 +185,7 @@ export default function Signup() {
         title="Sign Up | Horalix"
         description="Create your Horalix account to get started."
         canonical="/signup"
+        noindex
       />
       <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">

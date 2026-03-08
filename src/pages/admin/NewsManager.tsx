@@ -28,6 +28,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import type { Tables } from "@/integrations/supabase/types";
 
 /**
  * NewsManager - Admin page for managing news articles
@@ -45,6 +46,7 @@ interface ArticleForm {
   image_urls: string[];
   image_focus: Array<{ x: number; y: number }>;
   display_date: string;
+  author_id: string;
   is_published: boolean;
 }
 
@@ -58,8 +60,12 @@ const defaultForm: ArticleForm = {
   image_urls: [],
   image_focus: [],
   display_date: "",
+  author_id: "",
   is_published: false,
 };
+
+type NewsArticleRow = Tables<"news_articles">;
+type ImageFocusPoint = { x?: number; y?: number };
 
 const NewsManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -81,6 +87,15 @@ const NewsManager = () => {
     },
   });
 
+  const { data: contributors } = useQuery({
+    queryKey: ["admin-news-contributors"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("contributors").select("id, name").order("display_order", { ascending: true });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   // Create/Update mutation
   const saveMutation = useMutation({
     mutationFn: async (article: ArticleForm) => {
@@ -92,6 +107,7 @@ const NewsManager = () => {
         content: article.content,
         category: article.category,
         location: article.location || null,
+        author_id: article.author_id || null,
         image_urls: article.image_urls,
         image_focus: article.image_focus,
         display_date: article.display_date ? new Date(article.display_date).toISOString() : null,
@@ -140,9 +156,11 @@ const NewsManager = () => {
           } else if (result?.success) {
             console.log(`Newsletter sent to ${result.recipients} subscribers`);
           }
-        } catch (newsletterError: any) {
+        } catch (newsletterError: unknown) {
+          const message =
+            newsletterError instanceof Error ? newsletterError.message : "Unknown newsletter error";
           console.error("Failed to send newsletter:", newsletterError);
-          newsletterWarning = `Newsletter failed: ${newsletterError.message}`;
+          newsletterWarning = `Newsletter failed: ${message}`;
         }
       }
 
@@ -165,7 +183,7 @@ const NewsManager = () => {
 
       toast({ title: isEditing ? "Article updated" : "Article created" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ variant: "destructive", title: "Error", description: error.message });
     },
   });
@@ -180,24 +198,27 @@ const NewsManager = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-news"] });
       toast({ title: "Article deleted" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ variant: "destructive", title: "Error", description: error.message });
     },
   });
 
   // Parse image_urls from database
-  const parseImageUrls = (article: any): string[] => {
+  const parseImageUrls = (article: NewsArticleRow): string[] => {
     if (Array.isArray(article.image_urls) && article.image_urls.length > 0) {
-      return article.image_urls;
+      return article.image_urls.filter((url): url is string => typeof url === "string");
     }
     return [];
   };
 
   // Parse image_focus from database and normalize to match image count
-  const parseImageFocus = (article: any, imageCount: number): Array<{ x: number; y: number }> => {
+  const parseImageFocus = (article: NewsArticleRow, imageCount: number): Array<{ x: number; y: number }> => {
     let focus: Array<{ x: number; y: number }> = [];
     if (Array.isArray(article.image_focus)) {
-      focus = article.image_focus.map((f: any) => ({ x: f?.x ?? 50, y: f?.y ?? 50 }));
+      focus = article.image_focus.map((focusPoint) => {
+        const point = (focusPoint as ImageFocusPoint) || {};
+        return { x: point.x ?? 50, y: point.y ?? 50 };
+      });
     }
     // Normalize array length to match image count
     while (focus.length < imageCount) {
@@ -207,7 +228,7 @@ const NewsManager = () => {
   };
 
   // Open edit dialog
-  const handleEdit = (article: any) => {
+  const handleEdit = (article: NewsArticleRow) => {
     const urls = parseImageUrls(article);
     const focus = parseImageFocus(article, urls.length);
     
@@ -222,6 +243,7 @@ const NewsManager = () => {
       image_urls: urls,
       image_focus: focus,
       display_date: article.display_date ? article.display_date.split("T")[0] : "",
+      author_id: article.author_id || "",
       is_published: article.is_published,
     });
     setIsEditing(true);
@@ -330,6 +352,21 @@ const NewsManager = () => {
                         Override the date shown on the article (for older events)
                       </p>
                     </div>
+                    <div className="col-span-2 space-y-2">
+                      <Label>Author (optional)</Label>
+                      <select
+                        value={form.author_id}
+                        onChange={(e) => setForm({ ...form, author_id: e.target.value })}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      >
+                        <option value="">Horalix</option>
+                        {contributors?.map((contributor) => (
+                          <option key={contributor.id} value={contributor.id}>
+                            {contributor.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="col-span-2">
                       <MultiImageUpload
                         bucket="news-images"
@@ -425,7 +462,7 @@ const NewsManager = () => {
                           ? format(new Date(article.display_date), "MMM d, yyyy")
                           : article.published_at 
                             ? format(new Date(article.published_at), "MMM d, yyyy")
-                            : "—"}
+                            : "-"}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">

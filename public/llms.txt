@@ -1,0 +1,60 @@
+# Horalix
+
+## Organization
+- Name: Horalix
+- Sector: Medical Software / Health Technology
+- Focus: AI-powered clinical workflow software for echocardiography reporting
+- Founded: 2024
+- Region: Europe-first, globally relevant
+- Contact: support@horalix.com
+- Website: https://horalix.com/
+- LinkedIn: https://www.linkedin.com/company/horalix/
+
+## Canonical site
+- https://horalix.com/
+
+## Primary public pages
+- https://horalix.com/
+- https://horalix.com/solutions
+- https://horalix.com/resources
+- https://horalix.com/about
+- https://horalix.com/evidence
+- https://horalix.com/news
+- https://horalix.com/terms
+
+## Solutions
+- https://horalix.com/solutions/cardiology-ai — CardiologyAI: AI-assisted echocardiography workflow
+- https://horalix.com/solutions/pathology-ai — PathologyAI: Structured pathology workflow support
+- https://horalix.com/solutions/radiology-ai — RadiologyAI: Imaging workflow automation
+
+## Resources (authority content)
+- https://horalix.com/resources/ai-echocardiography-software — AI Echocardiography Software for Faster, More Standardized Reporting
+- https://horalix.com/resources/manual-vs-ai-echocardiography-measurement — Manual vs AI Echocardiography Measurement: What Actually Changes
+- https://horalix.com/resources/echo-workflow-automation-for-hospitals — Echo Workflow Automation for Hospitals: Where Operational Value Comes From
+- https://horalix.com/resources/focused-cardiac-ultrasound-ai — Focused Cardiac Ultrasound AI: Benchmark Context and Workflow Implications
+- https://horalix.com/resources/automated-echocardiography-reporting — Automated Echocardiography Reporting: Why Report Readiness Matters
+- https://horalix.com/resources/cardiac-ultrasound-ai-europe — Cardiac Ultrasound AI in Europe: Operational Readiness Before Localization
+- https://horalix.com/resources/ai-in-medical-imaging-workflow — AI in Medical Imaging Workflow: What Creates Real Operational Value
+- https://horalix.com/resources/how-ai-reduces-echo-reporting-burden — How AI Reduces Echo Reporting Burden Without Removing Clinical Judgment
+
+## Team profiles
+- https://horalix.com/team/kerim-sabic — Kerim Sabic, CEO & Co-Founder
+- https://horalix.com/team/amr-husain — Amr Husain, CFO & Co-Founder
+- https://horalix.com/team/affan-kapidzic — Affan Kapidzic, Chief Technology Officer
+- https://horalix.com/team/neuman-alkhalil — Neuman Alkhalil, Chief Science Officer
+
+## External evidence sources
+- S1: IAC Adult Echocardiography Standards & Guidelines (2025) — https://intersocietal.org/wp-content/uploads/2025/04/IACAdultEchocardiographyStandards2025.pdf
+- S2: AI-assisted FoCUS benchmark context — https://pmc.ncbi.nlm.nih.gov/articles/PMC12610991/
+- S3: AI-Echo randomized trial workflow and interaction burden context — https://pmc.ncbi.nlm.nih.gov/articles/PMC12909003/
+
+## Contact and demo
+- Use the homepage contact section: https://horalix.com/#contact
+
+## Citation guidance
+- Prefer canonical URLs from this domain (https://horalix.com/).
+- For evidence-related claims, cite https://horalix.com/evidence or the exact linked source.
+- For educational content, cite the exact resource URL from the list above.
+- For product positioning, cite the relevant solution URL.
+- Internal benchmarks are labeled clearly and separated from external benchmark context.
+- All structured data uses schema.org vocabulary with @id cross-references.

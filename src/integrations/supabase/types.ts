@@ -53,6 +53,63 @@ export type Database = {
         }
         Relationships: []
       }
+      contributors: {
+        Row: {
+          bio_long: string | null
+          bio_short: string
+          contributor_type: string
+          created_at: string
+          credentials: string | null
+          display_order: number
+          id: string
+          is_public: boolean
+          linkedin_url: string | null
+          name: string
+          photo_url: string | null
+          role: string
+          same_as: Json
+          slug: string
+          specialty: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio_long?: string | null
+          bio_short: string
+          contributor_type?: string
+          created_at?: string
+          credentials?: string | null
+          display_order?: number
+          id?: string
+          is_public?: boolean
+          linkedin_url?: string | null
+          name: string
+          photo_url?: string | null
+          role: string
+          same_as?: Json
+          slug: string
+          specialty?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio_long?: string | null
+          bio_short?: string
+          contributor_type?: string
+          created_at?: string
+          credentials?: string | null
+          display_order?: number
+          id?: string
+          is_public?: boolean
+          linkedin_url?: string | null
+          name?: string
+          photo_url?: string | null
+          role?: string
+          same_as?: Json
+          slug?: string
+          specialty?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
@@ -264,6 +321,96 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      resources: {
+        Row: {
+          author_id: string | null
+          canonical_path: string | null
+          content: string
+          content_type: string
+          created_at: string
+          cta_variant: string | null
+          hero_image_url: string | null
+          id: string
+          is_published: boolean
+          primary_keyword: string | null
+          published_at: string | null
+          region_scope: string
+          reviewed_at: string | null
+          reviewer_id: string | null
+          secondary_keywords: Json
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          summary: string
+          title: string
+          topic_cluster: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          canonical_path?: string | null
+          content: string
+          content_type?: string
+          created_at?: string
+          cta_variant?: string | null
+          hero_image_url?: string | null
+          id?: string
+          is_published?: boolean
+          primary_keyword?: string | null
+          published_at?: string | null
+          region_scope?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          secondary_keywords?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          summary: string
+          title: string
+          topic_cluster?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          canonical_path?: string | null
+          content?: string
+          content_type?: string
+          created_at?: string
+          cta_variant?: string | null
+          hero_image_url?: string | null
+          id?: string
+          is_published?: boolean
+          primary_keyword?: string | null
+          published_at?: string | null
+          region_scope?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          secondary_keywords?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          summary?: string
+          title?: string
+          topic_cluster?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "contributors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "contributors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_content: {
         Row: {

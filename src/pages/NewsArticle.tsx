@@ -1,23 +1,20 @@
-import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Calendar, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ImageSlider } from "@/components/ui/image-slider";
 import { format } from "date-fns";
-import SEO from "@/components/SEO";
+import { ArrowLeft, Calendar, MapPin } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
-/**
- * NewsArticle - Individual news article page
- * Fetches and displays a single article by slug
- */
+import SEO from "@/components/SEO";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { Button } from "@/components/ui/button";
+import { ImageSlider } from "@/components/ui/image-slider";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { supabase } from "@/integrations/supabase/client";
+import { buildBreadcrumbJsonLd, buildNewsArticleJsonLd } from "@/lib/structuredData";
 
 const NewsArticle = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  // Step 1: Fetch article data
   const { data: article, isLoading, error } = useQuery({
     queryKey: ["news-article", slug],
     queryFn: async () => {
@@ -28,24 +25,32 @@ const NewsArticle = () => {
         .eq("is_published", true)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
+
       return data;
     },
     enabled: !!slug,
   });
 
-  // Step 2: Loading state
   if (isLoading) {
     return (
       <MainLayout>
-        <article className="pt-32 pb-24 px-6 lg:px-12">
-          <div className="max-w-3xl mx-auto">
-            <Skeleton className="h-6 w-32 mb-8" />
-            <Skeleton className="h-12 w-full mb-4" />
-            <Skeleton className="h-6 w-1/2 mb-8" />
-            <Skeleton className="h-64 w-full mb-8" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
+        {/* [SEO] Prevent stale meta from previous route leaking during loading */}
+        <SEO
+          title={`${slug ? slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "Loading"} | Horalix`}
+          description="Loading news article from Horalix."
+          canonical={`/news/${slug ?? ""}`}
+        />
+        <article className="px-6 pb-24 pt-24 lg:px-12">
+          <div className="mx-auto max-w-3xl">
+            <Skeleton className="mb-8 h-6 w-32" />
+            <Skeleton className="mb-4 h-12 w-full" />
+            <Skeleton className="mb-8 h-6 w-1/2" />
+            <Skeleton className="mb-8 h-64 w-full" />
+            <Skeleton className="mb-2 h-4 w-full" />
+            <Skeleton className="mb-2 h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
           </div>
         </article>
@@ -53,161 +58,161 @@ const NewsArticle = () => {
     );
   }
 
-  // Step 3: Not found state
   if (error || !article) {
     return (
       <MainLayout>
-        {/* SEO for not found article */}
         <SEO
           title="Article Not Found | Horalix"
-          description="The article you're looking for doesn't exist or has been removed."
+          description="The article you are looking for does not exist or has been removed."
           canonical={`/news/${slug ?? ""}`}
+          noindex
         />
-        <div className="pt-32 pb-24 px-6 lg:px-12 text-center">
-          <div className="max-w-xl mx-auto">
-            <h1 className="text-4xl font-bold font-space mb-4">Article Not Found</h1>
-            <p className="text-muted-foreground mb-8">
-              The article you're looking for doesn't exist or has been removed.
+        <div className="px-6 pb-24 pt-24 text-center lg:px-12">
+          <div className="mx-auto max-w-xl border border-border bg-card p-10 shadow-sm">
+            <h1 className="font-space text-4xl font-bold text-primary">Article Not Found</h1>
+            <p className="mt-4 text-muted-foreground">
+              The article you are looking for does not exist or has been removed.
             </p>
-            <Link to="/news">
-              <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to News
-              </Button>
-            </Link>
+            <Button asChild className="mt-6">
+              <Link to="/news">Back to News</Link>
+            </Button>
           </div>
         </div>
       </MainLayout>
     );
   }
 
-  // Build SEO metadata when article exists
-  const title = `${article.title} | Horalix`;
+  const image =
+    Array.isArray((article as { image_urls?: string[] }).image_urls) &&
+    (article as { image_urls?: string[] }).image_urls?.length
+      ? (article as { image_urls?: string[] }).image_urls?.[0]
+      : undefined;
+
   const description =
     article.summary ||
-    (article.content?.split("\n\n")[0] as string) ||
+    (typeof article.content === "string" ? article.content.split("\n\n")[0] : "") ||
     "Read this update from Horalix.";
-  const canonical = `/news/${article.slug}`;
-  const image =
-    Array.isArray((article as any).image_urls) &&
-    (article as any).image_urls.length > 0
-      ? (article as any).image_urls[0]
-      : undefined;
-  const jsonLd: Record<string, any> = {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: article.title,
-    description: article.summary,
-    image: image ? [image] : undefined,
-    datePublished: article.display_date || article.published_at || undefined,
-    dateModified: article.updated_at || undefined,
-    publisher: {
-      "@type": "Organization",
-      name: "Horalix",
-    },
-    url: canonical,
-  };
+
+  const jsonLd = [
+    buildNewsArticleJsonLd({
+      slug: article.slug,
+      title: article.title,
+      summary: description,
+      display_date: article.display_date,
+      published_at: article.published_at,
+      updated_at: article.updated_at,
+      image_urls: image ? [image] : undefined,
+    }),
+    buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "News", path: "/news" },
+      { name: article.title, path: `/news/${article.slug}` },
+    ]),
+  ];
+
+  const rawUrls = article.image_urls;
+  const images: string[] =
+    Array.isArray(rawUrls) && rawUrls.length > 0
+      ? rawUrls.filter((url): url is string => typeof url === "string")
+      : [];
+  const rawFocus = article.image_focus;
+  const imageFocus = Array.isArray(rawFocus)
+    ? rawFocus.map((focus: { x?: number; y?: number }) => ({ x: focus?.x ?? 50, y: focus?.y ?? 50 }))
+    : [];
 
   return (
     <MainLayout>
       <SEO
-        title={title}
+        title={`${article.title} | Horalix`}
         description={description}
-        canonical={canonical}
+        canonical={`/news/${article.slug}`}
         image={image}
         type="article"
         jsonLd={jsonLd}
       />
-      <article className="pt-32 pb-24 px-6 lg:px-12">
-        <div className="max-w-3xl mx-auto">
-          {/* Back navigation */}
+
+      <article className="px-6 pb-24 pt-24 lg:px-12">
+        <div className="mx-auto max-w-4xl">
+          <Breadcrumb className="mb-8">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/news">News</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{article.title}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+
           <Link
             to="/news"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors mb-8"
+            className="mb-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="h-4 w-4" />
             All News
           </Link>
 
-          {/* Article header */}
-          <header className="border-b border-border pb-8 mb-8">
-            {/* Category badge */}
-            <span className="inline-block text-[10px] font-bold bg-accent text-accent-foreground px-2 py-0.5 uppercase mb-4">
+          <header className="border-b border-border pb-8">
+            <span className="inline-flex items-center rounded border border-accent/30 bg-accent/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
               {article.category}
             </span>
 
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-space tracking-tight mb-6">
+            <h1 className="mt-4 font-space text-3xl font-bold tracking-tight text-primary md:text-4xl lg:text-5xl">
               {article.title}
             </h1>
 
-            {/* Meta info */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+            <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               {(article.display_date || article.published_at) && (
                 <span className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="h-4 w-4" />
                   {format(new Date(article.display_date || article.published_at), "MMMM d, yyyy")}
                 </span>
               )}
               {article.location && (
                 <span className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="h-4 w-4" />
                   {article.location}
                 </span>
               )}
             </div>
           </header>
 
-          {/* Featured image slider */}
-          {(() => {
-            // Parse images from image_urls array
-            const rawUrls = article.image_urls;
-            const images: string[] = Array.isArray(rawUrls) && rawUrls.length > 0
-              ? rawUrls.filter((url): url is string => typeof url === "string")
-              : [];
-            
-            // Parse focus points
-            const rawFocus = article.image_focus;
-            const imageFocus = Array.isArray(rawFocus) 
-              ? rawFocus.map((f: any) => ({ x: f?.x ?? 50, y: f?.y ?? 50 }))
-              : [];
-            
-            return images.length > 0 ? (
-              <ImageSlider 
-                images={images} 
-                alt={article.title} 
-                className="mb-8"
-                imageFocus={imageFocus}
-              />
-            ) : null;
-          })()}
+          {images.length > 0 && (
+            <ImageSlider images={images} alt={article.title} className="mt-8" imageFocus={imageFocus} />
+          )}
 
-          {/* Summary (lead paragraph) */}
-          <p className="text-lg text-muted-foreground leading-relaxed mb-8 border-l-2 border-accent pl-4">
+          <p className="mt-8 border-l-2 border-accent pl-4 text-lg leading-relaxed text-muted-foreground">
             {article.summary}
           </p>
 
-          {/* Article content */}
-          <div className="prose prose-invert max-w-none">
-            {article.content.split("\n\n").map((paragraph, index) => (
-              <p key={index} className="text-muted-foreground leading-relaxed mb-4">
+          <div className="mt-8 space-y-4">
+            {article.content.split("\n\n").map((paragraph: string) => (
+              <p key={paragraph} className="text-base leading-relaxed text-muted-foreground">
                 {paragraph}
               </p>
             ))}
           </div>
 
-          {/* Footer */}
-          <footer className="border-t border-border pt-8 mt-12">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <Link to="/news">
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+          <footer className="mt-12 border-t border-border pt-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <Button asChild variant="outline">
+                <Link to="/news">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to News
-                </Button>
-              </Link>
-              <Link to="/#contact">
-                <Button>Contact Us</Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link to="/resources">Browse Resources</Link>
+              </Button>
             </div>
           </footer>
         </div>
