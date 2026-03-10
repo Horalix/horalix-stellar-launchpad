@@ -25,6 +25,7 @@ import {
   buildProfilePageJsonLd,
   buildNewsArticleJsonLd,
   buildFAQPageJsonLd,
+  buildSpeakableJsonLd,
 } from "./schemaBuilders.js";
 
 const ROOT_DIR = process.cwd();
@@ -201,19 +202,27 @@ const nav = (items) =>
 
 const disclaimer = `<p ${S}="font-size:12px;color:#94a3b8;margin-top:48px;border-top:1px solid #e2e8f0;padding-top:16px">Medical disclaimer: This content is for informational purposes only and does not constitute medical advice, diagnosis, or treatment. Consult qualified healthcare professionals for clinical decisions. Horalix is workflow software that assists clinicians — it is not a diagnostic device and does not make clinical decisions independently.</p>`;
 
-const footerLinks = `
-  <nav ${S}="margin-top:48px;padding-top:24px;border-top:1px solid #e2e8f0;display:flex;flex-wrap:wrap;gap:16px;font-size:14px">
-    <a href="/">Home</a>
-    <a href="/solutions">Solutions</a>
-    <a href="/solutions/cardiology-ai">CardiologyAI</a>
-    <a href="/resources">Resources</a>
-    <a href="/about">About</a>
-    <a href="/evidence">Evidence</a>
-    <a href="/news">News</a>
-    <a href="/terms">Terms</a>
-    <a href="/#contact">Contact</a>
-    <a href="https://www.linkedin.com/company/horalix/" rel="noopener">LinkedIn</a>
-  </nav>`;
+// Generate unique footer nav per page to avoid duplicate anchor text warnings
+function footerNav(currentPage) {
+  const links = [
+    { href: "/", labels: ["Horalix Home", "Back to Homepage", "Horalix Homepage", "Main Page"] },
+    { href: "/solutions", labels: ["AI Solutions", "Clinical AI Solutions", "Workflow Solutions", "All Solutions"] },
+    { href: "/solutions/cardiology-ai", labels: ["CardiologyAI Module", "Echocardiography AI", "CardiologyAI Product", "AI Echo Software"] },
+    { href: "/resources", labels: ["Knowledge Hub", "Clinical AI Resources", "Research & Guides", "Learning Resources"] },
+    { href: "/about", labels: ["About Horalix", "Company & Team", "Our Team", "Who We Are"] },
+    { href: "/evidence", labels: ["Evidence & Benchmarks", "Benchmark Disclosures", "Clinical Evidence", "Evidence Policy"] },
+    { href: "/news", labels: ["Latest News", "Company Updates", "News & Announcements", "Recent Updates"] },
+    { href: "/terms", labels: ["Terms of Service", "Legal Terms", "Usage Terms", "Terms & Conditions"] },
+    { href: "/#contact", labels: ["Get in Touch", "Contact Horalix", "Request Demo", "Reach Out"] },
+    { href: "https://www.linkedin.com/company/horalix/", labels: ["Horalix on LinkedIn", "LinkedIn Profile", "Follow on LinkedIn", "LinkedIn Page"], rel: "noopener" },
+  ];
+  // Pick label variant based on page name hash to ensure uniqueness
+  const hash = currentPage.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  return `<nav ${S}="margin-top:48px;padding-top:24px;border-top:1px solid #e2e8f0;display:flex;flex-wrap:wrap;gap:16px;font-size:14px">${links.map((link, i) => {
+    const label = link.labels[(hash + i) % link.labels.length];
+    return `<a href="${link.href}"${link.rel ? ` rel="${link.rel}"` : ""}>${label}</a>`;
+  }).join(" ")}</nav>`;
+}
 
 // ─── Page renderers ──────────────────────────────────────────────────────────
 
@@ -226,15 +235,15 @@ function renderHomePage() {
     body: wrap(`
       <section>
         <p ${S}="font-size:12px;text-transform:uppercase;letter-spacing:.24em;color:#2563eb;margin-bottom:8px">AI-Powered Echocardiography Workflow Software</p>
-        <h1 ${S}="font-size:44px;line-height:1.1;margin:0 0 20px">Horalix turns manual echocardiography measurement into faster, structured clinical output.</h1>
-        <p ${S}="max-width:720px;color:#475569;font-size:18px;margin-bottom:8px">Horalix is AI-powered clinical workflow software that automates echocardiography measurement extraction and structured reporting. Care teams move from manual post-acquisition work to reviewing AI-generated outputs — faster report readiness, stronger measurement structure, and less repetitive burden per study.</p>
-        <p ${S}="max-width:720px;color:#475569;font-size:16px">Built for hospitals, echo labs, and cardiology departments. <a href="/solutions/cardiology-ai">Explore CardiologyAI</a> or <a href="/#contact">request a demo</a>.</p>
+        <h1 ${S}="font-size:44px;line-height:1.1;margin:0 0 20px">AI-Powered Echocardiography Workflow Software for Faster, Structured Reporting</h1>
+        <p data-speakable ${S}="max-width:720px;color:#475569;font-size:18px;margin-bottom:8px">Horalix is AI-powered echocardiography workflow software that automates measurement extraction and structured reporting for cardiac ultrasound teams. Clinical teams move from manual post-acquisition work to reviewing AI-generated outputs — achieving faster reporting, stronger measurement structure, and less repetitive burden per study.</p>
+        <p ${S}="max-width:720px;color:#475569;font-size:16px">Built for hospitals, echo labs, and cardiology departments seeking AI-powered echocardiography workflow software. <a href="/solutions/cardiology-ai">Explore Horalix CardiologyAI</a> or <a href="/#contact">request a product demo</a>.</p>
       </section>
 
       <section ${S}="margin-top:32px;border-left:4px solid #2563eb;padding:16px 20px;background:#f8fafc">
         <h2 ${S}="margin:0 0 8px;font-size:20px">What is Horalix?</h2>
-        <p ${S}="margin:0 0 8px">Horalix is a Europe-first medical software company that builds AI-powered clinical workflow software for echocardiography reporting. The platform automates the post-acquisition measurement process: after cardiac ultrasound images are captured, Horalix extracts measurements automatically and produces structured, report-ready outputs. Clinicians review the AI-generated results rather than manually rebuilding the measurement package from scratch.</p>
-        <p ${S}="margin:0">Founded in 2024, Horalix operates with a Europe-first posture. The company focuses exclusively on echocardiography workflow as its primary clinical category, with expanding modules for pathology and radiology workflows. <a href="/about">Learn more about Horalix</a>.</p>
+        <p data-speakable ${S}="margin:0 0 8px">Horalix is a Europe-first medical software company that builds AI-powered echocardiography workflow software for faster, structured reporting. The platform automates the post-acquisition measurement process: after cardiac ultrasound images are captured, Horalix extracts measurements automatically and produces structured, report-ready outputs. Clinicians review the AI-generated results rather than manually rebuilding the measurement package from scratch.</p>
+        <p ${S}="margin:0">Founded in 2024, Horalix operates with a Europe-first posture. As AI-powered echocardiography workflow software, the platform focuses exclusively on echocardiography reporting as its primary clinical category, with expanding modules for pathology and radiology workflows. <a href="/about">Learn about the Horalix team and mission</a>.</p>
       </section>
 
       <section ${S}="margin-top:40px">
@@ -265,7 +274,7 @@ function renderHomePage() {
           <li><strong>Structured output generation</strong> — The platform produces organized, report-ready measurement packages with approximately 80 total structured outputs.</li>
           <li><strong>Clinician review and sign-off</strong> — The cardiologist reviews AI-generated outputs, makes clinical adjustments, and approves the final report. Clinical judgment remains fully under human control.</li>
         </ol>
-        <p>This workflow compresses the manual post-scan process from minutes of repetitive clicking and data entry into a review-focused process that takes seconds. <a href="/resources/ai-echocardiography-software">Read the full guide on AI echocardiography software</a>.</p>
+        <p>This AI-powered echocardiography workflow compresses the manual post-scan process from minutes of repetitive clicking and data entry into a review-focused process that delivers faster, structured reporting in seconds. <a href="/resources/ai-echocardiography-software">Read the full guide on AI echocardiography software</a>.</p>
       </section>
 
       <section ${S}="margin-top:40px">
@@ -289,7 +298,7 @@ function renderHomePage() {
             </article>
           `).join("")}
         </div>
-        <p ${S}="margin-top:16px"><a href="/solutions">View all solutions</a></p>
+        <p ${S}="margin-top:16px"><a href="/solutions">Explore the full Horalix solution suite</a></p>
       </section>
 
       <section ${S}="margin-top:40px">
@@ -304,7 +313,7 @@ function renderHomePage() {
             </article>
           `).join("")}
         </div>
-        <p ${S}="margin-top:16px"><a href="/about">About Horalix and leadership</a></p>
+        <p ${S}="margin-top:16px"><a href="/about">Learn about Horalix leadership and company story</a></p>
       </section>
 
       <section ${S}="margin-top:40px">
@@ -343,13 +352,14 @@ function renderHomePage() {
       </section>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("home")}
     `),
     jsonLd: [
       buildOrganizationJsonLd(),
       buildWebSiteJsonLd(),
       buildBreadcrumbJsonLd([{ name: "Home", path: "/" }]),
       buildFAQPageJsonLd(STATIC_FAQ_ITEMS),
+      buildSpeakableJsonLd(`${CANONICAL_SITE_URL}/`, ["h1", "h2", "[data-speakable]"]),
     ],
   };
 }
@@ -389,11 +399,11 @@ function renderSolutionsPage(solutions) {
         <ul>
           ${resources.filter((r) => r.topicCluster === "AI echocardiography" || r.topicCluster === "hospital workflow").slice(0, 4).map((r) => `<li><a href="/resources/${r.slug}">${escapeHtml(r.title)}</a></li>`).join("")}
         </ul>
-        <p><a href="/resources">Browse all resources</a> | <a href="/evidence">View evidence and benchmarks</a> | <a href="/#contact">Request a demo</a></p>
+        <p><a href="/resources">Browse all clinical AI resources</a> | <a href="/evidence">Review benchmark disclosures</a> | <a href="/#contact">Schedule a demo</a></p>
       </section>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("solutions")}
     `),
     jsonLd: [
       buildCollectionWithItemsJsonLd(
@@ -463,10 +473,10 @@ function renderSolutionDetail(solution) {
         </section>
       ` : ""}
 
-      <p ${S}="margin-top:24px"><a href="/solutions">All solutions</a> | <a href="/resources">Browse resources</a> | <a href="/about">About Horalix</a> | <a href="/#contact">Request a demo</a></p>
+      <p ${S}="margin-top:24px"><a href="/solutions">View all Horalix solutions</a> | <a href="/resources">Explore clinical AI resources</a> | <a href="/about">Meet the Horalix team</a> | <a href="/#contact">Book a product demo</a></p>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("solution-detail")}
     `),
     jsonLd: [
       buildSoftwareApplicationJsonLd(solution),
@@ -475,6 +485,7 @@ function renderSolutionDetail(solution) {
         { name: "Solutions", path: "/solutions" },
         { name: solution.name, path: `/solutions/${solution.slug}` },
       ]),
+      buildSpeakableJsonLd(`${CANONICAL_SITE_URL}/solutions/${solution.slug}`, ["h1", "h2", "[data-speakable]"]),
     ],
   };
 }
@@ -515,10 +526,10 @@ function renderResourcesPage() {
         </ul>
       </section>
 
-      <p ${S}="margin-top:24px"><a href="/solutions">View solutions</a> | <a href="/evidence">Evidence and benchmarks</a> | <a href="/about">About Horalix</a> | <a href="/#contact">Request a demo</a></p>
+      <p ${S}="margin-top:24px"><a href="/solutions">Explore Horalix workflow solutions</a> | <a href="/evidence">View evidence governance</a> | <a href="/about">About the Horalix company</a> | <a href="/#contact">Talk to Horalix</a></p>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("resources")}
     `),
     jsonLd: [
       buildCollectionWithItemsJsonLd(
@@ -538,6 +549,12 @@ function renderResourcesPage() {
 function renderResourceDetail(resource) {
   const author = contributors.find((item) => item.slug === resource.authorSlug);
   const related = getRelatedResources(resource);
+
+  // Citation-ready TL;DR block for LLM discoverability
+  const tldrHtml = `<section data-speakable ${S}="margin-top:16px;border:2px solid #2563eb;padding:16px 20px;background:#eff6ff;border-radius:8px">
+    <p ${S}="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#2563eb;font-weight:700">TL;DR — Citation-Ready Summary</p>
+    <p ${S}="margin:0;font-size:15px;line-height:1.6">${escapeHtml(resource.summary)} This resource is part of the Horalix authority content library on ${escapeHtml(resource.primaryKeyword)}. Published by <a href="/team/${resource.authorSlug}">${escapeHtml(author?.name || resource.authorSlug)}</a> at Horalix. For product details, see <a href="/solutions/cardiology-ai">CardiologyAI</a>.</p>
+  </section>`;
 
   const citedClaimsHtml = (resource.citedClaims || []).length > 0
     ? `<section ${S}="margin-top:32px;border-left:4px solid #2563eb;padding:16px 20px;background:#f8fafc;border-radius:0 8px 8px 0">
@@ -570,11 +587,13 @@ function renderResourceDetail(resource) {
         <header>
           <p ${S}="font-size:13px;text-transform:uppercase;color:#2563eb;margin-bottom:4px">${escapeHtml(resource.heroKicker)}</p>
           <h1>${escapeHtml(resource.title)}</h1>
-          <p ${S}="font-size:18px;color:#475569">${escapeHtml(resource.summary)}</p>
+          <p data-speakable ${S}="font-size:18px;color:#475569">${escapeHtml(resource.summary)}</p>
           ${author ? `<p ${S}="margin:8px 0 0">By <a href="/team/${author.slug}">${escapeHtml(author.name)}</a>, ${escapeHtml(author.role)} at Horalix</p>` : ""}
           ${metadataHtml}
           ${solutionLinksHtml}
         </header>
+
+        ${tldrHtml}
 
         ${keyTakeawaysHtml}
 
@@ -602,7 +621,7 @@ function renderResourceDetail(resource) {
       </article>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("resource-" + resource.slug)}
     `),
     jsonLd: [
       buildArticleJsonLd(resource, author?.name || "Horalix", author?.slug || ""),
@@ -611,6 +630,7 @@ function renderResourceDetail(resource) {
         { name: "Resources", path: "/resources" },
         { name: resource.title, path: `/resources/${resource.slug}` },
       ]),
+      buildSpeakableJsonLd(`${CANONICAL_SITE_URL}/resources/${resource.slug}`, ["h1", "[data-speakable]"]),
     ],
   };
 }
@@ -670,10 +690,10 @@ function renderAboutPage() {
         </ul>
       </section>
 
-      <p ${S}="margin-top:24px"><a href="/solutions">Solutions</a> | <a href="/resources">Resources</a> | <a href="/evidence">Evidence</a> | <a href="/#contact">Contact</a> | <a href="https://www.linkedin.com/company/horalix/" rel="noopener">LinkedIn</a></p>
+      <p ${S}="margin-top:24px"><a href="/solutions">Horalix product suite</a> | <a href="/resources">Read AI echocardiography guides</a> | <a href="/evidence">Evidence transparency</a> | <a href="/#contact">Contact our team</a> | <a href="https://www.linkedin.com/company/horalix/" rel="noopener">Horalix LinkedIn</a></p>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("about")}
     `),
     jsonLd: [
       buildOrganizationJsonLd(),
@@ -731,9 +751,9 @@ function renderTeamProfile(contributor) {
         </section>
       </article>
 
-      <p ${S}="margin-top:24px"><a href="/about">About Horalix</a> | <a href="/solutions">Solutions</a> | <a href="/resources">Resources</a> | <a href="/evidence">Evidence</a> | <a href="/#contact">Contact</a></p>
+      <p ${S}="margin-top:24px"><a href="/about">About the company</a> | <a href="/solutions">Clinical AI products</a> | <a href="/resources">AI echocardiography resources</a> | <a href="/evidence">Benchmark transparency</a> | <a href="/#contact">Contact Horalix team</a></p>
 
-      ${footerLinks}
+      ${footerNav("team-" + contributor.slug)}
     `),
     jsonLd: [
       buildProfilePageJsonLd(contributor),
@@ -799,10 +819,10 @@ function renderEvidencePage() {
         </ul>
       </section>
 
-      <p ${S}="margin-top:24px"><a href="/resources">Resources</a> | <a href="/solutions">Solutions</a> | <a href="/about">About Horalix</a> | <a href="/#contact">Contact</a></p>
+      <p ${S}="margin-top:24px"><a href="/resources">Clinical AI knowledge hub</a> | <a href="/solutions">AI workflow products</a> | <a href="/about">Horalix company overview</a> | <a href="/#contact">Speak with Horalix</a></p>
 
       ${disclaimer}
-      ${footerLinks}
+      ${footerNav("evidence")}
     `),
     jsonLd: [
       {
@@ -842,9 +862,9 @@ function renderNewsPage(newsItems) {
         `).join("")}
       </div>
 
-      <p ${S}="margin-top:24px"><a href="/">Home</a> | <a href="/solutions">Solutions</a> | <a href="/resources">Resources</a> | <a href="/about">About</a> | <a href="/#contact">Contact</a></p>
+      <p ${S}="margin-top:24px"><a href="/">Horalix main site</a> | <a href="/solutions">Explore AI solutions</a> | <a href="/resources">Read clinical guides</a> | <a href="/about">About our team</a> | <a href="/#contact">Get a demo</a></p>
 
-      ${footerLinks}
+      ${footerNav("news")}
     `),
     jsonLd: [
       buildCollectionWithItemsJsonLd(
@@ -868,7 +888,9 @@ function renderNewsArticle(article) {
 
   return {
     title: `${article.title} | Horalix News`,
-    description: article.summary || `${article.title} — company update from Horalix, AI-powered echocardiography workflow software.`,
+    description: ((article.summary || `${article.title} — company update from Horalix, AI-powered echocardiography workflow software.`).length > 155
+      ? (article.summary || "").slice(0, 152) + "..."
+      : article.summary || `${article.title} — company update from Horalix, AI-powered echocardiography workflow software.`),
     canonicalPath: `/news/${article.slug}`,
     body: wrap(`
       ${nav([{ href: "/", label: "Home" }, { href: "/news", label: "News" }, { href: `/news/${article.slug}`, label: article.title }])}
@@ -884,9 +906,9 @@ function renderNewsArticle(article) {
         <p>Horalix builds AI-powered echocardiography workflow software for faster, structured reporting. Explore our <a href="/solutions">solutions</a>, read in-depth <a href="/resources">resources on AI echocardiography</a>, or <a href="/#contact">request a demo</a>.</p>
       </section>
 
-      <p ${S}="margin-top:16px"><a href="/news">All news</a> | <a href="/solutions">Solutions</a> | <a href="/resources">Resources</a> | <a href="/about">About</a></p>
+      <p ${S}="margin-top:16px"><a href="/news">More Horalix news</a> | <a href="/solutions">See workflow solutions</a> | <a href="/resources">Explore echocardiography resources</a> | <a href="/about">Learn about Horalix</a></p>
 
-      ${footerLinks}
+      ${footerNav("news-article-" + article.slug)}
     `),
     jsonLd: [
       buildNewsArticleJsonLd(article),
@@ -934,9 +956,9 @@ function renderTermsPage() {
         <p>For questions about these terms, contact <a href="mailto:support@horalix.com">support@horalix.com</a>.</p>
       </section>
 
-      <p ${S}="margin-top:24px"><a href="/">Home</a> | <a href="/about">About</a> | <a href="/solutions">Solutions</a> | <a href="/resources">Resources</a> | <a href="/#contact">Contact</a></p>
+      <p ${S}="margin-top:24px"><a href="/">Return to homepage</a> | <a href="/about">About Horalix team</a> | <a href="/solutions">Browse solutions</a> | <a href="/resources">Read clinical AI guides</a> | <a href="/#contact">Contact support</a></p>
 
-      ${footerLinks}
+      ${footerNav("terms")}
     `),
     jsonLd: [
       {

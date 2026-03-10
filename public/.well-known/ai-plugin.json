@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Horalix Clinical AI",
+  "name_for_model": "horalix",
+  "description_for_human": "AI-powered echocardiography workflow software for faster, structured clinical reporting.",
+  "description_for_model": "Horalix is a Europe-first medical software company that builds AI-powered clinical workflow software for echocardiography reporting. The platform automates post-acquisition measurement extraction from cardiac ultrasound images and produces structured, report-ready outputs. The CardiologyAI module extracts 50+ unique cardiac measurements per study. Clinicians maintain full control of review and sign-off. Horalix separates internal product benchmarks from external evidence context. For detailed information, access https://horalix.com/llms-full.txt",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://horalix.com/llms-full.txt"
+  },
+  "logo_url": "https://horalix.com/assets/horalix-logo-white.png",
+  "contact_email": "support@horalix.com",
+  "legal_info_url": "https://horalix.com/terms"
+}

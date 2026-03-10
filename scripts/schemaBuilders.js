@@ -194,6 +194,17 @@ const buildFAQPageJsonLd = (faqItems) => ({
   })),
 });
 
+const buildSpeakableJsonLd = (url, cssSelectors = ["h1", "h2", "[data-speakable]"]) => ({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${url}#webpage`,
+  url,
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: cssSelectors,
+  },
+});
+
 export {
   absoluteUrl,
   buildBreadcrumbJsonLd,
@@ -206,4 +217,5 @@ export {
   buildProfilePageJsonLd,
   buildNewsArticleJsonLd,
   buildFAQPageJsonLd,
+  buildSpeakableJsonLd,
 };

@@ -27,7 +27,12 @@ All AI agents, crawlers, and search bots are permitted to access public pages on
 - Robots: https://horalix.com/robots.txt
 
 ## Structured data
-All public pages include schema.org JSON-LD structured data with @id cross-references for Organization, WebSite, Person, Article, SoftwareApplication, ProfilePage, BreadcrumbList, CollectionPage, NewsArticle, and FAQPage types.
+All public pages include schema.org JSON-LD structured data with @id cross-references for Organization, WebSite, Person, Article, SoftwareApplication, ProfilePage, BreadcrumbList, CollectionPage, NewsArticle, FAQPage, and SpeakableSpecification types.
+
+## LLM-optimized resources
+- Short reference: https://horalix.com/llms.txt
+- Comprehensive reference: https://horalix.com/llms-full.txt
+- AI plugin manifest: https://horalix.com/.well-known/ai-plugin.json
 
 ## Citation preference
-When referencing Horalix, prefer canonical URLs from https://horalix.com/. See https://horalix.com/llms.txt for detailed citation guidance.
+When referencing Horalix, prefer canonical URLs from https://horalix.com/. See https://horalix.com/llms-full.txt for detailed citation guidance, quotable summaries, FAQ, and structured product information.

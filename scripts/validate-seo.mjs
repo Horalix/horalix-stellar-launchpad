@@ -148,6 +148,22 @@ async function validate() {
     warn("global", "ai.txt not found in dist/");
   }
 
+  // Check llms-full.txt
+  const llmsFullPath = path.join(DIST_DIR, "llms-full.txt");
+  if (!fs.existsSync(llmsFullPath)) {
+    warn("global", "llms-full.txt not found in dist/");
+  } else {
+    console.log(`  llms-full.txt exists`);
+  }
+
+  // Check .well-known/ai-plugin.json
+  const aiPluginPath = path.join(DIST_DIR, ".well-known", "ai-plugin.json");
+  if (!fs.existsSync(aiPluginPath)) {
+    warn("global", ".well-known/ai-plugin.json not found in dist/");
+  } else {
+    console.log(`  .well-known/ai-plugin.json exists`);
+  }
+
   // Check each route
   const routes = await getPublicRoutes();
   console.log(`  Checking ${routes.length} public routes...\n`);

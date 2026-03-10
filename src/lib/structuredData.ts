@@ -255,3 +255,17 @@ export const buildNewsArticleJsonLd = (article: {
     publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
   };
 };
+
+export const buildSpeakableJsonLd = (
+  url: string,
+  cssSelectors: string[] = ["h1", "h2", "[data-speakable]"],
+) => ({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${url}#webpage`,
+  url,
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: cssSelectors,
+  },
+});

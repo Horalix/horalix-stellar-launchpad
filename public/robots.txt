@@ -25,6 +25,18 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
+User-agent: Amazonbot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
 User-agent: *
 Allow: /
 Disallow: /admin/
@@ -35,3 +47,9 @@ Disallow: /profile
 Disallow: /profile/submissions
 
 Sitemap: https://horalix.com/sitemap.xml
+
+# AI/LLM discovery files
+# https://horalix.com/llms.txt — Short LLM reference
+# https://horalix.com/llms-full.txt — Comprehensive LLM reference
+# https://horalix.com/ai.txt — AI agent access policy
+# https://horalix.com/.well-known/ai-plugin.json — ChatGPT plugin manifest
