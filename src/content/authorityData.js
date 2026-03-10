@@ -57,6 +57,14 @@ export const defaultSolutions = [
     short_description:
       "AI-assisted echocardiography workflow for faster measurement extraction and report preparation.",
     badge_text: "Clinical priority",
+    featureList: [
+      "AI-assisted echocardiography measurement extraction",
+      "Structured echo reporting output",
+      "50+ unique cardiac measurements",
+      "DICOM-compatible workflow integration",
+      "Clinician review and override controls",
+      "Report-ready measurement packages",
+    ],
   },
   {
     slug: "pathology-ai",
@@ -64,6 +72,11 @@ export const defaultSolutions = [
     short_description:
       "Structured pathology workflow support for faster review and better operational throughput.",
     badge_text: "Expanding suite",
+    featureList: [
+      "Structured pathology review workflow",
+      "Faster slide review throughput",
+      "Standardized reporting outputs",
+    ],
   },
   {
     slug: "radiology-ai",
@@ -71,6 +84,11 @@ export const defaultSolutions = [
     short_description:
       "Workflow automation support for imaging teams that need scalable, repeatable reporting operations.",
     badge_text: "Expanding suite",
+    featureList: [
+      "Imaging workflow automation",
+      "Repeatable reporting operations",
+      "Scalable imaging team support",
+    ],
   },
 ];
 

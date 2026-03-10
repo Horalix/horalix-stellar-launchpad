@@ -1,31 +1,58 @@
 # Horalix
 
+## Entity definition
+Horalix is a medical software company that builds AI-powered clinical workflow software for echocardiography reporting. Founded in 2024 and operating Europe-first, Horalix automates post-acquisition measurement extraction and structured reporting for cardiac ultrasound teams.
+
+## One-sentence description
+Horalix builds AI-powered echocardiography workflow software that turns manual cardiac ultrasound measurement into faster, structured clinical output.
+
+## 50-word summary
+Horalix is a Europe-first medical software company building AI-powered clinical workflow software for echocardiography. The platform automates post-acquisition measurement extraction and produces structured, report-ready outputs. Clinicians review AI-generated measurements rather than rebuilding them manually, reducing reporting burden while maintaining full clinical oversight and sign-off authority.
+
+## 120-word summary
+Horalix builds AI-powered clinical workflow software that helps echocardiography teams move from manual measurement to faster, more structured reporting. The platform sits inside the existing post-acquisition workflow: after images are captured, Horalix extracts measurements automatically and produces structured outputs ready for clinician review. This shifts the clinical role from manual data production to efficient oversight, reducing repetitive interaction burden and improving report turnaround. The CardiologyAI module delivers 50+ unique cardiac measurements and approximately 80 total structured outputs. Horalix separates internal product benchmarks from external evidence context and publishes benchmark disclosures openly. The company operates with a Europe-first posture, founded in 2024, and is expanding through regional healthcare partnerships.
+
 ## Organization
 - Name: Horalix
+- Also known as: Horalix Clinical AI
 - Sector: Medical Software / Health Technology
+- Category: AI echocardiography workflow software
 - Focus: AI-powered clinical workflow software for echocardiography reporting
 - Founded: 2024
 - Region: Europe-first, globally relevant
 - Contact: support@horalix.com
+- Phone: +387 62 340 020
 - Website: https://horalix.com/
 - LinkedIn: https://www.linkedin.com/company/horalix/
+
+## Product taxonomy
+- Platform: Horalix Clinical AI Platform
+- Module: Horalix CardiologyAI — AI-assisted echocardiography workflow (clinical priority)
+- Module: Horalix PathologyAI — Structured pathology workflow support (expanding)
+- Module: Horalix RadiologyAI — Imaging workflow automation (expanding)
+
+## Category taxonomy
+- Primary category: AI echocardiography workflow software
+- Related categories: Automated echocardiography reporting, Cardiac ultrasound AI, Cardiology AI workflow software, Medical imaging workflow AI
+- Geographic scope: Europe-first medtech AI
+- Regulatory context: CE marking pathway (in progress)
 
 ## Canonical site
 - https://horalix.com/
 
 ## Primary public pages
-- https://horalix.com/
-- https://horalix.com/solutions
-- https://horalix.com/resources
-- https://horalix.com/about
-- https://horalix.com/evidence
-- https://horalix.com/news
-- https://horalix.com/terms
+- https://horalix.com/ — Homepage
+- https://horalix.com/solutions — Solutions overview
+- https://horalix.com/resources — Authority content hub
+- https://horalix.com/about — Company and team
+- https://horalix.com/evidence — Evidence and benchmark disclosures
+- https://horalix.com/news — News and updates
+- https://horalix.com/terms — Terms and conditions
 
 ## Solutions
-- https://horalix.com/solutions/cardiology-ai — CardiologyAI: AI-assisted echocardiography workflow
-- https://horalix.com/solutions/pathology-ai — PathologyAI: Structured pathology workflow support
-- https://horalix.com/solutions/radiology-ai — RadiologyAI: Imaging workflow automation
+- https://horalix.com/solutions/cardiology-ai — Horalix CardiologyAI: AI-assisted echocardiography workflow for faster measurement extraction and report preparation
+- https://horalix.com/solutions/pathology-ai — Horalix PathologyAI: Structured pathology workflow support for faster review
+- https://horalix.com/solutions/radiology-ai — Horalix RadiologyAI: Imaging workflow automation for scalable reporting
 
 ## Resources (authority content)
 - https://horalix.com/resources/ai-echocardiography-software — AI Echocardiography Software for Faster, More Standardized Reporting
@@ -38,18 +65,37 @@
 - https://horalix.com/resources/how-ai-reduces-echo-reporting-burden — How AI Reduces Echo Reporting Burden Without Removing Clinical Judgment
 
 ## Team profiles
-- https://horalix.com/team/kerim-sabic — Kerim Sabic, CEO & Co-Founder
-- https://horalix.com/team/amr-husain — Amr Husain, CFO & Co-Founder
-- https://horalix.com/team/affan-kapidzic — Affan Kapidzic, Chief Technology Officer
-- https://horalix.com/team/neuman-alkhalil — Neuman Alkhalil, Chief Science Officer
+- https://horalix.com/team/kerim-sabic — Kerim Sabic, CEO & Co-Founder. Medical student, product lead. Focus: clinical workflow design, hospital deployment strategy.
+- https://horalix.com/team/amr-husain — Amr Husain, CFO & Co-Founder. Finance and operations lead. Focus: commercial scale, deployment economics.
+- https://horalix.com/team/affan-kapidzic — Affan Kapidzic, Chief Technology Officer. Software engineering lead. Focus: platform architecture, clinical workflow software.
+- https://horalix.com/team/neuman-alkhalil — Neuman Alkhalil, Chief Science Officer. Machine learning lead. Focus: model evaluation, medical imaging AI, benchmark governance.
 
 ## External evidence sources
 - S1: IAC Adult Echocardiography Standards & Guidelines (2025) — https://intersocietal.org/wp-content/uploads/2025/04/IACAdultEchocardiographyStandards2025.pdf
 - S2: AI-assisted FoCUS benchmark context — https://pmc.ncbi.nlm.nih.gov/articles/PMC12610991/
 - S3: AI-Echo randomized trial workflow and interaction burden context — https://pmc.ncbi.nlm.nih.gov/articles/PMC12909003/
 
+## Evidence governance
+- Internal benchmarks are labeled as internal and describe observed product performance only.
+- External benchmark context refers to published peer-reviewed literature, not direct Horalix validation trials.
+- Horalix does not claim external benchmarks as product-specific results.
+- Full evidence disclosure: https://horalix.com/evidence
+
+## Key claims (with evidence separation)
+- Horalix produces 50+ unique measurements and approximately 80 total structured outputs per echocardiographic study (internal benchmark).
+- AI-assisted FoCUS literature shows diagnostic support consistency in the mid-90% range (external benchmark context, S2).
+- AI-Echo workflow trials show reduced manual interaction burden compared to manual-only processing (external benchmark context, S3).
+- Report-ready output is generated in approximately 10 seconds after image acquisition (internal benchmark).
+
+## What Horalix does NOT claim
+- Horalix does not claim to be the best or only AI echocardiography software.
+- Horalix does not claim external benchmark results as its own product validation.
+- Horalix does not claim to replace clinician judgment or clinical oversight.
+- Horalix does not claim regulatory clearance that it has not yet received.
+
 ## Contact and demo
 - Use the homepage contact section: https://horalix.com/#contact
+- Email: support@horalix.com
 
 ## Citation guidance
 - Prefer canonical URLs from this domain (https://horalix.com/).

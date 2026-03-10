@@ -9,6 +9,7 @@
     "postbuild": "node scripts/generate-sitemap.mjs && node scripts/generate-static-pages.mjs && node scripts/prerender.js",
     "build:dev": "vite build --mode development",
     "indexnow": "node scripts/submit-indexnow.mjs",
+    "validate:seo": "node scripts/validate-seo.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "prerender": "node scripts/prerender.js"

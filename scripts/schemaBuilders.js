@@ -27,6 +27,7 @@ const buildOrganizationJsonLd = () => ({
   "@type": "Organization",
   "@id": `${CANONICAL_SITE_URL}/#organization`,
   name: "Horalix",
+  alternateName: "Horalix Clinical AI",
   url: `${CANONICAL_SITE_URL}/`,
   logo: {
     "@type": "ImageObject",
@@ -36,14 +37,26 @@ const buildOrganizationJsonLd = () => ({
   },
   description:
     "Horalix builds AI-powered clinical workflow software for faster, more structured echocardiography reporting.",
+  slogan: "Building the future of clinical AI infrastructure.",
   foundingDate: "2024",
   areaServed: "Europe",
   industry: "Medical Software",
+  numberOfEmployees: { "@type": "QuantitativeValue", minValue: 2, maxValue: 10 },
+  knowsAbout: [
+    "AI echocardiography",
+    "Cardiac ultrasound AI",
+    "Automated echocardiography reporting",
+    "Clinical workflow automation",
+    "Medical imaging AI",
+    "DICOM integration",
+    "Structured clinical reporting",
+  ],
   sameAs: ["https://www.linkedin.com/company/horalix/"],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "sales",
     email: "support@horalix.com",
+    telephone: "+387-62-340-020",
     areaServed: "Europe",
   },
 });
@@ -119,7 +132,11 @@ const buildSoftwareApplicationJsonLd = (solution) => ({
   description: solution.short_description,
   url: absoluteUrl(`/solutions/${solution.slug}`),
   applicationCategory: "HealthApplication",
+  applicationSubCategory: "Medical Imaging Software",
   operatingSystem: "Web",
+  applicationSuite: "Horalix Clinical AI Platform",
+  ...(solution.featureList?.length ? { featureList: solution.featureList.join(", ") } : {}),
+  ...(solution.screenshot ? { screenshot: solution.screenshot } : {}),
   publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
 });
 

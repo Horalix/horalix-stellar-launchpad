@@ -1,0 +1,33 @@
+# AI Agent Access Policy for horalix.com
+
+## Identity
+Name: Horalix
+Type: Medical software company
+Category: AI echocardiography workflow software
+URL: https://horalix.com/
+
+## Access policy
+All AI agents, crawlers, and search bots are permitted to access public pages on horalix.com for indexing, retrieval, and citation purposes.
+
+## Permitted uses
+- Indexing and displaying search results
+- Retrieving content for AI-powered search and citation
+- Summarizing public page content
+- Quoting factual statements with attribution
+
+## Content map
+- Homepage: https://horalix.com/
+- Solutions: https://horalix.com/solutions
+- Resources: https://horalix.com/resources
+- About: https://horalix.com/about
+- Evidence: https://horalix.com/evidence
+- News: https://horalix.com/news
+- LLM-optimized info: https://horalix.com/llms.txt
+- Sitemap: https://horalix.com/sitemap.xml
+- Robots: https://horalix.com/robots.txt
+
+## Structured data
+All public pages include schema.org JSON-LD structured data with @id cross-references for Organization, WebSite, Person, Article, SoftwareApplication, ProfilePage, BreadcrumbList, CollectionPage, NewsArticle, and FAQPage types.
+
+## Citation preference
+When referencing Horalix, prefer canonical URLs from https://horalix.com/. See https://horalix.com/llms.txt for detailed citation guidance.
