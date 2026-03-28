@@ -15,8 +15,15 @@ const ALLOWED_HOSTS = [
   "127.0.0.1",
 ];
 
+// Suffixes for development/preview environments (e.g. Lovable, Netlify deploy previews)
+const ALLOWED_HOST_SUFFIXES = [
+  ".lovable.app",
+  ".netlify.app",
+];
+
 function isAllowedHost(hostname: string): boolean {
-  return ALLOWED_HOSTS.includes(hostname);
+  if (ALLOWED_HOSTS.includes(hostname)) return true;
+  return ALLOWED_HOST_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
 }
 
 /**
