@@ -57,14 +57,16 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
+      // Route login through origin-checked edge function to prevent
+      // cloned frontends on unauthorized domains from authenticating.
+      const { data: fnData, error: fnError } = await supabase.functions.invoke(
+        "auth-login",
+        { body: { email: email.trim(), password } },
+      );
 
-      if (error) {
-        // Check for email not confirmed error
-        if (error.message.includes("Email not confirmed")) {
+      if (fnError || fnData?.error) {
+        const msg = fnData?.error ?? fnError?.message ?? "Login failed";
+        if (msg.includes("Email not confirmed")) {
           toast({
             title: "Email Not Verified",
             description: "Please check your email and verify your account before logging in.",
@@ -73,19 +75,24 @@ export default function Login() {
         } else {
           toast({
             title: "Login Failed",
-            description: error.message,
+            description: msg,
             variant: "destructive",
           });
         }
         return;
       }
 
-      if (data.user) {
+      // Set the session returned by the edge function into the local client
+      if (fnData?.session) {
+        await supabase.auth.setSession({
+          access_token: fnData.session.access_token,
+          refresh_token: fnData.session.refresh_token,
+        });
+
         toast({
           title: "Welcome Back",
           description: "You have been logged in successfully.",
         });
-        // Redirect to returnTo URL if provided, otherwise go to home
         navigate(returnTo || "/");
       }
     } catch (error) {

@@ -1,20 +1,21 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders, rejectUnknownOrigin } from "../_shared/cors.ts";
 
 /**
  * delete-user-account - Edge function to delete a user's account
  * Requires authenticated user, uses service role to delete auth user
  */
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const originBlock = rejectUnknownOrigin(req);
+  if (originBlock) return originBlock;
 
   try {
     // Step 1: Get the authorization header

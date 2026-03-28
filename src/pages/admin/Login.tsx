@@ -27,13 +27,23 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      // Step 2: Authenticate with Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Step 2: Authenticate via origin-checked edge function
+      const { data: fnData, error: fnError } = await supabase.functions.invoke(
+        "auth-login",
+        { body: { email, password } },
+      );
+
+      if (fnError || fnData?.error) {
+        throw new Error(fnData?.error ?? fnError?.message ?? "Login failed");
+      }
+      if (!fnData?.session) throw new Error("No session returned");
+
+      await supabase.auth.setSession({
+        access_token: fnData.session.access_token,
+        refresh_token: fnData.session.refresh_token,
       });
 
-      if (error) throw error;
+      const data = { user: fnData.user ?? (await supabase.auth.getUser()).data.user! };
 
       // Step 3: Check if user has admin/editor role
       const { data: roleData, error: roleError } = await supabase

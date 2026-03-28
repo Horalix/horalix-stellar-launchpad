@@ -6,20 +6,17 @@
 // Step 1: Define canonical production URL
 export const CANONICAL_SITE_URL = "https://horalix.com";
 
-// Step 2: Define blocked hosts that should redirect to canonical
-const BLOCKED_PUBLIC_HOSTS = [
-  "horalix-stellar-launchpad.lovable.app",
+// Step 2: Define the ONLY hosts allowed to serve this app.
+// Any host not in this list will be redirected to the canonical URL.
+const ALLOWED_HOSTS = [
+  "horalix.com",
+  "www.horalix.com",
+  "localhost",
+  "127.0.0.1",
 ];
-const BLOCKED_HOST_SUFFIXES = [".lovable.app"];
 
-function isBlockedHost(hostname: string): boolean {
-  if (BLOCKED_PUBLIC_HOSTS.includes(hostname)) {
-    return true;
-  }
-
-  return BLOCKED_HOST_SUFFIXES.some((suffix) =>
-    hostname === suffix.slice(1) || hostname.endsWith(suffix)
-  );
+function isAllowedHost(hostname: string): boolean {
+  return ALLOWED_HOSTS.includes(hostname);
 }
 
 /**
@@ -32,7 +29,7 @@ export function enforceCanonicalHost(): void {
 
   const currentHost = window.location.hostname;
 
-  if (isBlockedHost(currentHost)) {
+  if (!isAllowedHost(currentHost)) {
     // Preserve the path and search params on redirect
     const targetUrl = `${CANONICAL_SITE_URL}${window.location.pathname}${window.location.search}${window.location.hash}`;
     window.location.replace(targetUrl);

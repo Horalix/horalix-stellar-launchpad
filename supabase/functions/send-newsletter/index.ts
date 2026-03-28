@@ -5,12 +5,7 @@
  */
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, rejectUnknownOrigin } from "../_shared/cors.ts";
 
 const RESEND_FROM_DEFAULT = "Horalix <newsletter@horalix.com>";
 
@@ -19,10 +14,15 @@ interface NewsletterRequest {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const originBlock = rejectUnknownOrigin(req);
+  if (originBlock) return originBlock;
 
   try {
     // Step 1: Verify admin authorization

@@ -5,23 +5,9 @@
  */
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getCorsHeaders, rejectUnknownOrigin } from "../_shared/cors.ts";
 
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
-
-// Step 1: Helper to build JSON responses
-function jsonResponse(body: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
-
-// Step 2: Status-specific messaging
+// Status-specific messaging
 const STATUS_MESSAGES: Record<
   string,
   { subject: string; heading: string; body: string }
@@ -44,10 +30,22 @@ const STATUS_MESSAGES: Record<
 };
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
+  function jsonResponse(body: Record<string, unknown>, status = 200) {
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const originBlock = rejectUnknownOrigin(req);
+  if (originBlock) return originBlock;
 
   try {
     // Step 3: Validate required secrets

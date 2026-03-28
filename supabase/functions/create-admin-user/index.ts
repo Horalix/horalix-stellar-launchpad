@@ -5,19 +5,18 @@
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// Step 1: CORS headers for browser requests
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-admin-setup-key",
-};
+import { getCorsHeaders, rejectUnknownOrigin } from "../_shared/cors.ts";
 
 Deno.serve(async (req) => {
-  // Step 2: Handle preflight requests
+  const corsHeaders = getCorsHeaders(req);
+
+  // Handle preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const originBlock = rejectUnknownOrigin(req);
+  if (originBlock) return originBlock;
 
   try {
     // Step 3: Validate admin setup key for security

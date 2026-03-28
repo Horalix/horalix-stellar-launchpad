@@ -124,23 +124,25 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      // Use canonical URL for email redirect - never window.location.origin
-      const { error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          emailRedirectTo: authRedirectUrl("/verify-email"),
-          data: {
-            full_name: fullName.trim(),
-            newsletter_opt_in: subscribeNewsletter,
+      // Route signup through origin-checked edge function to prevent
+      // cloned frontends on unauthorized domains from registering users.
+      const { data: fnData, error: fnError } = await supabase.functions.invoke(
+        "auth-signup",
+        {
+          body: {
+            email: email.trim(),
+            password,
+            fullName: fullName.trim(),
+            newsletterOptIn: subscribeNewsletter,
+            emailRedirectTo: authRedirectUrl("/verify-email"),
           },
         },
-      });
+      );
 
-      if (error) {
+      if (fnError || fnData?.error) {
         toast({
           title: "Signup Failed",
-          description: error.message,
+          description: fnData?.error ?? fnError?.message ?? "Signup failed",
           variant: "destructive",
         });
         return;
