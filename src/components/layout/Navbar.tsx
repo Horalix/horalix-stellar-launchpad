@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useAuth } from "@/hooks/useAuth";
 import { UserProfileDropdown } from "@/components/layout/UserProfileDropdown";
+import { INTERACTIVE_DEMO_PATH } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import horalixLogo from "@/assets/horalix-logo.png";
 
@@ -84,6 +85,13 @@ export const Navbar = () => {
                 </Link>
               );
             })}
+            <a
+              href={INTERACTIVE_DEMO_PATH}
+              className="group relative text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
+            >
+              Demo
+              <span className="absolute -bottom-7 left-0 h-0.5 w-full scale-x-0 bg-accent transition-transform group-hover:scale-x-100" />
+            </a>
           </nav>
 
           <div className="flex items-center gap-4 md:gap-6">
@@ -130,6 +138,12 @@ export const Navbar = () => {
                   </Link>
                 );
               })}
+              <a
+                href={INTERACTIVE_DEMO_PATH}
+                className="px-6 py-3 text-sm font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary hover:text-accent"
+              >
+                Demo
+              </a>
               {!user && (
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="mx-4 mt-4">
                   <Button className="w-full text-xs font-bold uppercase tracking-widest">Login</Button>

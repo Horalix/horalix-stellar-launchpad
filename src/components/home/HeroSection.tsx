@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, ScanLine, Activity } from "lucide-react";
+import { ArrowRight, ScanLine, Activity, MonitorPlay } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
+import { INTERACTIVE_DEMO_PATH } from "@/lib/constants";
 import { TypewriterHeadline } from "./TypewriterHeadline";
 import { HeroScreenshots } from "./HeroScreenshots";
 /**
@@ -61,6 +62,13 @@ export const HeroSection = () => {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-4">
+              <Button asChild size="lg" className="text-xs font-bold uppercase tracking-widest">
+                <a href={INTERACTIVE_DEMO_PATH}>
+                  <MonitorPlay className="w-4 h-4" />
+                  Try Interactive Demo
+                </a>
+              </Button>
+
               <Link to="/#solutions" onClick={(e) => handleHeroClick(e, "/#solutions")}>
                 <Button 
                   variant="outline"

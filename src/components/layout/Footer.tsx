@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 
+import { INTERACTIVE_DEMO_PATH } from "@/lib/constants";
 import horalixLogo from "@/assets/horalix-logo.png";
 
 export const Footer = forwardRef<HTMLElement>((_, ref) => {
@@ -68,6 +69,14 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <Link to="/resources" className="text-sm text-primary-foreground/70 transition-colors hover:text-accent">
                   Resources
                 </Link>
+              </li>
+              <li>
+                <a
+                  href={INTERACTIVE_DEMO_PATH}
+                  className="text-sm text-primary-foreground/70 transition-colors hover:text-accent"
+                >
+                  Interactive Demo
+                </a>
               </li>
               {/* [SEO] Link to full team listing on About page, not a single profile */}
               <li>
