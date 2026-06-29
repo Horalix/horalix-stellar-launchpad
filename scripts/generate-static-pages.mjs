@@ -13,6 +13,7 @@ import {
   organizationProfile,
   resources,
 } from "../src/content/authorityData.js";
+import { fallbackNewsArticles } from "../src/content/newsFallbackData.js";
 
 import {
   buildBreadcrumbJsonLd,
@@ -69,80 +70,29 @@ const STATIC_FAQ_ITEMS = [
   },
 ];
 
-const FALLBACK_NEWS = [
-  {
-    slug: "clinic-validation-in-sarajevo-poliklinika-dr-nabil",
-    title: "Clinic Validation in Sarajevo, Poliklinika Dr Nabil",
-    summary:
-      "We tested Horalix in a real cardiology workflow at Poliklinika Dr Nabil in Sarajevo, ran echocardiography DICOM files through our platform, and got direct clinician validation and practical feedback for what to build next.",
-    content:
-      "Some days feel like a product milestone, not because of a press release, but because a real clinician looks at your output and says it makes sense.\n\nRecently, we spent a day at Poliklinika Dr Nabil in Sarajevo, Bosnia and Herzegovina, running Horalix in a real cardiology workflow using echocardiography DICOM inputs and comparing results to clinical review.\n\nThe visit gave us clinical validation, practical product direction from experienced cardiology leadership, and momentum.",
-    category: "NEWS",
-    location: null,
-    display_date: "2026-01-30T00:00:00+00:00",
-    published_at: "2026-01-30T19:46:06.959+00:00",
-    updated_at: "2026-01-30T19:46:07.224207+00:00",
-    image_urls: [
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802326425-r9xdyy4.png",
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802350501-748z6ya.jpeg",
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802356686-rol1bwb.jpeg",
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802361480-gj8h0nb.jpeg",
-    ],
-  },
-  {
-    slug: "horalix-at-fls",
-    title: "Horalix at Future Leaders Summit 2025!",
-    summary:
-      "Three days, one booth, and dozens of sharp conversations. FLS 2025 reminded us why building in Bosnia and Herzegovina feels exciting again.",
-    content:
-      "In December 2025, Sarajevo felt loud in the best way.\n\nFrom December 19-21 at Hotel Hills, the Future Leaders Summit brought together students, young professionals, diaspora voices, and people from the public and private sectors to talk about leadership, social change, and collective action.\n\nWe left FLS 2025 with a full notebook, new contacts we are excited to follow up with, and the best post-event feeling you can get: next.",
-    category: "NEWS",
-    location: "Sarajevo, BA",
-    display_date: "2025-12-21T00:00:00+00:00",
-    published_at: "2026-01-23T14:43:49.923+00:00",
-    updated_at: "2026-01-23T14:43:50.417647+00:00",
-    image_urls: [
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326134417-hgi9qv6.jpeg",
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326133724-pj422xm.jpeg",
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326163696-tcfuex7.jpg",
-    ],
-  },
-  {
-    slug: "demo-day",
-    title: "Techstars Demo Day",
-    summary:
-      "We pitched Horalix on Techstars Demo Day to a global audience of investors, and somehow made Zoom feel like a real stage.",
-    content:
-      "Techstars Demo Day is the kind of event where time behaves strangely.\n\nOne minute you are triple checking slides, audio, camera lighting, and whether your laptop is ready. The next minute, you are live, pitching Horalix to more than 100 investors joining from around the world.\n\nTechstars Demo Day left us proud of how far we have come and very motivated for what comes next.",
-    category: "NEWS",
-    location: "Sarajevo, BA",
-    display_date: "2025-12-18T00:00:00+00:00",
-    published_at: "2026-01-23T14:46:10.497+00:00",
-    updated_at: "2026-01-23T14:46:11.171241+00:00",
-    image_urls: [
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768359590853-a2pmacb.jpg",
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768359563551-7i92zc2.png",
-    ],
-  },
-  {
-    slug: "the-beginning",
-    title: "The Beginning, Why We Built Horalix",
-    summary:
-      "Horalix started with a stubborn idea: clinical AI should feel like a calm assistant inside the workflow, not another noisy dashboard.",
-    content:
-      "Horalix started the way a lot of useful products start, with one frustrating moment that refused to leave.\n\nInstead of chasing a long list of AI features, we focused on the experience of clinical review. We asked a simple question: what if AI did not add another tool to manage, but made the existing workflow smoother and clearer?\n\nThis is just the beginning, but the direction is clear: build clinical decision support that respects real workflows, supports verification, and feels practical in deployment.",
-    category: "NEWS",
-    location: "Sarajevo, BA",
-    display_date: "2024-08-01T00:00:00+00:00",
-    published_at: "2026-01-23T14:50:05.711+00:00",
-    updated_at: "2026-01-23T14:50:06.319143+00:00",
-    image_urls: [
-      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326091158-yx07xab.png",
-    ],
-  },
-];
+const FALLBACK_NEWS = fallbackNewsArticles;
 
 // ─── Utility helpers ─────────────────────────────────────────────────────────
+
+function mergeNewsArticleWithFallback(article) {
+  const fallback = FALLBACK_NEWS.find((fallbackArticle) => fallbackArticle.slug === article.slug);
+  if (!fallback) return article;
+
+  return {
+    ...article,
+    title: fallback.title,
+    summary: fallback.summary,
+    content: fallback.content,
+    category: fallback.category,
+    location: fallback.location,
+    image_urls: fallback.image_urls,
+    image_focus: fallback.image_focus,
+    keywords: fallback.keywords,
+    display_date: article.display_date || fallback.display_date,
+    published_at: article.published_at || fallback.published_at,
+    updated_at: article.updated_at ?? fallback.updated_at,
+  };
+}
 
 function escapeHtml(input = "") {
   return String(input)
@@ -151,6 +101,19 @@ function escapeHtml(input = "") {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function formatDisplayDate(dateString, month = "short") {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return String(dateString);
+
+  return new Intl.DateTimeFormat("en-US", {
+    month,
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
 }
 
 function readEnvFile() {
@@ -895,20 +858,23 @@ function renderEvidencePage() {
 }
 
 function renderNewsPage(newsItems) {
+  const description =
+    "Read Horalix news on AI echocardiography workflow software, clinical validation, Techstars Demo Day, and healthcare innovation in Sarajevo and Europe.";
+
   return {
-    title: "News and Updates | Horalix",
-    description: "The latest updates, announcements, milestones, and insights from Horalix — AI-powered echocardiography workflow software.",
+    title: "Horalix News | AI Echocardiography Workflow Updates",
+    description,
     canonicalPath: "/news",
     body: wrap(`
       ${nav([{ href: "/", label: "Home" }, { href: "/news", label: "News" }])}
-      <h1>Horalix News and Updates</h1>
-      <p>Follow the latest updates, announcements, milestones, and insights from Horalix. The company shares product progress, partnership developments, and participation in healthcare innovation events.</p>
+      <h1>Horalix News</h1>
+      <p data-speakable>Product milestones, clinical validation notes, investor updates, and Sarajevo health tech stories from the team building AI echocardiography workflow software.</p>
 
       <div ${S}="margin-top:24px">
         ${newsItems.map((article) => `
           <article ${S}="border:1px solid #cbd5e1;padding:20px;border-radius:8px;margin-bottom:16px">
             <h2 ${S}="margin:0 0 4px"><a href="/news/${article.slug}">${escapeHtml(article.title)}</a></h2>
-            <p ${S}="margin:0 0 8px;font-size:13px;color:#64748b">${escapeHtml(article.category || "UPDATE")}${article.display_date ? ` | ${article.display_date}` : ""}${article.location ? ` | ${escapeHtml(article.location)}` : ""}</p>
+            <p ${S}="margin:0 0 8px;font-size:13px;color:#64748b">${escapeHtml(article.category || "UPDATE")}${article.display_date ? ` | ${formatDisplayDate(article.display_date)}` : ""}${article.location ? ` | ${escapeHtml(article.location)}` : ""}</p>
             <p ${S}="margin:0;color:#475569">${escapeHtml(article.summary || "Company update from Horalix.")}</p>
           </article>
         `).join("")}
@@ -921,7 +887,7 @@ function renderNewsPage(newsItems) {
     jsonLd: [
       buildCollectionWithItemsJsonLd(
         "Horalix News",
-        "The latest updates, announcements, and insights from Horalix.",
+        description,
         "/news",
         newsItems.map((a) => ({ name: a.title, path: `/news/${a.slug}`, description: a.summary })),
       ),
@@ -933,24 +899,51 @@ function renderNewsPage(newsItems) {
   };
 }
 
+function renderArticleBlocks(content, fallback = "") {
+  const source = String(content || fallback || "");
+
+  return source
+    .split("\n\n")
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block) => {
+      const lines = block.split("\n");
+
+      if (lines[0]?.startsWith("## ")) {
+        const paragraph = lines.slice(1).join("\n").trim();
+        return [
+          `<h2 ${S}="margin-top:32px;font-size:28px;line-height:1.25">${escapeHtml(lines[0].slice(3))}</h2>`,
+          paragraph ? `<p data-speakable>${escapeHtml(paragraph)}</p>` : "",
+        ].join("");
+      }
+
+      if (lines.length > 1 && lines.every((line) => line.startsWith("- "))) {
+        return `<ul ${S}="margin:16px 0;padding-left:24px;color:#475569">${lines
+          .map((line) => `<li>${escapeHtml(line.slice(2))}</li>`)
+          .join("")}</ul>`;
+      }
+
+      return `<p data-speakable>${escapeHtml(block)}</p>`;
+    })
+    .join("");
+}
+
 function renderNewsArticle(article) {
-  const paragraphs = typeof article.content === "string" && article.content
-    ? article.content.split("\n\n").map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")
-    : `<p>${escapeHtml(article.summary || "Company update from Horalix.")}</p>`;
+  const articleBody = renderArticleBlocks(article.content, article.summary || "Company update from Horalix.");
 
   return {
     title: `${article.title} | Horalix News`,
-    description: ((article.summary || `${article.title} — company update from Horalix, AI-powered echocardiography workflow software.`).length > 155
+    description: ((article.summary || `${article.title} - company update from Horalix, AI-powered echocardiography workflow software.`).length > 155
       ? (article.summary || "").slice(0, 152) + "..."
-      : article.summary || `${article.title} — company update from Horalix, AI-powered echocardiography workflow software.`),
+      : article.summary || `${article.title} - company update from Horalix, AI-powered echocardiography workflow software.`),
     canonicalPath: `/news/${article.slug}`,
     body: wrap(`
       ${nav([{ href: "/", label: "Home" }, { href: "/news", label: "News" }, { href: `/news/${article.slug}`, label: article.title }])}
       <article>
         <h1>${escapeHtml(article.title)}</h1>
-        <p ${S}="font-size:13px;color:#64748b">${escapeHtml(article.category || "UPDATE")}${article.display_date ? ` | ${article.display_date}` : ""}${article.location ? ` | ${escapeHtml(article.location)}` : ""}</p>
+        <p ${S}="font-size:13px;color:#64748b">${escapeHtml(article.category || "UPDATE")}${article.display_date ? ` | ${formatDisplayDate(article.display_date, "long")}` : ""}${article.location ? ` | ${escapeHtml(article.location)}` : ""}</p>
         ${article.summary ? `<p ${S}="font-size:18px;color:#475569">${escapeHtml(article.summary)}</p>` : ""}
-        ${paragraphs}
+        ${articleBody}
       </article>
 
       <section ${S}="margin-top:32px">
@@ -964,6 +957,11 @@ function renderNewsArticle(article) {
     `),
     jsonLd: [
       buildNewsArticleJsonLd(article),
+      buildSpeakableJsonLd(`https://horalix.com/news/${article.slug}`, [
+        "h1",
+        "[data-speakable]",
+        "article h2",
+      ]),
       buildBreadcrumbJsonLd([
         { name: "Home", path: "/" },
         { name: "News", path: "/news" },
@@ -1045,15 +1043,20 @@ async function loadDynamicData() {
       ["is_active", "eq.true"],
       ["order", "display_order.asc"],
     ]),
-    fetchTable(config, "news_articles", "slug,title,summary,content,category,location,display_date,published_at", [
+    fetchTable(config, "news_articles", "slug,title,summary,content,category,location,display_date,published_at,updated_at,image_urls", [
       ["is_published", "eq.true"],
       ["order", "display_date.desc.nullslast"],
     ]),
   ]);
 
+  const loadedNewsItems =
+    newsItems.status === "fulfilled" && newsItems.value.length > 0
+      ? newsItems.value.map(mergeNewsArticleWithFallback)
+      : FALLBACK_NEWS;
+
   return {
     solutions: solutions.status === "fulfilled" && solutions.value.length > 0 ? solutions.value : defaultSolutions,
-    newsItems: newsItems.status === "fulfilled" && newsItems.value.length > 0 ? newsItems.value : FALLBACK_NEWS,
+    newsItems: loadedNewsItems,
   };
 }
 

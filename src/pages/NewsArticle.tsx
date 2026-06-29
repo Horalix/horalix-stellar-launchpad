@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { ArrowLeft, Calendar, MapPin } from "lucide-react";
+import { Fragment } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import SEO from "@/components/SEO";
@@ -10,9 +10,21 @@ import { ImageSlider } from "@/components/ui/image-slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
-import { buildBreadcrumbJsonLd, buildNewsArticleJsonLd } from "@/lib/structuredData";
-import { getFallbackNewsArticleBySlug } from "@/content/homepageFallbacks";
+import { buildBreadcrumbJsonLd, buildNewsArticleJsonLd, buildSpeakableJsonLd } from "@/lib/structuredData";
+import { getFallbackNewsArticleBySlug, mergeNewsArticleWithFallback } from "@/content/homepageFallbacks";
 import type { PublicNewsArticle } from "@/content/homepageFallbacks";
+
+const formatNewsArticleDate = (dateString: string) => {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+};
 
 const NewsArticle = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -33,7 +45,7 @@ const NewsArticle = () => {
 
       if (!data) return null;
 
-      return {
+      return mergeNewsArticleWithFallback({
         id: data.id,
         slug: data.slug,
         title: data.title,
@@ -53,7 +65,7 @@ const NewsArticle = () => {
         display_date: data.display_date ?? data.published_at ?? "",
         published_at: data.published_at ?? "",
         updated_at: data.updated_at ?? null,
-      };
+      });
     },
     enabled: isSupabaseConfigured && !!slug,
     retry: false,
@@ -127,11 +139,18 @@ const NewsArticle = () => {
       slug: article.slug,
       title: article.title,
       summary: description,
+      category: article.category,
       display_date: article.display_date,
       published_at: article.published_at,
       updated_at: article.updated_at,
-      image_urls: image ? [image] : undefined,
+      image_urls: article.image_urls.length > 0 ? article.image_urls : image ? [image] : undefined,
+      keywords: article.keywords,
     }),
+    buildSpeakableJsonLd(`https://horalix.com/news/${article.slug}`, [
+      "h1",
+      "[data-speakable]",
+      "article h2",
+    ]),
     buildBreadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "News", path: "/news" },
@@ -196,7 +215,7 @@ const NewsArticle = () => {
               {(article.display_date || article.published_at) && (
                 <span className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  {format(new Date(article.display_date || article.published_at), "MMMM d, yyyy")}
+                  {formatNewsArticleDate(article.display_date || article.published_at)}
                 </span>
               )}
               {article.location && (
@@ -217,11 +236,7 @@ const NewsArticle = () => {
           </p>
 
           <div className="mt-8 space-y-4">
-            {(article.content || article.summary).split("\n\n").map((paragraph: string) => (
-              <p key={paragraph} className="text-base leading-relaxed text-muted-foreground">
-                {paragraph}
-              </p>
-            ))}
+            {renderArticleBlocks(article.content || article.summary)}
           </div>
 
           <footer className="mt-12 border-t border-border pt-8">
@@ -241,6 +256,53 @@ const NewsArticle = () => {
       </article>
     </MainLayout>
   );
+};
+
+const renderArticleBlocks = (content: string) => {
+  return content
+    .split("\n\n")
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block, index) => {
+      const key = `${index}-${block.slice(0, 24)}`;
+
+      const lines = block.split("\n");
+
+      if (lines[0]?.startsWith("## ")) {
+        const paragraph = lines.slice(1).join("\n").trim();
+
+        return (
+          <Fragment key={key}>
+            <h2 className="pt-6 font-space text-2xl font-bold tracking-tight text-primary md:text-3xl">
+              {lines[0].slice(3)}
+            </h2>
+            {paragraph && (
+              <p data-speakable className="text-base leading-relaxed text-muted-foreground">
+                {paragraph}
+              </p>
+            )}
+          </Fragment>
+        );
+      }
+
+      if (lines.length > 1 && lines.every((line) => line.startsWith("- "))) {
+        return (
+          <ul key={key} className="space-y-2 border-l border-border pl-5 text-base leading-relaxed text-muted-foreground">
+            {lines.map((line) => (
+              <li key={line} className="list-disc">
+                {line.slice(2)}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
+      return (
+        <p key={key} data-speakable className="text-base leading-relaxed text-muted-foreground">
+          {block}
+        </p>
+      );
+    });
 };
 
 export default NewsArticle;

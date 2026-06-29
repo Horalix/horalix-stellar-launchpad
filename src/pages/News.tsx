@@ -4,16 +4,27 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { Newspaper, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
 import SEO from "@/components/SEO";
-import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
-import { homepageNewsFallbacks } from "@/content/homepageFallbacks";
+import { buildBreadcrumbJsonLd, buildCollectionWithItemsJsonLd } from "@/lib/structuredData";
+import { homepageNewsFallbacks, mergeNewsArticleWithFallback } from "@/content/homepageFallbacks";
 import type { PublicNewsArticle } from "@/content/homepageFallbacks";
 
 /**
  * News - News listing page
  * Displays all published news articles from the database
  */
+
+const formatNewsDate = (dateString: string) => {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+};
 
 const News = () => {
   // Step 1: Fetch all published articles, sorted by display_date (admin-chosen date)
@@ -27,27 +38,29 @@ const News = () => {
         .order("display_date", { ascending: false, nullsFirst: false });
 
       if (error) throw error;
-      return (data ?? []).map((article) => ({
-        id: article.id,
-        slug: article.slug,
-        title: article.title,
-        summary: article.summary ?? "",
-        content: article.content ?? "",
-        category: article.category ?? "UPDATE",
-        location: article.location ?? null,
-        image_urls: Array.isArray(article.image_urls)
-          ? article.image_urls.filter((url): url is string => typeof url === "string")
-          : [],
-        image_focus: Array.isArray(article.image_focus)
-          ? article.image_focus.map((focus: { x?: number; y?: number }) => ({
-              x: focus?.x ?? 50,
-              y: focus?.y ?? 50,
-            }))
-          : [],
-        display_date: article.display_date ?? article.published_at ?? "",
-        published_at: article.published_at ?? "",
-        updated_at: article.updated_at ?? null,
-      }));
+      return (data ?? [])
+        .map((article) => ({
+          id: article.id,
+          slug: article.slug,
+          title: article.title,
+          summary: article.summary ?? "",
+          content: article.content ?? "",
+          category: article.category ?? "UPDATE",
+          location: article.location ?? null,
+          image_urls: Array.isArray(article.image_urls)
+            ? article.image_urls.filter((url): url is string => typeof url === "string")
+            : [],
+          image_focus: Array.isArray(article.image_focus)
+            ? article.image_focus.map((focus: { x?: number; y?: number }) => ({
+                x: focus?.x ?? 50,
+                y: focus?.y ?? 50,
+              }))
+            : [],
+          display_date: article.display_date ?? article.published_at ?? "",
+          published_at: article.published_at ?? "",
+          updated_at: article.updated_at ?? null,
+        }))
+        .map(mergeNewsArticleWithFallback);
     },
     enabled: isSupabaseConfigured,
     retry: false,
@@ -67,27 +80,21 @@ const News = () => {
   };
 
   // SEO metadata for the news listing page
-  const title = "News | Horalix";
+  const title = "Horalix News | AI Echocardiography Workflow Updates";
   const description =
-    "The latest updates, announcements, and insights from Horalix.";
+    "Read Horalix news on AI echocardiography workflow software, clinical validation, Techstars Demo Day, and healthcare innovation in Sarajevo and Europe.";
   const canonical = "/news";
-  const canonicalUrl = "https://horalix.com/news";
-  // [SEO] CollectionPage + BreadcrumbList (was missing breadcrumb — all other listing pages have it)
   const jsonLd = [
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "@id": `${canonicalUrl}#collection`,
-      name: "Horalix News",
+    buildCollectionWithItemsJsonLd(
+      "Horalix News",
       description,
-      url: canonicalUrl,
-      publisher: {
-        "@type": "Organization",
-        "@id": "https://horalix.com/#organization",
-        name: "Horalix",
-        url: "https://horalix.com/",
-      },
-    },
+      "/news",
+      articles.map((article) => ({
+        name: article.title,
+        path: `/news/${article.slug}`,
+        description: article.summary,
+      })),
+    ),
     buildBreadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "News", path: "/news" },
@@ -112,10 +119,10 @@ const News = () => {
               <span>Press & Updates</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold font-space tracking-tight">
-              News
+              Horalix News
             </h1>
             <p className="mt-4 text-muted-foreground max-w-2xl">
-              The latest updates, announcements, and insights from Horalix.
+              Product milestones, clinical validation notes, investor updates, and Sarajevo health tech stories from the team building AI echocardiography workflow software.
             </p>
           </header>
 
@@ -162,7 +169,7 @@ const News = () => {
                         {getArticleDate(article) && (
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {format(new Date(getArticleDate(article)!), "MMM d, yyyy")}
+                            {formatNewsDate(getArticleDate(article)!)}
                           </span>
                         )}
                         {article.location && (

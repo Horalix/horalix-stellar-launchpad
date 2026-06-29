@@ -161,6 +161,15 @@ const buildProfilePageJsonLd = (contributor) => ({
 
 const buildNewsArticleJsonLd = (article) => {
   const datePublished = article.display_date || article.published_at || new Date().toISOString();
+  const keywords = article.keywords?.length
+    ? article.keywords
+    : [
+        "Horalix",
+        "AI echocardiography",
+        "clinical AI",
+        "cardiac ultrasound AI",
+        "medical imaging workflow",
+      ];
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -170,7 +179,16 @@ const buildNewsArticleJsonLd = (article) => {
     datePublished,
     ...(article.updated_at ? { dateModified: article.updated_at } : {}),
     ...(article.image_urls?.length ? { image: article.image_urls } : {}),
+    articleSection: article.category || "News",
+    keywords: keywords.join(", "),
     url: absoluteUrl(`/news/${article.slug}`),
+    mainEntityOfPage: { "@id": absoluteUrl(`/news/${article.slug}#webpage`) },
+    about: keywords.map((keyword) => ({
+      "@type": "Thing",
+      name: keyword,
+    })),
+    isPartOf: { "@id": absoluteUrl("/news#collection") },
+    inLanguage: "en",
     author: {
       "@type": "Organization",
       "@id": `${CANONICAL_SITE_URL}/#organization`,

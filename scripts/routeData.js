@@ -1,18 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { contributors, resources } from "../src/content/authorityData.js";
+import { fallbackNewsArticles } from "../src/content/newsFallbackData.js";
 
 const ROOT_DIR = process.cwd();
 const ENV_PATH = path.join(ROOT_DIR, ".env");
 
 const CORE_ROUTES = ["/", "/about", "/evidence", "/news", "/resources", "/solutions", "/terms"];
 // Non-public routes excluded from sitemap: /login, /signup, /verify-email, /profile, /admin
-const FALLBACK_NEWS_ROUTES = [
-  "/news/clinic-validation-in-sarajevo-poliklinika-dr-nabil",
-  "/news/horalix-at-fls",
-  "/news/demo-day",
-  "/news/the-beginning",
-];
+const FALLBACK_NEWS_ROUTES = fallbackNewsArticles.map((article) => `/news/${article.slug}`);
 const FALLBACK_SOLUTION_ROUTES = [
   "/solutions/cardiology-ai",
   "/solutions/pathology-ai",

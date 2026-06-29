@@ -218,14 +218,25 @@ export const buildNewsArticleJsonLd = (article: {
   title: string;
   summary: string;
   slug: string;
+  category?: string;
   published_at?: string;
   display_date?: string;
   updated_at?: string;
   image_urls?: string[];
+  keywords?: string[];
   authorName?: string;
   authorSlug?: string;
 }) => {
   const datePublished = article.display_date ?? article.published_at ?? new Date().toISOString();
+  const keywords = article.keywords?.length
+    ? article.keywords
+    : [
+        "Horalix",
+        "AI echocardiography",
+        "clinical AI",
+        "cardiac ultrasound AI",
+        "medical imaging workflow",
+      ];
   const author =
     article.authorName && article.authorSlug
       ? {
@@ -250,7 +261,16 @@ export const buildNewsArticleJsonLd = (article: {
     datePublished,
     ...(article.updated_at ? { dateModified: article.updated_at } : {}),
     ...(article.image_urls?.length ? { image: article.image_urls } : {}),
+    articleSection: article.category || "News",
+    keywords: keywords.join(", "),
     url: absoluteUrl(`/news/${article.slug}`),
+    mainEntityOfPage: { "@id": absoluteUrl(`/news/${article.slug}#webpage`) },
+    about: keywords.map((keyword) => ({
+      "@type": "Thing",
+      name: keyword,
+    })),
+    isPartOf: { "@id": absoluteUrl("/news#collection") },
+    inLanguage: "en",
     author,
     publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
   };
