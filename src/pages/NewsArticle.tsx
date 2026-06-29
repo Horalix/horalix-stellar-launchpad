@@ -9,13 +9,15 @@ import { Button } from "@/components/ui/button";
 import { ImageSlider } from "@/components/ui/image-slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { buildBreadcrumbJsonLd, buildNewsArticleJsonLd } from "@/lib/structuredData";
+import { getFallbackNewsArticleBySlug } from "@/content/homepageFallbacks";
+import type { PublicNewsArticle } from "@/content/homepageFallbacks";
 
 const NewsArticle = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const { data: article, isLoading, error } = useQuery({
+  const { data: queriedArticle, isLoading, error } = useQuery<PublicNewsArticle | null>({
     queryKey: ["news-article", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,12 +31,39 @@ const NewsArticle = () => {
         throw error;
       }
 
-      return data;
+      if (!data) return null;
+
+      return {
+        id: data.id,
+        slug: data.slug,
+        title: data.title,
+        summary: data.summary ?? "",
+        content: data.content ?? "",
+        category: data.category ?? "UPDATE",
+        location: data.location ?? null,
+        image_urls: Array.isArray(data.image_urls)
+          ? data.image_urls.filter((url): url is string => typeof url === "string")
+          : [],
+        image_focus: Array.isArray(data.image_focus)
+          ? data.image_focus.map((focus: { x?: number; y?: number }) => ({
+              x: focus?.x ?? 50,
+              y: focus?.y ?? 50,
+            }))
+          : [],
+        display_date: data.display_date ?? data.published_at ?? "",
+        published_at: data.published_at ?? "",
+        updated_at: data.updated_at ?? null,
+      };
     },
-    enabled: !!slug,
+    enabled: isSupabaseConfigured && !!slug,
+    retry: false,
   });
 
-  if (isLoading) {
+  const fallbackArticle = getFallbackNewsArticleBySlug(slug);
+  const article = queriedArticle ?? fallbackArticle;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedArticle && !fallbackArticle;
+
+  if (shouldShowLoading) {
     return (
       <MainLayout>
         {/* [SEO] Prevent stale meta from previous route leaking during loading */}
@@ -110,15 +139,8 @@ const NewsArticle = () => {
     ]),
   ];
 
-  const rawUrls = article.image_urls;
-  const images: string[] =
-    Array.isArray(rawUrls) && rawUrls.length > 0
-      ? rawUrls.filter((url): url is string => typeof url === "string")
-      : [];
-  const rawFocus = article.image_focus;
-  const imageFocus = Array.isArray(rawFocus)
-    ? rawFocus.map((focus: { x?: number; y?: number }) => ({ x: focus?.x ?? 50, y: focus?.y ?? 50 }))
-    : [];
+  const images = article.image_urls;
+  const imageFocus = article.image_focus;
 
   return (
     <MainLayout>
@@ -195,7 +217,7 @@ const NewsArticle = () => {
           </p>
 
           <div className="mt-8 space-y-4">
-            {article.content.split("\n\n").map((paragraph: string) => (
+            {(article.content || article.summary).split("\n\n").map((paragraph: string) => (
               <p key={paragraph} className="text-base leading-relaxed text-muted-foreground">
                 {paragraph}
               </p>

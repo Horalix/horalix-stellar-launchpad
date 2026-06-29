@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { Newspaper, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import SEO from "@/components/SEO";
 import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
+import { homepageNewsFallbacks } from "@/content/homepageFallbacks";
+import type { PublicNewsArticle } from "@/content/homepageFallbacks";
 
 /**
  * News - News listing page
@@ -15,7 +17,7 @@ import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
 
 const News = () => {
   // Step 1: Fetch all published articles, sorted by display_date (admin-chosen date)
-  const { data: articles, isLoading } = useQuery({
+  const { data: queriedArticles, isLoading } = useQuery<PublicNewsArticle[]>({
     queryKey: ["news-articles"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -25,12 +27,37 @@ const News = () => {
         .order("display_date", { ascending: false, nullsFirst: false });
 
       if (error) throw error;
-      return data || [];
+      return (data ?? []).map((article) => ({
+        id: article.id,
+        slug: article.slug,
+        title: article.title,
+        summary: article.summary ?? "",
+        content: article.content ?? "",
+        category: article.category ?? "UPDATE",
+        location: article.location ?? null,
+        image_urls: Array.isArray(article.image_urls)
+          ? article.image_urls.filter((url): url is string => typeof url === "string")
+          : [],
+        image_focus: Array.isArray(article.image_focus)
+          ? article.image_focus.map((focus: { x?: number; y?: number }) => ({
+              x: focus?.x ?? 50,
+              y: focus?.y ?? 50,
+            }))
+          : [],
+        display_date: article.display_date ?? article.published_at ?? "",
+        published_at: article.published_at ?? "",
+        updated_at: article.updated_at ?? null,
+      }));
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
 
+  const articles = queriedArticles && queriedArticles.length > 0 ? queriedArticles : homepageNewsFallbacks;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedArticles;
+
   // Helper: Get display date (prefer display_date, fallback to published_at)
-  const getArticleDate = (article: any): string | null => {
+  const getArticleDate = (article: PublicNewsArticle): string | null => {
     return article.display_date || article.published_at;
   };
 
@@ -88,7 +115,7 @@ const News = () => {
           </header>
 
           {/* Articles list */}
-          {isLoading ? (
+          {shouldShowLoading ? (
             // Loading skeleton
             <div className="space-y-8">
               {[1, 2, 3].map((i) => (
@@ -100,7 +127,7 @@ const News = () => {
                 </div>
               ))}
             </div>
-          ) : articles && articles.length > 0 ? (
+          ) : articles.length > 0 ? (
             <div className="space-y-6">
               {articles.map((article) => (
                 <Link
@@ -113,7 +140,7 @@ const News = () => {
                     {Array.isArray(article.image_urls) && article.image_urls[0] && (
                       <div className="md:w-48 md:h-32 shrink-0 overflow-hidden bg-secondary rounded-lg">
                         <img
-                          src={article.image_urls[0] as string}
+                          src={article.image_urls[0]}
                           alt={article.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />

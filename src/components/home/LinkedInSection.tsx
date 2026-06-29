@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { Linkedin, ArrowRight, Loader2, ExternalLink } from "lucide-react";
 import { ContentSlider } from "@/components/ui/content-slider";
 
@@ -94,6 +94,8 @@ export const LinkedInSection = () => {
       if (error) throw error;
       return data;
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
 
   // Step 2: Don't render section if no posts

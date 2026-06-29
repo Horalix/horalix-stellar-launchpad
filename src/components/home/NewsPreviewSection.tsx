@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { Globe, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { ContentSlider } from "@/components/ui/content-slider";
 import { format } from "date-fns";
+import { homepageNewsFallbacks } from "@/content/homepageFallbacks";
+import type { PublicNewsArticle } from "@/content/homepageFallbacks";
 
 /**
  * NewsPreviewSection - Shows news articles on homepage with slider when > 3
@@ -17,20 +19,46 @@ const PLACEHOLDER_IMAGE =
 
 export const NewsPreviewSection = () => {
   // Step 2: Fetch published articles from database (no limit for slider)
-  const { data: articles, isLoading } = useQuery({
+  const { data: queriedArticles, isLoading } = useQuery<PublicNewsArticle[]>({
     queryKey: ["homepage-news"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("news_articles")
-        .select("id, slug, title, summary, image_urls, category, location, published_at, display_date")
+        .select("id, slug, title, summary, content, image_urls, image_focus, category, location, published_at, updated_at, display_date")
         .eq("is_published", true)
         .order("display_date", { ascending: false, nullsFirst: false })
         .limit(10);
 
       if (error) throw error;
-      return data;
+
+      return (data ?? []).map((article) => ({
+        id: article.id,
+        slug: article.slug,
+        title: article.title,
+        summary: article.summary ?? "",
+        content: article.content ?? "",
+        category: article.category ?? "UPDATE",
+        location: article.location ?? null,
+        image_urls: Array.isArray(article.image_urls)
+          ? article.image_urls.filter((url): url is string => typeof url === "string")
+          : [],
+        image_focus: Array.isArray(article.image_focus)
+          ? article.image_focus.map((focus: { x?: number; y?: number }) => ({
+              x: focus?.x ?? 50,
+              y: focus?.y ?? 50,
+            }))
+          : [],
+        display_date: article.display_date ?? article.published_at ?? "",
+        published_at: article.published_at ?? "",
+        updated_at: article.updated_at ?? null,
+      }));
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
+
+  const articles = queriedArticles && queriedArticles.length > 0 ? queriedArticles : homepageNewsFallbacks;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedArticles;
 
   // Step 3: Format date for display (use display_date if set, fallback to published_at)
   const formatDate = (displayDate: string | null, publishedAt: string | null) => {
@@ -40,7 +68,7 @@ export const NewsPreviewSection = () => {
   };
 
   // Step 4: Render article card
-  const renderArticleCard = (article: NonNullable<typeof articles>[number]) => (
+  const renderArticleCard = (article: PublicNewsArticle) => (
     <Link
       key={article.id}
       to={`/news/${article.slug}`}
@@ -110,21 +138,21 @@ export const NewsPreviewSection = () => {
         </div>
 
         {/* Step 5: Loading state */}
-        {isLoading && (
+        {shouldShowLoading && (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-accent" />
           </div>
         )}
 
         {/* Step 6: Empty state */}
-        {!isLoading && (!articles || articles.length === 0) && (
+        {!shouldShowLoading && articles.length === 0 && (
           <div className="text-center py-16 text-muted-foreground font-mono text-sm">
             No news available.
           </div>
         )}
 
         {/* Step 7: News cards with slider when > 3 */}
-        {!isLoading && articles && articles.length > 0 && (
+        {!shouldShowLoading && articles.length > 0 && (
           articles.length <= 3 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map(renderArticleCard)}

@@ -14,8 +14,10 @@ import {
   Bone
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { ContentSlider } from "@/components/ui/content-slider";
+import { homepageSolutionFallbacks } from "@/content/homepageFallbacks";
+import type { HomepageSolution } from "@/content/homepageFallbacks";
 import type { LucideIcon } from "lucide-react";
 
 /**
@@ -43,24 +45,44 @@ const getIconComponent = (iconName: string): LucideIcon => {
 
 export const SolutionsSection = () => {
   // Step 2: Fetch active solutions from database
-  const { data: solutions, isLoading } = useQuery({
+  const { data: queriedSolutions, isLoading } = useQuery<HomepageSolution[]>({
     queryKey: ["homepage-solutions"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("solutions")
-        .select("id, slug, name, short_description, icon_name, specs, badge_text, display_order")
+        .select("id, slug, name, short_description, full_description, icon_name, specs, features, badge_text, display_order")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data;
+
+      return (data ?? []).map((solution, index) => ({
+        id: solution.id,
+        slug: solution.slug,
+        name: solution.name,
+        short_description: solution.short_description,
+        full_description: solution.full_description ?? null,
+        icon_name: solution.icon_name || "Activity",
+        specs:
+          typeof solution.specs === "object" && solution.specs !== null && !Array.isArray(solution.specs)
+            ? Object.fromEntries(Object.entries(solution.specs).map(([key, value]) => [key, String(value)]))
+            : {},
+        features: Array.isArray(solution.features) ? solution.features.map(String) : [],
+        badge_text: solution.badge_text ?? null,
+        display_order: solution.display_order ?? index + 1,
+      }));
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
 
+  const solutions = queriedSolutions && queriedSolutions.length > 0 ? queriedSolutions : homepageSolutionFallbacks;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedSolutions;
+
   // Step 3: Render solution card
-  const renderSolutionCard = (solution: NonNullable<typeof solutions>[number]) => {
+  const renderSolutionCard = (solution: HomepageSolution) => {
     const IconComponent = getIconComponent(solution.icon_name);
-    const specs = (solution.specs as Record<string, string>) || {};
+    const specs = solution.specs || {};
 
     return (
       <Link
@@ -141,21 +163,21 @@ export const SolutionsSection = () => {
         </div>
 
         {/* Step 4: Loading state */}
-        {isLoading && (
+        {shouldShowLoading && (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-accent" />
           </div>
         )}
 
         {/* Step 5: Empty state */}
-        {!isLoading && (!solutions || solutions.length === 0) && (
+        {!shouldShowLoading && solutions.length === 0 && (
           <div className="text-center py-16 text-muted-foreground font-mono text-sm">
             No solutions available.
           </div>
         )}
 
         {/* Step 6: Solution cards with slider when > 3 */}
-        {!isLoading && solutions && solutions.length > 0 && (
+        {!shouldShowLoading && solutions.length > 0 && (
           solutions.length <= 3 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {solutions.map(renderSolutionCard)}

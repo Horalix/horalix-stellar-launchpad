@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 
 /**
  * useSiteContent - Hook for fetching site content by key
@@ -24,12 +24,14 @@ export const useSiteContent = (key: string, fallback: string = ""): SiteContentR
       if (error) throw error;
       return data?.value || fallback;
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   return {
     value: data ?? fallback,
-    isLoading,
+    isLoading: isSupabaseConfigured && isLoading,
   };
 };
 
@@ -53,6 +55,8 @@ export const useSiteContentBatch = (keys: string[]): Record<string, string> => {
       });
       return contentMap;
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
     staleTime: 5 * 60 * 1000,
   });
 

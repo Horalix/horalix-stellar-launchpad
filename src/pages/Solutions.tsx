@@ -7,13 +7,15 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { defaultSolutions, getResourcesForSolution } from "@/content/authorityData";
-import { supabase } from "@/integrations/supabase/client";
+import { getResourcesForSolution } from "@/content/authorityData";
+import { homepageSolutionFallbacks } from "@/content/homepageFallbacks";
+import type { HomepageSolution } from "@/content/homepageFallbacks";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { getSolutionIcon } from "@/lib/solutionIcons";
 import { buildBreadcrumbJsonLd, buildCollectionWithItemsJsonLd } from "@/lib/structuredData";
 
 const Solutions = () => {
-  const { data: solutions, isLoading } = useQuery({
+  const { data: queriedSolutions, isLoading } = useQuery<HomepageSolution[]>({
     queryKey: ["solutions-hub"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -26,11 +28,28 @@ const Solutions = () => {
         throw error;
       }
 
-      return data;
+      return (data ?? []).map((solution, index) => ({
+        id: solution.id,
+        slug: solution.slug,
+        name: solution.name,
+        short_description: solution.short_description,
+        full_description: solution.full_description ?? null,
+        icon_name: solution.icon_name || "Activity",
+        specs:
+          typeof solution.specs === "object" && solution.specs !== null && !Array.isArray(solution.specs)
+            ? Object.fromEntries(Object.entries(solution.specs).map(([key, value]) => [key, String(value)]))
+            : {},
+        features: Array.isArray(solution.features) ? solution.features.map(String) : [],
+        badge_text: solution.badge_text ?? null,
+        display_order: solution.display_order ?? index + 1,
+      }));
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
 
-  const cards = solutions && solutions.length > 0 ? solutions : defaultSolutions;
+  const cards = queriedSolutions && queriedSolutions.length > 0 ? queriedSolutions : homepageSolutionFallbacks;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedSolutions;
 
   const jsonLd = [
     buildCollectionWithItemsJsonLd(
@@ -97,7 +116,7 @@ const Solutions = () => {
           </header>
 
           <section className="mt-10 grid gap-6 lg:grid-cols-3">
-            {isLoading &&
+            {shouldShowLoading &&
               Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="border border-border bg-card p-8">
                   <Skeleton className="h-12 w-12 mb-6" />
@@ -107,9 +126,9 @@ const Solutions = () => {
                 </div>
               ))}
 
-            {!isLoading &&
+            {!shouldShowLoading &&
               cards.map((solution) => {
-                const Icon = getSolutionIcon("icon_name" in solution ? solution.icon_name : "Activity");
+                const Icon = getSolutionIcon(solution.icon_name);
                 const relatedResources = getResourcesForSolution(solution.slug).slice(0, 2);
 
                 return (

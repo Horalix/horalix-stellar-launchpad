@@ -1,7 +1,9 @@
 import { Users, ExternalLink, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
+import { homepageTeamFallbacks } from "@/content/homepageFallbacks";
+import type { HomepageTeamMember } from "@/content/homepageFallbacks";
 
 // Import team member photos as fallbacks
 import affanPhoto from "@/assets/team/affan.jpg";
@@ -36,7 +38,7 @@ const getPhotoUrl = (photoUrl: string | null): string => {
 
 export const TeamSection = () => {
   // Step 2: Fetch active team members from database
-  const { data: teamMembers, isLoading } = useQuery({
+  const { data: queriedTeamMembers, isLoading } = useQuery<HomepageTeamMember[]>({
     queryKey: ["homepage-team"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -46,9 +48,22 @@ export const TeamSection = () => {
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data;
+      return (data ?? []).map((member, index) => ({
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        bio: member.bio ?? "",
+        photo_url: member.photo_url ?? null,
+        linkedin_url: member.linkedin_url ?? null,
+        display_order: member.display_order ?? index + 1,
+      }));
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
+
+  const teamMembers = queriedTeamMembers && queriedTeamMembers.length > 0 ? queriedTeamMembers : homepageTeamFallbacks;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedTeamMembers;
 
   return (
     <section
@@ -68,21 +83,21 @@ export const TeamSection = () => {
         </div>
 
         {/* Step 3: Loading state */}
-        {isLoading && (
+        {shouldShowLoading && (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-accent" />
           </div>
         )}
 
         {/* Step 4: Empty state */}
-        {!isLoading && (!teamMembers || teamMembers.length === 0) && (
+        {!shouldShowLoading && teamMembers.length === 0 && (
           <div className="text-center py-16 text-muted-foreground font-mono text-sm">
             No team members available.
           </div>
         )}
 
         {/* Step 5: Team members grid */}
-        {!isLoading && teamMembers && teamMembers.length > 0 && (
+        {!shouldShowLoading && teamMembers.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {teamMembers.map((member, i) => {
               const profileSlug = TEAM_PROFILE_SLUGS[member.name];

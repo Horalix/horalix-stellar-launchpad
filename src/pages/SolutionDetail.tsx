@@ -8,14 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { getResourcesForSolution } from "@/content/authorityData";
-import { supabase } from "@/integrations/supabase/client";
+import { getFallbackSolutionBySlug } from "@/content/homepageFallbacks";
+import type { HomepageSolution } from "@/content/homepageFallbacks";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { getSolutionIcon } from "@/lib/solutionIcons";
 import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
 
 const SolutionDetail = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const { data: solution, isLoading, error } = useQuery({
+  const { data: queriedSolution, isLoading, error } = useQuery<HomepageSolution | null>({
     queryKey: ["solution", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,12 +31,33 @@ const SolutionDetail = () => {
         throw error;
       }
 
-      return data;
+      if (!data) return null;
+
+      return {
+        id: data.id,
+        slug: data.slug,
+        name: data.name,
+        short_description: data.short_description,
+        full_description: data.full_description ?? null,
+        icon_name: data.icon_name || "Activity",
+        specs:
+          typeof data.specs === "object" && data.specs !== null && !Array.isArray(data.specs)
+            ? Object.fromEntries(Object.entries(data.specs).map(([key, value]) => [key, String(value)]))
+            : {},
+        features: Array.isArray(data.features) ? data.features.map(String) : [],
+        badge_text: data.badge_text ?? null,
+        display_order: data.display_order ?? 1,
+      };
     },
-    enabled: !!slug,
+    enabled: isSupabaseConfigured && !!slug,
+    retry: false,
   });
 
-  if (isLoading) {
+  const fallbackSolution = getFallbackSolutionBySlug(slug);
+  const solution = queriedSolution ?? fallbackSolution;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedSolution && !fallbackSolution;
+
+  if (shouldShowLoading) {
     return (
       <MainLayout>
         {/* [SEO] Prevent stale meta from previous route leaking during loading */}
@@ -80,8 +103,8 @@ const SolutionDetail = () => {
   }
 
   const IconComponent = getSolutionIcon(solution.icon_name);
-  const specs = (solution.specs as Record<string, string>) || {};
-  const features = (solution.features as string[]) || [];
+  const specs = solution.specs || {};
+  const features = solution.features || [];
   const relatedResources = getResourcesForSolution(solution.slug).slice(0, 3);
   const image =
     Array.isArray((solution as { image_urls?: string[] }).image_urls) &&

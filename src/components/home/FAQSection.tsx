@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { HelpCircle } from "lucide-react";
 import {
   Accordion,
@@ -8,22 +8,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Helmet } from "react-helmet-async";
+import { homepageFAQFallbacks } from "@/content/homepageFallbacks";
+import type { HomepageFAQItem } from "@/content/homepageFallbacks";
 
 /**
  * FAQSection - Homepage FAQ accordion with JSON-LD structured data
  * Fetches FAQ items from database and renders with SEO schema
  */
 
-interface FAQItem {
-  id: string;
-  question: string;
-  answer: string;
-  sort_order: number;
-}
-
 export const FAQSection = () => {
   // Step 1: Fetch FAQ items for homepage
-  const { data: faqItems, isLoading } = useQuery({
+  const { data: queriedFAQItems, isLoading } = useQuery<HomepageFAQItem[]>({
     queryKey: ["faq-items", "home"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -34,11 +29,15 @@ export const FAQSection = () => {
         .order("sort_order", { ascending: true });
 
       if (error) throw error;
-      return data as FAQItem[];
+      return data ?? [];
     },
+    enabled: isSupabaseConfigured,
+    retry: false,
   });
 
-  const hasFaqItems = !!faqItems && faqItems.length > 0;
+  const faqItems = queriedFAQItems && queriedFAQItems.length > 0 ? queriedFAQItems : homepageFAQFallbacks;
+  const hasFaqItems = faqItems.length > 0;
+  const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedFAQItems;
 
   // Step 2: Build JSON-LD structured data for FAQPage
   const jsonLd = hasFaqItems
@@ -81,19 +80,19 @@ export const FAQSection = () => {
         </div>
 
         {/* FAQ Accordion */}
-        {isLoading && (
+        {shouldShowLoading && (
           <div className="py-12 text-left text-muted-foreground font-mono text-sm">
             Loading FAQs...
           </div>
         )}
 
-        {!isLoading && !hasFaqItems && (
+        {!shouldShowLoading && !hasFaqItems && (
           <div className="py-12 text-left text-muted-foreground font-mono text-sm">
             No FAQs available.
           </div>
         )}
 
-        {!isLoading && hasFaqItems && (
+        {!shouldShowLoading && hasFaqItems && (
           <div className="max-w-7xl mx-auto">
             <Accordion type="single" collapsible className="w-full space-y-0">
               {faqItems.map((item) => (
