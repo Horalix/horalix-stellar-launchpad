@@ -61,6 +61,11 @@ const News = () => {
     return article.display_date || article.published_at;
   };
 
+  const getPrimaryImageFocus = (article: PublicNewsArticle): string => {
+    const focus = article.image_focus[0];
+    return focus ? `${focus.x}% ${focus.y}%` : "50% 50%";
+  };
+
   // SEO metadata for the news listing page
   const title = "News | Horalix";
   const description =
@@ -142,6 +147,7 @@ const News = () => {
                         <img
                           src={article.image_urls[0]}
                           alt={article.title}
+                          style={{ objectPosition: getPrimaryImageFocus(article) }}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                       </div>

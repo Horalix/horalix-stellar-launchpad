@@ -8,6 +8,7 @@ const ENV_PATH = path.join(ROOT_DIR, ".env");
 const CORE_ROUTES = ["/", "/about", "/evidence", "/news", "/resources", "/solutions", "/terms"];
 // Non-public routes excluded from sitemap: /login, /signup, /verify-email, /profile, /admin
 const FALLBACK_NEWS_ROUTES = [
+  "/news/clinic-validation-in-sarajevo-poliklinika-dr-nabil",
   "/news/horalix-at-fls",
   "/news/demo-day",
   "/news/the-beginning",

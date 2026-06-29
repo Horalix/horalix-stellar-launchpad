@@ -71,22 +71,74 @@ const STATIC_FAQ_ITEMS = [
 
 const FALLBACK_NEWS = [
   {
-    slug: "horalix-at-fls",
-    title: "Horalix at FLS",
-    summary: "Updates from Horalix public appearances and company milestones.",
+    slug: "clinic-validation-in-sarajevo-poliklinika-dr-nabil",
+    title: "Clinic Validation in Sarajevo, Poliklinika Dr Nabil",
+    summary:
+      "We tested Horalix in a real cardiology workflow at Poliklinika Dr Nabil in Sarajevo, ran echocardiography DICOM files through our platform, and got direct clinician validation and practical feedback for what to build next.",
+    content:
+      "Some days feel like a product milestone, not because of a press release, but because a real clinician looks at your output and says it makes sense.\n\nRecently, we spent a day at Poliklinika Dr Nabil in Sarajevo, Bosnia and Herzegovina, running Horalix in a real cardiology workflow using echocardiography DICOM inputs and comparing results to clinical review.\n\nThe visit gave us clinical validation, practical product direction from experienced cardiology leadership, and momentum.",
     category: "NEWS",
+    location: null,
+    display_date: "2026-01-30T00:00:00+00:00",
+    published_at: "2026-01-30T19:46:06.959+00:00",
+    updated_at: "2026-01-30T19:46:07.224207+00:00",
+    image_urls: [
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802326425-r9xdyy4.png",
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802350501-748z6ya.jpeg",
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802356686-rol1bwb.jpeg",
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1769802361480-gj8h0nb.jpeg",
+    ],
+  },
+  {
+    slug: "horalix-at-fls",
+    title: "Horalix at Future Leaders Summit 2025!",
+    summary:
+      "Three days, one booth, and dozens of sharp conversations. FLS 2025 reminded us why building in Bosnia and Herzegovina feels exciting again.",
+    content:
+      "In December 2025, Sarajevo felt loud in the best way.\n\nFrom December 19-21 at Hotel Hills, the Future Leaders Summit brought together students, young professionals, diaspora voices, and people from the public and private sectors to talk about leadership, social change, and collective action.\n\nWe left FLS 2025 with a full notebook, new contacts we are excited to follow up with, and the best post-event feeling you can get: next.",
+    category: "NEWS",
+    location: "Sarajevo, BA",
+    display_date: "2025-12-21T00:00:00+00:00",
+    published_at: "2026-01-23T14:43:49.923+00:00",
+    updated_at: "2026-01-23T14:43:50.417647+00:00",
+    image_urls: [
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326134417-hgi9qv6.jpeg",
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326133724-pj422xm.jpeg",
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326163696-tcfuex7.jpg",
+    ],
   },
   {
     slug: "demo-day",
-    title: "Demo Day",
-    summary: "A company update covering product progress and public presentation.",
-    category: "UPDATE",
+    title: "Techstars Demo Day",
+    summary:
+      "We pitched Horalix on Techstars Demo Day to a global audience of investors, and somehow made Zoom feel like a real stage.",
+    content:
+      "Techstars Demo Day is the kind of event where time behaves strangely.\n\nOne minute you are triple checking slides, audio, camera lighting, and whether your laptop is ready. The next minute, you are live, pitching Horalix to more than 100 investors joining from around the world.\n\nTechstars Demo Day left us proud of how far we have come and very motivated for what comes next.",
+    category: "NEWS",
+    location: "Sarajevo, BA",
+    display_date: "2025-12-18T00:00:00+00:00",
+    published_at: "2026-01-23T14:46:10.497+00:00",
+    updated_at: "2026-01-23T14:46:11.171241+00:00",
+    image_urls: [
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768359590853-a2pmacb.jpg",
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768359563551-7i92zc2.png",
+    ],
   },
   {
     slug: "the-beginning",
-    title: "The Beginning",
-    summary: "Background on the early direction and company origin of Horalix.",
+    title: "The Beginning, Why We Built Horalix",
+    summary:
+      "Horalix started with a stubborn idea: clinical AI should feel like a calm assistant inside the workflow, not another noisy dashboard.",
+    content:
+      "Horalix started the way a lot of useful products start, with one frustrating moment that refused to leave.\n\nInstead of chasing a long list of AI features, we focused on the experience of clinical review. We asked a simple question: what if AI did not add another tool to manage, but made the existing workflow smoother and clearer?\n\nThis is just the beginning, but the direction is clear: build clinical decision support that respects real workflows, supports verification, and feels practical in deployment.",
     category: "NEWS",
+    location: "Sarajevo, BA",
+    display_date: "2024-08-01T00:00:00+00:00",
+    published_at: "2026-01-23T14:50:05.711+00:00",
+    updated_at: "2026-01-23T14:50:06.319143+00:00",
+    image_urls: [
+      "https://yyzrwjocniepskofoehu.supabase.co/storage/v1/object/public/news-images/1768326091158-yx07xab.png",
+    ],
   },
 ];
 

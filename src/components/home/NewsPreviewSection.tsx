@@ -7,6 +7,7 @@ import { ContentSlider } from "@/components/ui/content-slider";
 import { format } from "date-fns";
 import { homepageNewsFallbacks } from "@/content/homepageFallbacks";
 import type { PublicNewsArticle } from "@/content/homepageFallbacks";
+import newsPlaceholderImage from "@/assets/hero/screenshot-dashboard.png";
 
 /**
  * NewsPreviewSection - Shows news articles on homepage with slider when > 3
@@ -14,8 +15,7 @@ import type { PublicNewsArticle } from "@/content/homepageFallbacks";
  */
 
 // Step 1: Default placeholder image for articles without images
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2670&auto=format&fit=crop";
+const PLACEHOLDER_IMAGE = newsPlaceholderImage;
 
 export const NewsPreviewSection = () => {
   // Step 2: Fetch published articles from database (no limit for slider)
@@ -67,6 +67,15 @@ export const NewsPreviewSection = () => {
     return format(new Date(dateToUse), "dd.MM.yyyy");
   };
 
+  const getPrimaryImage = (article: PublicNewsArticle) => {
+    return article.image_urls[0] || PLACEHOLDER_IMAGE;
+  };
+
+  const getPrimaryImageFocus = (article: PublicNewsArticle) => {
+    const focus = article.image_focus[0];
+    return focus ? `${focus.x}% ${focus.y}%` : "50% 50%";
+  };
+
   // Step 4: Render article card
   const renderArticleCard = (article: PublicNewsArticle) => (
     <Link
@@ -78,11 +87,9 @@ export const NewsPreviewSection = () => {
       <div className="aspect-video w-full overflow-hidden border-b border-border relative">
         <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10" />
         <img
-          src={(() => {
-            const urls = article.image_urls;
-            return (Array.isArray(urls) && typeof urls[0] === 'string') ? urls[0] : PLACEHOLDER_IMAGE;
-          })()}
+          src={getPrimaryImage(article)}
           alt={article.title}
+          style={{ objectPosition: getPrimaryImageFocus(article) }}
           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105"
         />
         <div className="absolute bottom-0 left-0 bg-primary text-primary-foreground px-3 py-1 text-[10px] font-mono font-bold uppercase z-20">
