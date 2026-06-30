@@ -70,14 +70,30 @@ const About = () => {
               </p>
             </div>
 
+            {/* [ENTITY] Company-facts block — makes the canonical entity definition
+                (HQ, founded, category) visible plain text for the Knowledge Graph + LLMs. */}
             <aside className="border border-border bg-card p-5 shadow-sm">
               <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-                Company posture
+                Company facts
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Horalix focuses on workflow leverage, defensible benchmarks, and trust-first positioning
-                rather than broad claims about solving all of medical AI.
-              </p>
+              <dl className="mt-3 space-y-2 text-sm">
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground">Headquarters</dt>
+                  <dd className="text-right font-medium text-foreground">{organizationProfile.hqLocation}</dd>
+                </div>
+                <div className="flex justify-between gap-4 border-t border-border/70 pt-2">
+                  <dt className="text-muted-foreground">Founded</dt>
+                  <dd className="text-right font-medium text-foreground">{organizationProfile.foundingYear}</dd>
+                </div>
+                <div className="flex justify-between gap-4 border-t border-border/70 pt-2">
+                  <dt className="text-muted-foreground">Category</dt>
+                  <dd className="text-right font-medium text-foreground">{organizationProfile.category}</dd>
+                </div>
+                <div className="flex justify-between gap-4 border-t border-border/70 pt-2">
+                  <dt className="text-muted-foreground">Region</dt>
+                  <dd className="text-right font-medium text-foreground">Europe-first</dd>
+                </div>
+              </dl>
             </aside>
           </header>
 

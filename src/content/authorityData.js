@@ -28,11 +28,19 @@ export const benchmarkDisclosures = [
 
 export const organizationProfile = {
   name: "Horalix",
+  legalName: "Horalix d.o.o.",
   siteUrl: "https://horalix.com",
   tagline: "Building the future of clinical AI infrastructure.",
   description:
-    "Horalix builds AI-powered clinical workflow software that helps care teams move from manual measurement toward faster, more standardized reporting.",
+    "Horalix is a Sarajevo-based (Bosnia and Herzegovina) medical-AI company building automated echocardiography analysis. Its CardiologyAI module extracts 50+ structured measurements from cardiac ultrasound for faster, DICOM-compatible clinician review.",
   regionFocus: "Europe-first operating posture with global clinical AI relevance.",
+  // [ENTITY] Canonical facts — keep identical to the Organization JSON-LD
+  // (src/lib/structuredData.ts + scripts/schemaBuilders.js) and llms.txt.
+  foundingYear: "2024",
+  hqCity: "Sarajevo",
+  hqCountry: "Bosnia and Herzegovina",
+  hqLocation: "Sarajevo, Bosnia and Herzegovina",
+  category: "Medical AI / echocardiography AI",
   sameAs: ["https://www.linkedin.com/company/horalix/"],
 };
 

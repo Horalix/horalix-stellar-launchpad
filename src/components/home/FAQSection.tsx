@@ -10,6 +10,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import { homepageFAQFallbacks } from "@/content/homepageFallbacks";
 import type { HomepageFAQItem } from "@/content/homepageFallbacks";
+import { buildFAQPageJsonLd } from "@/lib/structuredData";
 
 /**
  * FAQSection - Homepage FAQ accordion with JSON-LD structured data
@@ -39,21 +40,8 @@ export const FAQSection = () => {
   const hasFaqItems = faqItems.length > 0;
   const shouldShowLoading = isSupabaseConfigured && isLoading && !queriedFAQItems;
 
-  // Step 2: Build JSON-LD structured data for FAQPage
-  const jsonLd = hasFaqItems
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqItems.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      }
-    : null;
+  // Step 2: Build JSON-LD structured data for FAQPage (shared builder)
+  const jsonLd = hasFaqItems ? buildFAQPageJsonLd(faqItems) : null;
 
   return (
     <section

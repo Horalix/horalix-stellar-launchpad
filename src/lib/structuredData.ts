@@ -75,7 +75,7 @@ export const buildOrganizationJsonLd = () => ({
     contentUrl: `${CANONICAL_SITE_URL}/assets/horalix-logo-white.png`,
   },
   description:
-    "Horalix builds AI-powered clinical workflow software for faster, more structured echocardiography reporting.",
+    "Horalix is a Sarajevo-based (Bosnia and Herzegovina) medical-AI company building automated echocardiography analysis. Its CardiologyAI module extracts 50+ structured measurements from cardiac ultrasound for faster, DICOM-compatible clinician review.",
   slogan: "Building the future of clinical AI infrastructure.",
   foundingDate: "2024",
   // [ENTITY] HQ makes Horalix resolvable as a Sarajevo/Bosnia entity for the
@@ -286,6 +286,23 @@ export const buildNewsArticleJsonLd = (article: {
     publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
   };
 };
+
+// [AEO] FAQPage — wins featured snippets / "People also ask" / AI Overviews.
+// Mirror of buildFAQPageJsonLd in scripts/schemaBuilders.js — keep in sync.
+export const buildFAQPageJsonLd = (
+  faqItems: Array<{ question: string; answer: string }>,
+) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+});
 
 export const buildSpeakableJsonLd = (
   url: string,

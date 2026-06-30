@@ -26,8 +26,14 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
           <div className="md:col-span-2">
             <img src={horalixLogo} alt="Horalix" className="mb-4 h-10 w-auto brightness-0 invert" />
             <p className="max-w-md text-sm leading-relaxed text-primary-foreground/70">
-              Horalix builds clinical AI workflow software that helps care teams move from manual
-              measurement toward faster, more structured reporting operations.
+              Horalix is a Sarajevo-based medical-AI company building automated echocardiography
+              analysis — structured measurements from cardiac ultrasound for faster, DICOM-compatible
+              clinician review.
+            </p>
+            {/* [ENTITY][SEO] Visible HQ — crawlable geo text on every page reinforces the
+                Sarajevo / Bosnia entity (matches Organization JSON-LD foundingLocation). */}
+            <p className="mt-4 font-mono text-xs not-italic text-primary-foreground/50">
+              <span className="not-sr-only">HQ:</span> Sarajevo, Bosnia and Herzegovina
             </p>
           </div>
 

@@ -22,7 +22,7 @@ import {
 const Index = () => {
   const title = "Horalix | AI-Powered Echocardiography Workflow";
   const description =
-    "Horalix helps clinical teams move from manual echo measurement to AI-assisted reporting with faster turnaround and deeper structured outputs.";
+    "Horalix — Sarajevo-based medical AI automating echocardiography analysis: structured measurements from cardiac ultrasound for faster clinician review.";
   const canonical = "/";
   const jsonLd = [
     buildOrganizationJsonLd(),

@@ -4,6 +4,8 @@
 Name: Horalix
 Type: Medical software company
 Category: AI echocardiography workflow software
+Headquarters: Sarajevo, Bosnia and Herzegovina
+Founded: 2024
 URL: https://horalix.com/
 
 ## Access policy

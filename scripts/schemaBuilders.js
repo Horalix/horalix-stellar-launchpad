@@ -36,9 +36,21 @@ const buildOrganizationJsonLd = () => ({
     contentUrl: `${CANONICAL_SITE_URL}/assets/horalix-logo-white.png`,
   },
   description:
-    "Horalix builds AI-powered clinical workflow software for faster, more structured echocardiography reporting.",
+    "Horalix is a Sarajevo-based (Bosnia and Herzegovina) medical-AI company building automated echocardiography analysis. Its CardiologyAI module extracts 50+ structured measurements from cardiac ultrasound for faster, DICOM-compatible clinician review.",
   slogan: "Building the future of clinical AI infrastructure.",
   foundingDate: "2024",
+  // [ENTITY] HQ makes Horalix resolvable as a Sarajevo/Bosnia entity for the
+  // Knowledge Graph + LLMs (the "best AI startup Bosnia" query ring).
+  // Keep identical to buildOrganizationJsonLd() in src/lib/structuredData.ts.
+  foundingLocation: {
+    "@type": "Place",
+    name: "Sarajevo, Bosnia and Herzegovina",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Sarajevo",
+    addressCountry: "BA",
+  },
   areaServed: "Europe",
   industry: "Medical Software",
   numberOfEmployees: { "@type": "QuantitativeValue", minValue: 2, maxValue: 10 },

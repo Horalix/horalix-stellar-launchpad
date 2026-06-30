@@ -1,7 +1,7 @@
 # Horalix
 
 ## Entity definition
-Horalix is a medical software company that builds AI-powered clinical workflow software for echocardiography reporting. Founded in 2024 and operating Europe-first, Horalix automates post-acquisition measurement extraction and structured reporting for cardiac ultrasound teams.
+Horalix is a medical software company that builds AI-powered clinical workflow software for echocardiography reporting. Founded in 2024 and headquartered in Sarajevo, Bosnia and Herzegovina, operating Europe-first, Horalix automates post-acquisition measurement extraction and structured reporting for cardiac ultrasound teams.
 
 ## One-sentence description
 Horalix builds AI-powered echocardiography workflow software that turns manual cardiac ultrasound measurement into faster, structured clinical output.
@@ -19,6 +19,7 @@ Horalix builds AI-powered clinical workflow software that helps echocardiography
 - Category: AI echocardiography workflow software
 - Focus: AI-powered clinical workflow software for echocardiography reporting
 - Founded: 2024
+- Headquarters: Sarajevo, Bosnia and Herzegovina
 - Region: Europe-first, globally relevant
 - Contact: support@horalix.com
 - Phone: +387 62 340 020

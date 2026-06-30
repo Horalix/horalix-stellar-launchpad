@@ -12,7 +12,7 @@ import { getFallbackSolutionBySlug } from "@/content/homepageFallbacks";
 import type { HomepageSolution } from "@/content/homepageFallbacks";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { getSolutionIcon } from "@/lib/solutionIcons";
-import { buildBreadcrumbJsonLd } from "@/lib/structuredData";
+import { buildBreadcrumbJsonLd, buildSoftwareApplicationJsonLd } from "@/lib/structuredData";
 
 const SolutionDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -114,21 +114,17 @@ const SolutionDetail = () => {
       : undefined;
 
   const jsonLd = [
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+    // [ENTITY] Use the shared builder so the SoftwareApplication node carries an
+    // @id and references the Org node (#organization) — fuses into one entity graph
+    // instead of floating free.
+    buildSoftwareApplicationJsonLd({
       name: solution.name,
-      description: solution.short_description,
-      url: `https://horalix.com/solutions/${solution.slug}`,
-      applicationCategory: "HealthApplication",
-      operatingSystem: "Web",
-      image: image ? [image] : undefined,
-      publisher: {
-        "@type": "Organization",
-        name: "Horalix",
-        url: "https://horalix.com/",
-      },
-    },
+      slug: solution.slug,
+      short_description: solution.short_description,
+      icon_name: solution.icon_name,
+      featureList: features.length ? features : undefined,
+      screenshot: image,
+    }),
     buildBreadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "Solutions", path: "/solutions" },

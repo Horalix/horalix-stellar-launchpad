@@ -9,15 +9,15 @@ import { useState, useEffect, useCallback } from "react";
  */
 
 // Step 1: Define tagline messages
+// [OPERATOR] Category-true rotations only — each line reinforces the echo-AI wedge
+// (System-1 clarity) rather than generic health-AI slogans.
 const HEADLINES = [
-  "AI That Thinks Like a Clinician",
-  "From Data to Decisions",
-  "Decision Support at Lightning Speed",
-  "Real-Time Analysis for Real Patients",
-  "Built for Doctors, By Doctors",
-  "AI You Can Trust in Practice",
-  "Powering the Future of Medicine",
-  "Where Medicine meets Technology",
+  "50+ echo measurements in seconds",
+  "DICOM in. Structured report out.",
+  "~10s vs 45–90 minutes by hand",
+  "The clinician keeps the sign-off",
+  "Automated echocardiography analysis",
+  "Built by clinicians and engineers",
 ];
 
 // Easter egg with 1 in 1 billion chance

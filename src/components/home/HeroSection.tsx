@@ -86,6 +86,23 @@ export const HeroSection = () => {
                 </Button>
               </Link>
             </div>
+
+            {/* [PSYCH][TRUST] Persistent trust strip — surfaces the buyer's de-risking
+                signals (compliance, integration, clinician control) above the fold,
+                not just on the contact form. */}
+            <ul className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+              {[
+                "GDPR-aligned",
+                "EU data residency",
+                "DICOM-compatible",
+                "Clinician sign-off",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <span aria-hidden="true" className="h-1 w-1 rounded-full bg-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
