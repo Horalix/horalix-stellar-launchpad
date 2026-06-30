@@ -11,7 +11,7 @@ import {
   getRelatedResources,
   getResourceBySlug,
 } from "@/content/authorityData";
-import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/structuredData";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildFAQPageJsonLd } from "@/lib/structuredData";
 
 type SourceId = "S1" | "S2" | "S3";
 
@@ -53,9 +53,12 @@ const ResourceDetail = () => {
     { name: resource.title, path: `/resources/${resource.slug}` },
   ];
 
+  const faqs = (resource.faqs ?? []) as Array<{ question: string; answer: string }>;
+
   const jsonLd = [
     buildArticleJsonLd(resource, author?.name || "Horalix", author?.slug || ""),
     buildBreadcrumbJsonLd(breadcrumbItems),
+    ...(faqs.length ? [buildFAQPageJsonLd(faqs)] : []),
   ];
 
   return (
@@ -207,6 +210,26 @@ const ResourceDetail = () => {
                   ))}
                 </div>
               </section>
+
+              {/* [AEO] Question-shaped headings + extractable answers win
+                  "People also ask" / AI Overview. Mirrors FAQPage JSON-LD. */}
+              {faqs.length > 0 && (
+                <section className="border border-border bg-card p-8 shadow-sm">
+                  <h2 className="font-space text-2xl font-bold text-primary">
+                    Frequently asked questions
+                  </h2>
+                  <div className="mt-5 space-y-6">
+                    {faqs.map((faq) => (
+                      <div key={faq.question} className="border-t border-border/70 pt-5 first:border-t-0 first:pt-0">
+                        <h3 className="text-base font-semibold text-foreground">{faq.question}</h3>
+                        <p data-speakable className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
             <aside className="space-y-6">

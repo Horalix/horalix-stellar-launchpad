@@ -592,6 +592,19 @@ function renderResourceDetail(resource) {
     ? `<p ${S}="font-size:13px;color:#64748b">Related product: ${resource.solutionSlugs.map((slug) => `<a href="/solutions/${slug}">${escapeHtml(defaultSolutions.find((s) => s.slug === slug)?.name || slug)}</a>`).join(", ")}</p>`
     : "";
 
+  // [AEO] Question-shaped FAQ block — mirrors FAQPage JSON-LD for snippet / AI-Overview capture.
+  const faqHtml = (resource.faqs || []).length > 0
+    ? `<section ${S}="margin-top:32px">
+        <h2>Frequently asked questions</h2>
+        ${resource.faqs.map((faq) => `
+          <div ${S}="margin-top:16px">
+            <h3 ${S}="margin:0 0 6px;font-size:17px">${escapeHtml(faq.question)}</h3>
+            <p data-speakable ${S}="margin:0;color:#475569">${escapeHtml(faq.answer)}</p>
+          </div>
+        `).join("")}
+      </section>`
+    : "";
+
   return {
     title: resource.seoTitle,
     description: resource.seoDescription,
@@ -624,6 +637,8 @@ function renderResourceDetail(resource) {
 
         ${citedClaimsHtml}
 
+        ${faqHtml}
+
         <section ${S}="margin-top:32px">
           <h2>Related reading</h2>
           <ul>${linkList(related.map((item) => ({ href: `/resources/${item.slug}`, label: item.title })))}</ul>
@@ -646,6 +661,7 @@ function renderResourceDetail(resource) {
         { name: resource.title, path: `/resources/${resource.slug}` },
       ]),
       buildSpeakableJsonLd(`${CANONICAL_SITE_URL}/resources/${resource.slug}`, ["h1", "[data-speakable]"]),
+      ...(resource.faqs?.length ? [buildFAQPageJsonLd(resource.faqs)] : []),
     ],
   };
 }

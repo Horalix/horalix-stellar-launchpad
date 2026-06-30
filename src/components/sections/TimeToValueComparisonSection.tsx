@@ -27,6 +27,8 @@ type WorkflowLane = {
   badge: string;
   sourceId?: SourceId;
   time: string;
+  /** When set, the time renders as an animated count-up on first reveal (signature moment). */
+  countTo?: number;
   summary: string;
   detail: string;
   stages: string[];
@@ -59,6 +61,7 @@ const WORKFLOW_LANES: WorkflowLane[] = [
     title: "Horalix AI",
     badge: "Internal benchmark",
     time: "~10s",
+    countTo: 10,
     summary: "Full measurement output after acquisition.",
     detail: "Measurements are generated first, then clinically reviewed.",
     stages: ["Acquisition complete", "AI measures", "Clinical review"],
@@ -125,6 +128,53 @@ const OUTCOME_CELLS: OutcomeCell[] = [
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+// [SIGNATURE MOMENT] Count-up — the eye watches Horalix's ~10s tick up from 0 on
+// first reveal, making the time advantage visceral. Reduced-motion → final value.
+const CountUpValue = ({
+  value,
+  prefix = "",
+  suffix = "",
+  start,
+  reducedMotion,
+  durationMs = 700,
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  start: boolean;
+  reducedMotion: boolean;
+  durationMs?: number;
+}) => {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!start) return;
+    if (reducedMotion || typeof requestAnimationFrame === "undefined") {
+      setDisplay(value);
+      return;
+    }
+
+    let raf = 0;
+    const startTime = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - startTime) / durationMs);
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      setDisplay(Math.round(eased * value));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [start, reducedMotion, value, durationMs]);
+
+  return (
+    <>
+      {prefix}
+      {display}
+      {suffix}
+    </>
+  );
+};
 
 const SourceChip = ({ sourceId }: { sourceId: SourceId }) => {
   const source = SOURCES[sourceId];
@@ -407,11 +457,21 @@ export const TimeToValueComparisonSection = () => {
                         {/* [PSYCH][ART] Winner time in accent blue — makes the gap visceral */}
                         <p
                           className={cn(
-                            "font-space text-4xl font-bold tracking-tight sm:text-5xl",
+                            "font-space text-4xl font-bold tracking-tight tabular-nums sm:text-5xl",
                             isWinner ? "text-accent" : "text-primary",
                           )}
                         >
-                          {lane.time}
+                          {isWinner && typeof lane.countTo === "number" ? (
+                            <CountUpValue
+                              value={lane.countTo}
+                              prefix="~"
+                              suffix="s"
+                              start={isVisible}
+                              reducedMotion={prefersReducedMotion}
+                            />
+                          ) : (
+                            lane.time
+                          )}
                         </p>
                         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
                           {lane.summary}

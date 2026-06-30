@@ -257,6 +257,28 @@ export const resources = [
         sourceIds: ["S3"],
       },
     ],
+    faqs: [
+      {
+        question: "What is AI echocardiography software?",
+        answer:
+          "AI echocardiography software automates the post-acquisition workflow of a cardiac ultrasound study. After images are captured, it extracts measurements and produces structured, report-ready outputs that a clinician reviews — replacing repetitive manual measurement work, not clinical judgment.",
+      },
+      {
+        question: "How does AI echocardiography software work?",
+        answer:
+          "It sits between image acquisition and clinical review. Standard DICOM echo images are processed to extract cardiac measurements automatically; Horalix CardiologyAI produces 50+ unique measurements and about 80 structured outputs per study, which the cardiologist then reviews, adjusts, and signs off.",
+      },
+      {
+        question: "Can AI measure ejection fraction automatically?",
+        answer:
+          "Yes. AI-assisted echocardiography workflows can extract ejection fraction alongside chamber dimensions, valve assessments, and diastolic parameters as part of a structured output set. The clinician verifies every measurement before it enters the report, so AI supports rather than replaces interpretation.",
+      },
+      {
+        question: "How accurate is AI-assisted echocardiography analysis?",
+        answer:
+          "Accuracy depends on the product and study quality. External peer-reviewed AI-assisted FoCUS literature reports diagnostic support consistency in the mid-90% range as benchmark context — not a Horalix product claim. Horalix separates internal benchmarks from external evidence and discloses both.",
+      },
+    ],
     ctaTitle: "See how Horalix compresses manual echo work into report-ready output.",
   },
   {
@@ -329,6 +351,23 @@ export const resources = [
       {
         text: "AI-assisted workflow trials describe lower interaction burden than manual-only processing.",
         sourceIds: ["S3"],
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the difference between manual and AI echocardiography measurement?",
+        answer:
+          "Manual measurement is a production model: a clinician clicks and enters each parameter after the scan. AI measurement is a review model: the software extracts structured outputs automatically and the clinician reviews and confirms them, reducing repetitive interaction burden per study.",
+      },
+      {
+        question: "Is AI echocardiography measurement faster than manual measurement?",
+        answer:
+          "In Horalix internal benchmarks, structured measurement output is ready in about 10 seconds after acquisition, versus a manual post-scan loop that can add 45–90 minutes. This is an internal benchmark describing observed product performance, not an externally validated claim.",
+      },
+      {
+        question: "Does AI measurement reduce variability in echocardiography?",
+        answer:
+          "AI-assisted workflows can improve consistency by standardizing how measurements are produced across operators, and external workflow literature describes lower manual interaction burden. Final accuracy still depends on clinician review, which Horalix keeps mandatory for every study.",
       },
     ],
     ctaTitle: "Compare Horalix against manual measurement workflows in a live demo.",
@@ -677,6 +716,116 @@ export const resources = [
       },
     ],
     ctaTitle: "See how Horalix reduces repetitive reporting steps while keeping clinicians in control.",
+  },
+  {
+    slug: "how-to-choose-ai-echocardiography-software",
+    title: "How to Choose AI Echocardiography Software: A Buyer's Evaluation Guide",
+    summary:
+      "A vendor-neutral framework for evaluating AI echocardiography software — the criteria, the questions to ask, and how to separate workflow value from model hype.",
+    heroKicker: "Buyer's guide",
+    audience: "Hospital buyers, echo lab leaders, procurement, and digital health investors",
+    contentType: "comparison",
+    topicCluster: "AI echocardiography",
+    primaryKeyword: "how to choose AI echocardiography software",
+    secondaryKeywords: [
+      "best AI echocardiography software",
+      "echocardiography AI software for hospitals",
+      "echo AI vendor evaluation",
+    ],
+    regionScope: "global",
+    authorSlug: "kerim-sabic",
+    publishedAt: "2026-06-30",
+    updatedAt: "2026-06-30",
+    seoTitle: "How to Choose AI Echocardiography Software | Horalix",
+    seoDescription:
+      "A vendor-neutral guide to choosing AI echocardiography software: the five criteria that matter, questions to ask vendors, and how to judge evidence claims.",
+    solutionSlugs: ["cardiology-ai"],
+    relatedResourceSlugs: [
+      "ai-echocardiography-software",
+      "manual-vs-ai-echocardiography-measurement",
+      "echo-workflow-automation-for-hospitals",
+    ],
+    sourceIds: ["S1", "S2", "S3"],
+    keyTakeaways: [
+      {
+        label: "Evaluate workflow",
+        text: "The best echo AI fits your existing DICOM workflow and reduces repetitive work — model accuracy alone does not predict adoption.",
+      },
+      {
+        label: "Demand evidence clarity",
+        text: "Trustworthy vendors separate internal benchmarks from external literature and never claim regulatory status they lack.",
+      },
+      {
+        label: "Keep clinicians in control",
+        text: "Assistive software that preserves clinician review and sign-off is both safer and easier to deploy than autonomous claims.",
+      },
+    ],
+    sections: [
+      {
+        title: "Start with the workflow, not the model",
+        paragraphs: [
+          "The most common procurement mistake is comparing AI echocardiography products on headline accuracy numbers. Accuracy matters, but a model that does not fit the post-acquisition workflow rarely changes day-to-day operations.",
+          "Evaluate where the software sits: does it take standard DICOM images, extract structured measurements, and hand a review-ready package to the clinician? That workflow fit is what determines whether reporting actually gets faster.",
+        ],
+      },
+      {
+        title: "The five criteria that actually matter",
+        paragraphs: [
+          "A defensible evaluation weighs workflow and trust alongside performance. These five criteria separate operationally useful echo AI from demo-stage tools.",
+        ],
+        bullets: [
+          "Workflow integration — DICOM-compatible, fits existing echo lab infrastructure, produces report-ready structured outputs.",
+          "Measurement breadth — how many measurements are produced and whether they cover the parameters your reports require (Horalix CardiologyAI: 50+ unique measurements, ~80 structured outputs).",
+          "Evidence transparency — internal benchmarks labeled as internal, external literature cited precisely, no conflation of the two.",
+          "Clinician control — every measurement is reviewable and the clinician retains interpretation and final sign-off.",
+          "Security and compliance — data residency, security posture, and an honest regulatory pathway (e.g. GDPR alignment, EU data residency, CE marking status).",
+        ],
+      },
+      {
+        title: "Questions to ask any echo-AI vendor",
+        paragraphs: [
+          "Bring the same questions to every vendor so answers are comparable: Which measurements are automated, and which remain manual? What is an internal benchmark versus an external citation in your materials? Where does patient data reside, and what is your regulatory status today?",
+          "Vendors that answer these precisely — rather than with broad 'AI transformation' language — are the ones worth piloting.",
+        ],
+      },
+    ],
+    citedClaims: [
+      {
+        text: "Adult echocardiography standards make manual studies operationally demanding, which is why workflow fit matters more than isolated accuracy.",
+        sourceIds: ["S1"],
+      },
+      {
+        text: "External AI-assisted FoCUS literature provides diagnostic support benchmark context, but it is not a substitute for product-specific validation.",
+        sourceIds: ["S2"],
+      },
+      {
+        text: "Workflow trials indicate AI assistance can reduce manual interaction burden, a practical signal buyers should weigh.",
+        sourceIds: ["S3"],
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the best AI for echocardiography?",
+        answer:
+          "There is no single best echo AI — the right choice depends on workflow fit, evidence transparency, integration, and clinician control. Evaluate vendors against those criteria. Horalix focuses on DICOM-compatible, workflow-integrated structured measurement with mandatory clinician sign-off and published benchmark governance.",
+      },
+      {
+        question: "What should I look for in AI echocardiography software?",
+        answer:
+          "Prioritize workflow integration (DICOM compatibility, report-ready structured outputs), measurement breadth, transparent evidence that separates internal benchmarks from external literature, mandatory clinician review and sign-off, and a clear security and regulatory posture such as GDPR alignment and data residency.",
+      },
+      {
+        question: "How much does AI echocardiography software cost?",
+        answer:
+          "Pricing varies by deployment scope, study volume, and integration needs, so most vendors — Horalix included — scope it per engagement rather than publishing a fixed price. Contact the Horalix team to discuss pilot and deployment options for your site.",
+      },
+      {
+        question: "Is AI echocardiography software CE marked or regulated?",
+        answer:
+          "Regulatory status varies by vendor and region. Horalix is pursuing the CE marking pathway appropriate for AI-assisted clinical workflow software and does not claim clearance it has not received. Always confirm a vendor's current regulatory status in writing before deployment.",
+      },
+    ],
+    ctaTitle: "Bring this checklist to a Horalix product walkthrough.",
   },
 ];
 

@@ -64,6 +64,7 @@ Horalix builds AI-powered clinical workflow software that helps echocardiography
 - https://horalix.com/resources/cardiac-ultrasound-ai-europe — Cardiac Ultrasound AI in Europe: Operational Readiness Before Localization
 - https://horalix.com/resources/ai-in-medical-imaging-workflow — AI in Medical Imaging Workflow: What Creates Real Operational Value
 - https://horalix.com/resources/how-ai-reduces-echo-reporting-burden — How AI Reduces Echo Reporting Burden Without Removing Clinical Judgment
+- https://horalix.com/resources/how-to-choose-ai-echocardiography-software — How to Choose AI Echocardiography Software: A Buyer's Evaluation Guide
 
 ## Team profiles
 - https://horalix.com/team/kerim-sabic — Kerim Sabic, CEO & Co-Founder. Medical student, product lead. Focus: clinical workflow design, hospital deployment strategy.
