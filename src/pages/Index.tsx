@@ -40,8 +40,9 @@ const Index = () => {
       <NewsPreviewSection />
       <LinkedInSection />
       <TeamSection />
-      <ContactSection />
+      {/* FAQ before the contact form: answer objections at peak motivation, then ask */}
       <FAQSection />
+      <ContactSection />
     </MainLayout>
   );
 };

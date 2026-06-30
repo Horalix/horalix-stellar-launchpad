@@ -40,25 +40,6 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Supabase credentials not configured" }, 500);
     }
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return jsonResponse({ error: "Missing authorization header" }, 401);
-    }
-
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const supabaseService = createClient(supabaseUrl, supabaseServiceKey);
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user) {
-      return jsonResponse({ error: "Unauthorized" }, 401);
-    }
-
     const teamEmails = teamEmailsRaw
       .split(",")
       .map((email) => email.trim())
@@ -73,6 +54,9 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "submission_id is required" }, 400);
     }
 
+    const supabaseService = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Fetch the submission first — we need created_at for the anonymous recency guard.
     const { data: submission, error: fetchError } = await supabaseService
       .from("contact_submissions")
       .select("*")
@@ -83,22 +67,46 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Submission not found" }, 404);
     }
 
-    const { data: roleData, error: roleError } = await supabaseService
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .in("role", ["admin", "editor"])
-      .limit(1)
-      .maybeSingle();
+    // Authorization. Two legitimate callers:
+    //   1. An authenticated admin/editor, or the submission owner (dashboard re-send).
+    //   2. An anonymous public submit that just happened — guarded by a recency window
+    //      (plus the origin allowlist already enforced by rejectUnknownOrigin above).
+    // This is what lets the public contact form notify the team without a login,
+    // while preventing enumeration/replay of older submissions.
+    const authHeader = req.headers.get("Authorization");
+    let authorized = false;
 
-    if (roleError) {
-      return jsonResponse({ error: "Unable to verify role" }, 500);
+    if (authHeader) {
+      const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const {
+        data: { user },
+      } = await supabaseAuth.auth.getUser();
+
+      if (user) {
+        const { data: roleData } = await supabaseService
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .in("role", ["admin", "editor"])
+          .limit(1)
+          .maybeSingle();
+
+        const isAdminOrEditor = !!roleData;
+        const isOwner = submission.user_id === user.id;
+        authorized = isAdminOrEditor || isOwner;
+      }
     }
 
-    const isAdminOrEditor = !!roleData;
-    const isOwner = submission.user_id === user.id;
+    if (!authorized) {
+      // Anonymous path: only notify for a freshly-created submission.
+      const RECENCY_WINDOW_MS = 120_000; // 2 minutes
+      const ageMs = Date.now() - new Date(submission.created_at).getTime();
+      authorized = ageMs >= 0 && ageMs <= RECENCY_WINDOW_MS;
+    }
 
-    if (!isAdminOrEditor && !isOwner) {
+    if (!authorized) {
       return jsonResponse({ error: "Forbidden" }, 403);
     }
 

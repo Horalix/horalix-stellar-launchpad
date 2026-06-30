@@ -34,9 +34,12 @@
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    /* Accent: Medical teal/cyan */
+    /* Accent: clinical blue (hue 217). Bright tone for fills/bars/highlights. */
     --accent: 217 91% 65%;
     --accent-foreground: 0 0% 100%;
+    /* Accent (text): darker tone that meets WCAG AA (~4.6:1) on light surfaces.
+       Use for text/icons/links; keep --accent for fills where contrast is N/A. */
+    --accent-strong: 217 74% 45%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
@@ -87,6 +90,8 @@
 
     --accent: 217 91% 65%;
     --accent-foreground: 0 0% 100%;
+    /* On dark surfaces a brighter accent reads as the high-contrast text tone */
+    --accent-strong: 217 91% 72%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
@@ -203,6 +208,15 @@
   display: flex;
   animation: marquee 30s linear infinite;
   will-change: transform;
+}
+
+/* [A11Y] Stop continuous marquee motion for reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 /* Fade in animation */

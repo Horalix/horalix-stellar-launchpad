@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, ScanLine, Activity, MonitorPlay } from "lucide-react";
+import { ArrowRight, Activity, MonitorPlay } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteContentBatch } from "@/hooks/useSiteContent";
 import { INTERACTIVE_DEMO_PATH } from "@/lib/constants";
@@ -12,7 +12,8 @@ import { HeroScreenshots } from "./HeroScreenshots";
 
 // Step 1: Default content fallbacks
 const DEFAULTS = {
-  hero_subtitle: "Built for real cases. Designed for fast review. Enterprise-ready.",
+  hero_subtitle:
+    "Horalix turns echocardiograms into 50+ structured measurements for fast clinician review — DICOM-compatible, and in active hospital pilots.",
 };
 
 export const HeroSection = () => {
@@ -44,23 +45,28 @@ export const HeroSection = () => {
           <div className="absolute top-10 left-10 w-4 h-4 border-t border-l border-primary opacity-30" />
 
           <div className="relative z-10 max-w-2xl">
-            {/* Version badge */}
+            {/* Category badge — states the wedge up front (5-second test + entity/AEO) */}
             <div className="inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
               <Activity className="w-3 h-3 text-accent" />
               <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-primary">
-                Horalix Clinical Engine
+                Echocardiography AI
               </span>
             </div>
 
-            {/* Animated typewriter headline */}
+            {/* Fixed value headline — stable, scannable, names what Horalix does */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space tracking-tight text-primary leading-[1.05] mb-4">
+              From echo capture to report-ready in seconds.
+            </h1>
+
+            {/* Kinetic tagline — brand flavor only; reduced-motion safe */}
             <TypewriterHeadline />
 
             {/* Subheadline */}
-            <p className="text-lg text-muted-foreground mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1">
+            <p className="text-lg text-muted-foreground mt-6 mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1">
               {heroSubtitle}
             </p>
 
-            {/* CTA buttons */}
+            {/* CTAs — one primary (experience the product), one secondary (talk to us) */}
             <div className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="text-xs font-bold uppercase tracking-widest">
                 <a href={INTERACTIVE_DEMO_PATH}>
@@ -69,20 +75,13 @@ export const HeroSection = () => {
                 </a>
               </Button>
 
-              <Link to="/#solutions" onClick={(e) => handleHeroClick(e, "/#solutions")}>
-                <Button 
+              <Link to="/#contact" onClick={(e) => handleHeroClick(e, "/#contact")}>
+                <Button
                   variant="outline"
                   size="lg"
-                  className="text-xs font-bold uppercase tracking-widest"
+                  className="group text-xs font-bold uppercase tracking-widest"
                 >
-                  <ScanLine className="w-4 h-4" />
-                  Learn more about Solutions
-                </Button>
-              </Link>
-              
-              <Link to="/#contact" onClick={(e) => handleHeroClick(e, "/#contact")}>
-                <Button size="lg" className="group text-xs font-bold uppercase tracking-widest">
-                  <span>Request Demo</span>
+                  <span>Book a Demo</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>

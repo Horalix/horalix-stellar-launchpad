@@ -4,8 +4,11 @@ project_id = "yyzrwjocniepskofoehu"
 site_url = "https://horalix.com"
 additional_redirect_urls = ["https://horalix.com/**", "https://www.horalix.com/**"]
 
+# Public so the anonymous contact form can trigger notifications.
+# Hardened in-function via origin allowlist (rejectUnknownOrigin) + a recency
+# window on the submission; admin/owner re-sends still require a valid JWT.
 [functions.send-contact-notification]
-verify_jwt = true
+verify_jwt = false
 
 [functions.create-admin-user]
 verify_jwt = false

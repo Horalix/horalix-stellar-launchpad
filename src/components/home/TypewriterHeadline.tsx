@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 
 /**
- * TypewriterHeadline - Terminal-style animated headline
- * Types text character-by-character, pauses, deletes, then cycles to next
+ * TypewriterHeadline - Terminal-style animated tagline (kinetic brand flavor)
+ *
+ * NOTE: This is intentionally NOT the page <h1>. The hero renders a fixed,
+ * scannable value headline; this component is a secondary rotating tagline.
+ * It respects `prefers-reduced-motion` (renders a static line, no typing/cursor).
  */
 
-// Step 1: Define headline messages
+// Step 1: Define tagline messages
 const HEADLINES = [
   "AI That Thinks Like a Clinician",
   "From Data to Decisions",
@@ -31,16 +34,29 @@ const CONFIG = {
 
 type Phase = "typing" | "paused" | "deleting";
 
+const WRAPPER_CLASS =
+  "block min-h-[1.8em] font-mono text-base sm:text-lg font-semibold tracking-tight text-accent-strong";
+
 export const TypewriterHeadline = () => {
   // Step 3: State management
   const [displayText, setDisplayText] = useState("");
   const [headlineIndex, setHeadlineIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("typing");
   const [cursorVisible, setCursorVisible] = useState(true);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // [A11Y] Track reduced-motion preference reactively
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduceMotion(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   // Step 4: Get current target headline (with easter egg chance)
   const getNextHeadline = useCallback(() => {
-    // Check for easter egg on each new headline
     if (Math.random() < EASTER_EGG_CHANCE) {
       return EASTER_EGG;
     }
@@ -49,68 +65,64 @@ export const TypewriterHeadline = () => {
 
   const currentTarget = getNextHeadline();
 
-  // Step 5: Cursor blinking effect
+  // Step 5: Cursor blinking effect (skipped under reduced motion)
   useEffect(() => {
+    if (reduceMotion) return;
     const cursorInterval = setInterval(() => {
       setCursorVisible((prev) => !prev);
     }, CONFIG.cursorBlinkRate);
 
     return () => clearInterval(cursorInterval);
-  }, []);
+  }, [reduceMotion]);
 
-  // Step 6: Main typewriter animation logic
+  // Step 6: Main typewriter animation logic (disabled under reduced motion)
   useEffect(() => {
+    if (reduceMotion) return;
     let timeout: NodeJS.Timeout;
 
     if (phase === "typing") {
-      // Type next character
       if (displayText.length < currentTarget.length) {
         timeout = setTimeout(() => {
           setDisplayText(currentTarget.slice(0, displayText.length + 1));
         }, CONFIG.typeSpeed);
       } else {
-        // Typing complete, transition to pause
         setPhase("paused");
       }
     } else if (phase === "paused") {
-      // Wait before deleting
       timeout = setTimeout(() => {
         setPhase("deleting");
       }, CONFIG.pauseDuration);
     } else if (phase === "deleting") {
-      // Delete character by character
       if (displayText.length > 0) {
         timeout = setTimeout(() => {
           setDisplayText(displayText.slice(0, -1));
         }, CONFIG.deleteSpeed);
       } else {
-        // Deletion complete, move to next headline
         setHeadlineIndex((prev) => (prev + 1) % HEADLINES.length);
         setPhase("typing");
       }
     }
 
     return () => clearTimeout(timeout);
-  }, [displayText, phase, currentTarget]);
+  }, [displayText, phase, currentTarget, reduceMotion]);
 
-  // Step 7: Render with accessibility support
+  // Step 7a: Reduced-motion render — static line, no animation or cursor
+  if (reduceMotion) {
+    return <span className={WRAPPER_CLASS}>{HEADLINES[0]}</span>;
+  }
+
+  // Step 7b: Animated render (decorative — hidden from assistive tech to avoid churn)
   return (
-    <h1
-      className="min-h-[2.8em] sm:min-h-[2.3em] overflow-hidden text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-primary mb-8 leading-[0.9] font-mono"
-      // min-h-[2.3em] overflow-hidden text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-primary mb-8 leading-[0.9] font-mono
-      aria-label={currentTarget}
-    >
-      {/* Visible animated text */}
+    <span className={WRAPPER_CLASS}>
       <span aria-hidden="true">
         {displayText}
-        {/* Blinking cursor */}
-        <span className={`inline-block transition-opacity duration-100 ${cursorVisible ? "opacity-100" : "opacity-0"}`}>
+        <span
+          className={`inline-block transition-opacity duration-100 ${cursorVisible ? "opacity-100" : "opacity-0"}`}
+        >
           _
         </span>
       </span>
-
-      {/* SEO fallback - hidden but indexable */}
-      <span className="sr-only">{HEADLINES.join(". ")}</span>
-    </h1>
+      <span className="sr-only">Clinical AI for echocardiography workflows.</span>
+    </span>
   );
 };

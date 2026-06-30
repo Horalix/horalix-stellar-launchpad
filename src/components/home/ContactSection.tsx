@@ -1,5 +1,4 @@
 import { useState, useEffect, forwardRef } from "react";
-import { useNavigate } from "react-router-dom";
 import horalixLogoWhite from "@/assets/horalix-logo-white.png";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,23 +8,14 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
-// localStorage key for saving pending contact form data
+// localStorage key for clearing any legacy pending-contact data
 const PENDING_CONTACT_KEY = "horalix_pending_contact";
 
 /**
- * ContactSection - Contact form with validation
- * Stores submissions to database (email notification handled by edge function)
- * If user is not logged in, shows dialog and auto-submits after authentication
+ * ContactSection - "Book a Demo" form with validation
+ * Submits directly to the database (no login required); the team is notified by
+ * the send-contact-notification edge function. Logged-in users are pre-filled.
  */
 
 // Form validation schema
@@ -52,9 +42,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
   const { toast } = useToast();
   const { user, isLoading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -104,19 +92,12 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     }
   };
 
-  // Handle dialog continue to login
-  const handleContinueToLogin = () => {
-    setShowLoginDialog(false);
-    // Navigate to login without hash - PendingSubmissionHandler will auto-submit
-    navigate("/login?returnTo=/");
-  };
-
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
-    // Validate form data first (so we save valid data)
+    // Validate form data first
     const result = contactSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<ContactFormData> = {};
@@ -129,25 +110,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
       return;
     }
 
-    // Check if user is logged in - require login to submit
-    if (!user) {
-      // Save complete form data to localStorage for auto-submit after login
-      localStorage.setItem(
-        PENDING_CONTACT_KEY,
-        JSON.stringify({
-          name: result.data.name,
-          email: result.data.email,
-          message: result.data.message,
-          savedAt: new Date().toISOString(),
-        })
-      );
-      // Show dialog instead of immediate redirect
-      setShowLoginDialog(true);
-      return;
-    }
-
-    // Form data already validated above
-
+    // No login required: the origin-scoped RLS policy allows anonymous inserts
+    // from horalix.com, and the notification function handles anonymous leads.
     setIsSubmitting(true);
 
     try {
@@ -158,7 +122,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
           name: result.data.name,
           email: result.data.email,
           message: result.data.message,
-          user_id: user.id,
+          user_id: user?.id ?? null,
         })
         .select("id")
         .single();
@@ -227,10 +191,10 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
           <div className="flex justify-between items-start mb-8">
             <div>
               <h2 className="text-3xl font-bold font-space text-primary">
-                Contact Us
+                Book a Demo
               </h2>
-              <p className="text-sm font-mono text-muted-foreground mt-1 uppercase">
-                Your information is encrypted and secure.
+              <p className="text-sm font-mono text-muted-foreground mt-1">
+                Tell us about your echo workflow — we&apos;ll set up a walkthrough.
               </p>
             </div>
             <div className="hidden md:block text-right">
@@ -326,7 +290,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
             {/* Submit section */}
             <div className="pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <ShieldCheck className="w-4 h-4" /> HIPAA Compliant
+                <ShieldCheck className="w-4 h-4" /> GDPR-aligned · EU data residency
               </div>
               <Button
                 type="submit"
@@ -341,7 +305,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                   </>
                 ) : (
                   <>
-                    Submit
+                    Send Message
                     <Send className="w-4 h-4" />
                   </>
                 )}
@@ -350,28 +314,6 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
           </form>
         </div>
       </div>
-
-      {/* Login required dialog */}
-      <AlertDialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sign In Required</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your message has been saved. Please sign in or create an account
-              to submit your inquiry. Once you're signed in, your form will be
-              automatically submitted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>
-              Cancel
-            </Button>
-            <AlertDialogAction onClick={handleContinueToLogin}>
-              Continue to Sign In
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </section>
   );
 });

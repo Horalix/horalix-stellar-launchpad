@@ -72,7 +72,7 @@ export const Navbar = () => {
                   onClick={() => handleNavClick(item.href)}
                   className={cn(
                     "group relative text-xs font-bold uppercase tracking-widest transition-colors",
-                    isActive ? "text-accent" : "text-muted-foreground hover:text-accent",
+                    isActive ? "text-accent-strong" : "text-muted-foreground hover:text-accent-strong",
                   )}
                 >
                   {item.label}
@@ -87,7 +87,7 @@ export const Navbar = () => {
             })}
             <a
               href={INTERACTIVE_DEMO_PATH}
-              className="group relative text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
+              className="group relative text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent-strong"
             >
               Demo
               <span className="absolute -bottom-7 left-0 h-0.5 w-full scale-x-0 bg-accent transition-transform group-hover:scale-x-100" />
@@ -95,14 +95,23 @@ export const Navbar = () => {
           </nav>
 
           <div className="flex items-center gap-4 md:gap-6">
+            <Link
+              to="/#contact"
+              onClick={() => handleNavClick("/#contact")}
+              className="hidden sm:block"
+            >
+              <Button className="text-xs font-bold uppercase tracking-widest">Book a Demo</Button>
+            </Link>
+
             {!isLoading &&
               (user ? (
                 <UserProfileDropdown />
               ) : (
-                <Link to="/login">
-                  <Button variant="default" className="hidden text-xs font-bold uppercase tracking-widest sm:flex">
-                    Login
-                  </Button>
+                <Link
+                  to="/login"
+                  className="hidden text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent-strong sm:block"
+                >
+                  Login
                 </Link>
               ))}
 
@@ -130,8 +139,8 @@ export const Navbar = () => {
                     className={cn(
                       "px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors",
                       isActive
-                        ? "border-l-2 border-accent bg-secondary text-accent"
-                        : "text-muted-foreground hover:bg-secondary hover:text-accent",
+                        ? "border-l-2 border-accent bg-secondary text-accent-strong"
+                        : "text-muted-foreground hover:bg-secondary hover:text-accent-strong",
                     )}
                   >
                     {item.label}
@@ -140,13 +149,20 @@ export const Navbar = () => {
               })}
               <a
                 href={INTERACTIVE_DEMO_PATH}
-                className="px-6 py-3 text-sm font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary hover:text-accent"
+                className="px-6 py-3 text-sm font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary hover:text-accent-strong"
               >
                 Demo
               </a>
+              <Link to="/#contact" onClick={() => handleNavClick("/#contact")} className="mx-4 mt-4">
+                <Button className="w-full text-xs font-bold uppercase tracking-widest">Book a Demo</Button>
+              </Link>
               {!user && (
-                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="mx-4 mt-4">
-                  <Button className="w-full text-xs font-bold uppercase tracking-widest">Login</Button>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="mx-4 mt-2 px-2 py-2 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent-strong"
+                >
+                  Login
                 </Link>
               )}
             </div>
