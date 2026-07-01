@@ -62,7 +62,7 @@ const defaultForm: ContributorForm = {
   is_public: true,
 };
 
-type ContributorRow = Tables<"contributors">;
+type ContributorRow = any;
 
 const ContributorsManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
