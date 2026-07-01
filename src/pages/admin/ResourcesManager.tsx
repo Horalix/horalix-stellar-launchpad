@@ -68,7 +68,7 @@ const defaultForm: ResourceForm = {
   is_published: false,
 };
 
-type ResourceRow = Tables<"resources">;
+type ResourceRow = any;
 
 const ResourcesManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
