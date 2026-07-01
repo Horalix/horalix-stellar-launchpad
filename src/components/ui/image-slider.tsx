@@ -42,7 +42,7 @@ export const ImageSlider = ({
   const [touchDiff, setTouchDiff] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Step 1: No images
   if (!images || images.length === 0) {
