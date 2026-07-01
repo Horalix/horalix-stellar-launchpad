@@ -115,24 +115,25 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     setIsSubmitting(true);
 
     try {
-      // Store submission in database (user is required now)
-      const { data: insertData, error } = await supabase
+      // Generate id client-side so we don't need SELECT permission after INSERT
+      // (anon role has no SELECT policy on contact_submissions).
+      const submissionId = crypto.randomUUID();
+      const { error } = await supabase
         .from("contact_submissions")
         .insert({
+          id: submissionId,
           name: result.data.name,
           email: result.data.email,
           message: result.data.message,
           user_id: user?.id ?? null,
-        })
-        .select("id")
-        .single();
+        });
 
       if (error) throw error;
 
       // Invoke notification edge function and surface errors to the user
       const { data: notificationResult, error: notificationError } =
         await supabase.functions.invoke("send-contact-notification", {
-          body: { submission_id: insertData.id },
+          body: { submission_id: submissionId },
         });
 
       if (
