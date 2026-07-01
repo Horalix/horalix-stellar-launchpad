@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as supabaseClient } from "@/integrations/supabase/client";
+const supabase = supabaseClient as any;
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { MultiImageUpload } from "@/components/admin/MultiImageUpload";

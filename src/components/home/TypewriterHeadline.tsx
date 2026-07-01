@@ -78,7 +78,7 @@ export const TypewriterHeadline = () => {
   // Step 6: Main typewriter animation logic (disabled under reduced motion)
   useEffect(() => {
     if (reduceMotion) return;
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     if (phase === "typing") {
       if (displayText.length < currentTarget.length) {
