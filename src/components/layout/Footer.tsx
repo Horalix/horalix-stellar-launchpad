@@ -56,6 +56,11 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
                 </Link>
               </li>
               <li>
+                <Link to="/press" className="text-sm text-primary-foreground/70 transition-colors hover:text-accent">
+                  Press
+                </Link>
+              </li>
+              <li>
                 <Link to="/terms" className="text-sm text-primary-foreground/70 transition-colors hover:text-accent">
                   Terms
                 </Link>

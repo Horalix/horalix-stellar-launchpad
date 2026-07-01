@@ -22,8 +22,9 @@ export interface SEOProps {
   children?: ReactNode;
 }
 
-// [SEO] Default OG image fallback — ensures every page has og:image
-const DEFAULT_OG_IMAGE = "https://horalix.com/assets/horalix-logo-white.png";
+// [SEO] Default OG image — designed 1200×630 share card (regenerate via
+// scripts/generate-og-image.mjs when the design or entity facts change)
+const DEFAULT_OG_IMAGE = "https://horalix.com/assets/og/horalix-og.png";
 
 const SEO: FC<SEOProps> = ({
   title,
@@ -44,10 +45,10 @@ const SEO: FC<SEOProps> = ({
     (noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
   const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 
-  // [SEO] Always provide og:image — fall back to logo when no page-specific image
+  // [SEO] Always provide og:image — the default is a designed 1200×630 card,
+  // so every page qualifies for the large share preview
   const resolvedImage = image ?? DEFAULT_OG_IMAGE;
-  // [SEO] Use summary_large_image only when a real (non-fallback) image is provided
-  const twitterCard = image ? "summary_large_image" : "summary";
+  const twitterCard = "summary_large_image";
 
   return (
     <>

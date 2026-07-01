@@ -23,6 +23,7 @@ All AI agents, crawlers, and search bots are permitted to access public pages on
 - Resources: https://horalix.com/resources
 - About: https://horalix.com/about
 - Evidence: https://horalix.com/evidence
+- Press kit: https://horalix.com/press
 - News: https://horalix.com/news
 - LLM-optimized info: https://horalix.com/llms.txt
 - Sitemap: https://horalix.com/sitemap.xml

@@ -11,6 +11,7 @@ import {
   hospitalValuePoints,
   investorSignalPoints,
   organizationProfile,
+  pressKit,
   resources,
 } from "../src/content/authorityData.js";
 import { fallbackNewsArticles } from "../src/content/newsFallbackData.js";
@@ -81,6 +82,7 @@ function mergeNewsArticleWithFallback(article) {
   return {
     ...article,
     title: fallback.title,
+    seoTitle: fallback.seoTitle,
     summary: fallback.summary,
     content: fallback.content,
     category: fallback.category,
@@ -226,6 +228,7 @@ function footerNav(currentPage) {
     { href: "/resources", labels: ["Knowledge Hub", "Clinical AI Resources", "Research & Guides", "Learning Resources"] },
     { href: "/about", labels: ["About Horalix", "Company & Team", "Our Team", "Who We Are"] },
     { href: "/evidence", labels: ["Evidence & Benchmarks", "Benchmark Disclosures", "Clinical Evidence", "Evidence Policy"] },
+    { href: "/press", labels: ["Press Kit", "Company Facts", "Press & Facts", "Media Resources"] },
     { href: "/news", labels: ["Latest News", "Company Updates", "News & Announcements", "Recent Updates"] },
     { href: "/terms", labels: ["Terms of Service", "Legal Terms", "Usage Terms", "Terms & Conditions"] },
     { href: "/#contact", labels: ["Get in Touch", "Contact Horalix", "Request Demo", "Reach Out"] },
@@ -873,6 +876,129 @@ function renderEvidencePage() {
   };
 }
 
+function renderPressPage() {
+  const factRows = [
+    { label: "Company", value: organizationProfile.name },
+    { label: "Legal name", value: organizationProfile.legalName },
+    { label: "Founded", value: organizationProfile.foundingYear },
+    { label: "Headquarters", value: organizationProfile.hqLocation },
+    { label: "Category", value: "AI echocardiography workflow software" },
+    { label: "Products", value: "CardiologyAI (clinical priority), PathologyAI, RadiologyAI" },
+    { label: "Website", value: "horalix.com", href: "https://horalix.com/" },
+    { label: "LinkedIn", value: "linkedin.com/company/horalix", href: "https://www.linkedin.com/company/horalix/" },
+    { label: "Crunchbase", value: "crunchbase.com/organization/horalix", href: "https://www.crunchbase.com/organization/horalix" },
+  ];
+
+  const boilerplates = [
+    { label: "One sentence", text: pressKit.boilerplateOneLine },
+    { label: "50 words", text: pressKit.boilerplate50 },
+    { label: "120 words", text: pressKit.boilerplate120 },
+  ];
+
+  return {
+    title: "Horalix Press Kit & Company Facts",
+    description:
+      "Official Horalix press kit: company facts, boilerplate descriptions, citable benchmarks with evidence labels, milestones, leadership bios, and brand assets.",
+    canonicalPath: "/press",
+    body: wrap(`
+      ${nav([{ href: "/", label: "Home" }, { href: "/press", label: "Press" }])}
+      <h1>Horalix Press Kit &amp; Company Facts</h1>
+      <p data-speakable ${S}="font-size:18px;color:#475569;max-width:720px">${escapeHtml(pressKit.boilerplateOneLine)} This page is the canonical source of Horalix company facts, boilerplate descriptions, citable claims, and brand assets for journalists, analysts, and partners. Quote it verbatim with attribution to Horalix (horalix.com).</p>
+
+      <section ${S}="margin-top:32px">
+        <h2>Fast facts</h2>
+        <table ${S}="border-collapse:collapse;width:100%;max-width:720px">
+          ${factRows.map((row) => `
+            <tr>
+              <th scope="row" ${S}="text-align:left;border:1px solid #e2e8f0;padding:8px 12px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:#64748b;white-space:nowrap">${escapeHtml(row.label)}</th>
+              <td ${S}="border:1px solid #e2e8f0;padding:8px 12px">${row.href ? `<a href="${row.href}" rel="noopener">${escapeHtml(row.value)}</a>` : escapeHtml(row.value)}</td>
+            </tr>
+          `).join("")}
+        </table>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Boilerplate descriptions</h2>
+        <p>Approved company descriptions at three lengths. Use them verbatim.</p>
+        ${boilerplates.map((item) => `
+          <article ${S}="border:1px solid #cbd5e1;padding:16px 20px;border-radius:8px;margin-bottom:12px">
+            <p ${S}="margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#2563eb;font-weight:700">${escapeHtml(item.label)}</p>
+            <p data-speakable ${S}="margin:0;color:#475569">${escapeHtml(item.text)}</p>
+          </article>
+        `).join("")}
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Citable claims and benchmarks</h2>
+        <p>Every claim carries an evidence label. Internal benchmarks describe observed product performance; external benchmark context cites published literature, not Horalix validation trials. See <a href="/evidence">evidence and benchmark disclosures</a>.</p>
+        <ul>
+          ${pressKit.citableClaims.map((claim) => `<li><strong>${escapeHtml(claim.label)}:</strong> ${escapeHtml(claim.text)}</li>`).join("")}
+        </ul>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Milestones</h2>
+        <ul>
+          ${pressKit.milestones.map((m) => `<li><strong>${escapeHtml(m.date)}:</strong> <a href="${m.href}">${escapeHtml(m.title)}</a></li>`).join("")}
+        </ul>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Leadership</h2>
+        <ul>
+          ${contributors.map((c) => `<li><a href="/team/${c.slug}">${escapeHtml(c.name)}</a>, ${escapeHtml(c.role)} — ${escapeHtml(c.bioShort)}</li>`).join("")}
+        </ul>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Products</h2>
+        <ul>
+          ${defaultSolutions.map((s) => `<li><a href="/solutions/${s.slug}">${escapeHtml(s.name)}</a> — ${escapeHtml(s.short_description)}</li>`).join("")}
+        </ul>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Brand assets</h2>
+        <p><a href="${pressKit.logo.path}" download>${escapeHtml(pressKit.logo.label)}</a></p>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Usage guidance</h2>
+        <ul>
+          ${pressKit.usageGuidance.map((rule) => `<li>${escapeHtml(rule)}</li>`).join("")}
+        </ul>
+      </section>
+
+      <section ${S}="margin-top:32px">
+        <h2>Media contact</h2>
+        <p>Email <a href="mailto:${pressKit.pressContact.email}">${pressKit.pressContact.email}</a> or call ${escapeHtml(pressKit.pressContact.phone)}. The founding team answers press inquiries directly.</p>
+      </section>
+
+      ${disclaimer}
+      ${footerNav("press")}
+    `),
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${CANONICAL_SITE_URL}/press#webpage`,
+        name: "Horalix Press Kit & Company Facts",
+        description:
+          "Official Horalix press kit: company facts, boilerplate descriptions, citable benchmarks with evidence labels, milestones, leadership bios, and brand assets.",
+        url: `${CANONICAL_SITE_URL}/press`,
+        about: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+        publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+      },
+      buildOrganizationJsonLd(),
+      buildBreadcrumbJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Press", path: "/press" },
+      ]),
+      buildSpeakableJsonLd(`${CANONICAL_SITE_URL}/press`, ["h1", "[data-speakable]"]),
+    ],
+  };
+}
+
 function renderNewsPage(newsItems) {
   const description =
     "Read Horalix news on AI echocardiography workflow software, clinical validation, Techstars Demo Day, and healthcare innovation in Sarajevo and Europe.";
@@ -948,7 +1074,8 @@ function renderNewsArticle(article) {
   const articleBody = renderArticleBlocks(article.content, article.summary || "Company update from Horalix.");
 
   return {
-    title: `${article.title} | Horalix News`,
+    // Prefer the hand-tuned ≤60-char seoTitle; the visible h1 keeps the full headline
+    title: article.seoTitle || `${article.title} | Horalix News`,
     description: ((article.summary || `${article.title} - company update from Horalix, AI-powered echocardiography workflow software.`).length > 155
       ? (article.summary || "").slice(0, 152) + "..."
       : article.summary || `${article.title} - company update from Horalix, AI-powered echocardiography workflow software.`),
@@ -1089,6 +1216,7 @@ async function generateStaticPages() {
   pages.set("/", renderHomePage());
   pages.set("/about", renderAboutPage());
   pages.set("/evidence", renderEvidencePage());
+  pages.set("/press", renderPressPage());
   pages.set("/resources", renderResourcesPage());
   pages.set("/solutions", renderSolutionsPage(solutions));
   pages.set("/news", renderNewsPage(newsItems));

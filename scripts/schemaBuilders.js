@@ -63,7 +63,10 @@ const buildOrganizationJsonLd = () => ({
     "DICOM integration",
     "Structured clinical reporting",
   ],
-  sameAs: ["https://www.linkedin.com/company/horalix/"],
+  sameAs: [
+    "https://www.linkedin.com/company/horalix/",
+    "https://www.crunchbase.com/organization/horalix",
+  ],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "sales",

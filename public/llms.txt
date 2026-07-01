@@ -25,6 +25,8 @@ Horalix builds AI-powered clinical workflow software that helps echocardiography
 - Phone: +387 62 340 020
 - Website: https://horalix.com/
 - LinkedIn: https://www.linkedin.com/company/horalix/
+- Crunchbase: https://www.crunchbase.com/organization/horalix
+- Press kit and company facts: https://horalix.com/press
 
 ## Product taxonomy
 - Platform: Horalix Clinical AI Platform
@@ -47,6 +49,7 @@ Horalix builds AI-powered clinical workflow software that helps echocardiography
 - https://horalix.com/resources — Authority content hub
 - https://horalix.com/about — Company and team
 - https://horalix.com/evidence — Evidence and benchmark disclosures
+- https://horalix.com/press — Press kit and company facts (canonical boilerplates, citable claims, milestones)
 - https://horalix.com/news — News and updates
 - https://horalix.com/terms — Terms and conditions
 

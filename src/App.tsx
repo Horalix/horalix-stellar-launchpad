@@ -18,6 +18,7 @@ const ResourceDetail = lazy(() => import("./pages/ResourceDetail"));
 const About = lazy(() => import("./pages/About"));
 const TeamProfile = lazy(() => import("./pages/TeamProfile"));
 const Evidence = lazy(() => import("./pages/Evidence"));
+const Press = lazy(() => import("./pages/Press"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Login = lazy(() => import("./pages/Login"));
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/team/:slug" element={<TeamProfile />} />
             <Route path="/evidence" element={<Evidence />} />
+            <Route path="/press" element={<Press />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
 

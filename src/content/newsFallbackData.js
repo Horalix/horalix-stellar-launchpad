@@ -3,6 +3,8 @@ export const fallbackNewsArticles = [
     id: "fallback-clinic-validation-in-sarajevo-poliklinika-dr-nabil",
     slug: "clinic-validation-in-sarajevo-poliklinika-dr-nabil",
     title: "Horalix Clinical Validation at Poliklinika Dr Nabil in Sarajevo",
+    // [SEO] Full <title> tag (≤60 chars, front-loaded) — used by the static generator
+    seoTitle: "Horalix Clinical Validation at Poliklinika Dr Nabil",
     summary:
       "Horalix tested its AI echocardiography workflow in a real Sarajevo cardiology clinic, comparing DICOM-based analysis with clinician review at Poliklinika Dr Nabil.",
     content: `## Short answer
@@ -66,6 +68,7 @@ Horalix is continuing product validation with clinicians, imaging teams, and hea
     id: "fallback-horalix-at-fls",
     slug: "horalix-at-fls",
     title: "Horalix at Future Leaders Summit 2025: Clinical AI Built in Sarajevo",
+    seoTitle: "Horalix at Future Leaders Summit 2025 | Horalix News",
     summary:
       "Horalix joined Future Leaders Summit 2025 in Sarajevo to discuss clinical AI, healthcare innovation, and the future of AI echocardiography workflow software from Bosnia and Herzegovina.",
     content: `## Short answer
@@ -124,6 +127,7 @@ Horalix will continue building with a Europe-first posture and a global clinical
     id: "fallback-demo-day",
     slug: "demo-day",
     title: "Techstars Demo Day: Horalix Pitches AI Echocardiography Workflow to Investors",
+    seoTitle: "Horalix at Techstars Demo Day: Echo AI Investor Pitch",
     summary:
       "Horalix pitched its AI echocardiography workflow software during Techstars Demo Day, presenting a focused clinical AI story to investors and healthcare innovation partners.",
     content: `## Short answer
@@ -177,6 +181,7 @@ After Demo Day, Horalix continues to focus on product validation, clinical feedb
     id: "fallback-the-beginning",
     slug: "the-beginning",
     title: "Why We Built Horalix: AI Echocardiography Workflow Clinicians Can Verify",
+    seoTitle: "Why We Built Horalix: Verifiable Echo AI Workflow",
     summary:
       "Horalix was built to make AI echocardiography calmer, faster, and more verifiable by turning manual cardiac ultrasound review into structured clinician-led workflow.",
     content: `## Short answer

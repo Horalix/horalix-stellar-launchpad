@@ -41,7 +41,77 @@ export const organizationProfile = {
   hqCountry: "Bosnia and Herzegovina",
   hqLocation: "Sarajevo, Bosnia and Herzegovina",
   category: "Medical AI / echocardiography AI",
-  sameAs: ["https://www.linkedin.com/company/horalix/"],
+  sameAs: [
+    "https://www.linkedin.com/company/horalix/",
+    "https://www.crunchbase.com/organization/horalix",
+  ],
+};
+
+// [GEO][ENTITY] Press kit — the single liftable source for journalists, analysts,
+// and LLMs. Boilerplates are kept word-identical to public/llms.txt; claims reuse
+// the evidence-separation wording from /evidence. Consumed by BOTH src/pages/Press.tsx
+// (runtime) and renderPressPage in scripts/generate-static-pages.mjs (shipped HTML).
+export const pressKit = {
+  boilerplateOneLine:
+    "Horalix builds AI-powered echocardiography workflow software that turns manual cardiac ultrasound measurement into faster, structured clinical output.",
+  boilerplate50:
+    "Horalix is a Europe-first medical software company building AI-powered clinical workflow software for echocardiography. The platform automates post-acquisition measurement extraction and produces structured, report-ready outputs. Clinicians review AI-generated measurements rather than rebuilding them manually, reducing reporting burden while maintaining full clinical oversight and sign-off authority.",
+  boilerplate120:
+    "Horalix builds AI-powered clinical workflow software that helps echocardiography teams move from manual measurement to faster, more structured reporting. The platform sits inside the existing post-acquisition workflow: after images are captured, Horalix extracts measurements automatically and produces structured outputs ready for clinician review. This shifts the clinical role from manual data production to efficient oversight, reducing repetitive interaction burden and improving report turnaround. The CardiologyAI module delivers 50+ unique cardiac measurements and approximately 80 total structured outputs. Horalix separates internal product benchmarks from external evidence context and publishes benchmark disclosures openly. The company operates with a Europe-first posture, founded in 2024, and is expanding through regional healthcare partnerships.",
+  citableClaims: [
+    {
+      text: "Horalix produces 50+ unique measurements and approximately 80 total structured outputs per echocardiographic study.",
+      label: "Internal benchmark",
+    },
+    {
+      text: "Report-ready output is generated in approximately 10 seconds after image acquisition.",
+      label: "Internal benchmark",
+    },
+    {
+      text: "AI-assisted FoCUS literature shows diagnostic support consistency in the mid-90% range.",
+      label: "External benchmark context (S2) — not a Horalix product validation claim",
+    },
+    {
+      text: "AI-Echo workflow trials show reduced manual interaction burden compared to manual-only processing.",
+      label: "External benchmark context (S3) — not a Horalix product validation claim",
+    },
+  ],
+  milestones: [
+    {
+      date: "2024",
+      title: "Horalix founded in Sarajevo, Bosnia and Herzegovina",
+      href: "/news/the-beginning",
+    },
+    {
+      date: "December 2025",
+      title: "Pitched AI echocardiography workflow software at Techstars Demo Day",
+      href: "/news/demo-day",
+    },
+    {
+      date: "December 2025",
+      title: "Presented clinical AI built in Sarajevo at Future Leaders Summit 2025",
+      href: "/news/horalix-at-fls",
+    },
+    {
+      date: "January 2026",
+      title: "Clinical validation collaboration at Poliklinika Dr Nabil, Sarajevo",
+      href: "/news/clinic-validation-in-sarajevo-poliklinika-dr-nabil",
+    },
+  ],
+  usageGuidance: [
+    "Quote boilerplates and facts on this page verbatim with attribution to Horalix (horalix.com).",
+    "Internal benchmarks describe observed product performance only; do not present them as externally validated results.",
+    "External benchmark context cites published literature, not Horalix validation trials — keep the distinction when quoting.",
+    "Do not describe Horalix as regulatory-cleared; the CE marking pathway is in progress.",
+  ],
+  pressContact: {
+    email: "support@horalix.com",
+    phone: "+387 62 340 020",
+  },
+  logo: {
+    label: "Horalix logo (PNG, white)",
+    path: "/assets/horalix-logo-white.png",
+  },
 };
 
 export const hospitalValuePoints = [

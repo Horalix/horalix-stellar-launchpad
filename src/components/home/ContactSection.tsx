@@ -92,6 +92,21 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     }
   };
 
+  // Inline validation on blur (not keystroke): confirm a field the moment the
+  // user leaves it, but never flag an empty field they merely tabbed through.
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    if (!value.trim()) return;
+    const fieldSchema = contactSchema.shape[name as keyof ContactFormData];
+    const result = fieldSchema.safeParse(value);
+    setErrors((prev) => ({
+      ...prev,
+      [name]: result.success ? undefined : result.error.errors[0]?.message,
+    }));
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,8 +171,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
 
       // Show success message
       toast({
-        title: "Message Transmitted",
-        description: "Your inquiry has been received. We'll respond shortly.",
+        title: "Message sent",
+        description: "Your inquiry has been received — we'll get back to you shortly.",
       });
 
       // Reset form
@@ -165,8 +180,9 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     } catch (error) {
       console.error("Contact form submission error:", error);
       toast({
-        title: "Transmission Failed",
-        description: "Unable to send message. Please try again later.",
+        title: "Message not sent",
+        description:
+          "Something went wrong on our side. Please try again, or email support@horalix.com directly.",
         variant: "destructive",
       });
     } finally {
@@ -226,6 +242,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                   type="text"
                   value={formData.name}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={Boolean(errors.name)}
                   placeholder="Enter full name"
                   className={`bg-secondary border-border focus:border-accent ${
                     errors.name ? "border-destructive" : ""
@@ -251,6 +269,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={Boolean(errors.email)}
                   placeholder="email@institution.edu"
                   className={`bg-secondary border-border focus:border-accent ${
                     errors.email ? "border-destructive" : ""
@@ -277,6 +297,8 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
                 rows={4}
                 value={formData.message}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                aria-invalid={Boolean(errors.message)}
                 placeholder="Describe your requirements or clinical needs..."
                 className={`bg-secondary border-border focus:border-accent resize-none ${
                   errors.message ? "border-destructive" : ""

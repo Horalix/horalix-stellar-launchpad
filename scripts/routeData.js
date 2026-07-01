@@ -6,7 +6,7 @@ import { fallbackNewsArticles } from "../src/content/newsFallbackData.js";
 const ROOT_DIR = process.cwd();
 const ENV_PATH = path.join(ROOT_DIR, ".env");
 
-const CORE_ROUTES = ["/", "/about", "/evidence", "/news", "/resources", "/solutions", "/terms"];
+const CORE_ROUTES = ["/", "/about", "/evidence", "/news", "/press", "/resources", "/solutions", "/terms"];
 // Non-public routes excluded from sitemap: /login, /signup, /verify-email, /profile, /admin
 const FALLBACK_NEWS_ROUTES = fallbackNewsArticles.map((article) => `/news/${article.slug}`);
 const FALLBACK_SOLUTION_ROUTES = [
