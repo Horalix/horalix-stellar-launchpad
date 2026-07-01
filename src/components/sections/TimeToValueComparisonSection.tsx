@@ -273,8 +273,8 @@ export const TimeToValueComparisonSection = () => {
     }
 
     // [FIX] Legacy browser fallback for matchMedia event listener
-    mediaQuery.addListener(sync);
-    return () => mediaQuery.removeListener(sync);
+    (mediaQuery as any).addListener(sync);
+    return () => (mediaQuery as any).removeListener(sync);
   }, []);
 
   // [PERF] IntersectionObserver for lazy reveal — disconnects after first trigger
