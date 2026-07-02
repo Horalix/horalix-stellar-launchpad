@@ -145,7 +145,7 @@ const News = () => {
                 <Link
                   key={article.id}
                   to={`/news/${article.slug}`}
-                  className="group block bg-card border border-border p-6 md:p-8 hover:border-accent transition-all"
+                  className="group hover-lift block bg-card border border-border p-6 md:p-8 hover:border-accent hover:shadow-lg"
                 >
                   <div className="flex flex-col md:flex-row md:items-start gap-6">
                     {/* Article image (if available) */}

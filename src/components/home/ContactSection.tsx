@@ -195,8 +195,13 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
     <section
       ref={ref}
       id="contact"
-      className="py-24 px-6 lg:px-12 bg-card relative z-10"
+      className="py-24 px-6 lg:px-12 bg-card relative z-10 overflow-hidden"
     >
+      {/* [ART] Soft glow behind the form card — the final CTA gets the focal light */}
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 top-1/2 h-[540px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.07] blur-3xl"
+      />
       <Reveal className="max-w-4xl mx-auto bg-card border border-border shadow-2xl relative">
         {/* Decorative paper holes */}
         <div className="absolute -top-6 left-0 w-full flex justify-between px-8">

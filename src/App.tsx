@@ -42,9 +42,32 @@ const FAQManager = lazy(() => import("./pages/admin/FAQManager"));
 
 const queryClient = new QueryClient();
 
+// Branded route loader — the ECG trace draws while the chunk loads
 const RouteLoadingState = () => (
-  <div className="flex min-h-[40vh] items-center justify-center px-6 py-24 text-sm uppercase tracking-[0.24em] text-muted-foreground">
-    Loading page
+  <div
+    role="status"
+    aria-label="Loading page"
+    className="flex min-h-[60vh] flex-col items-center justify-center gap-5 px-6 py-24"
+  >
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 600 40"
+      className="h-8 w-full max-w-xs text-accent"
+      preserveAspectRatio="none"
+    >
+      <path
+        className="ecg-path-fast"
+        d="M0 24 H150 l12 -7 12 7 h60 l8 -18 10 30 8 -34 10 26 6 -11 h70 l10 -6 10 6 h234"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+    <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+      Loading
+    </span>
   </div>
 );
 

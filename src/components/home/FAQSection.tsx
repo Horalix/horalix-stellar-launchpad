@@ -57,50 +57,70 @@ export const FAQSection = () => {
       )}
 
       <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <Reveal className="flex flex-col items-start text-left mb-12">
-          <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-accent mb-4">
-            <HelpCircle className="w-4 h-4" />
-            Frequently Asked Questions
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold font-space tracking-tight text-primary">
-            Questions & Answers
-          </h2>
-        </Reveal>
-
-        {/* FAQ Accordion */}
-        {shouldShowLoading && (
-          <div className="py-12 text-left text-muted-foreground font-mono text-sm">
-            Loading FAQs...
-          </div>
-        )}
-
-        {!shouldShowLoading && !hasFaqItems && (
-          <div className="py-12 text-left text-muted-foreground font-mono text-sm">
-            No FAQs available.
-          </div>
-        )}
-
-        {!shouldShowLoading && hasFaqItems && (
-          <Reveal delay={90} className="max-w-7xl mx-auto">
-            <Accordion type="single" collapsible className="w-full space-y-0">
-              {faqItems.map((item) => (
-                <AccordionItem
-                  key={item.id}
-                  value={item.id}
-                  className="border-b border-border/60 last:border-b-0"
-                >
-                  <AccordionTrigger className="text-left text-lg md:text-xl lg:text-2xl font-semibold leading-snug hover:no-underline py-5">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm md:text-base lg:text-lg text-muted-foreground/80 leading-relaxed pt-2 pb-5">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+        {/* [UX] Editorial two-column layout: sticky context left, answers right —
+            the reader keeps orientation while scanning long accordions */}
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-16">
+          <Reveal className="lg:sticky lg:top-32 lg:self-start">
+            <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-accent mb-4">
+              <HelpCircle className="w-4 h-4" />
+              Frequently Asked Questions
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold font-space tracking-tight text-primary">
+              Questions &amp; Answers
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground max-w-xs">
+              The questions hospitals, clinicians, and investors actually ask — answered plainly.
+              Anything missing?{" "}
+              <a href="/#contact" className="font-medium text-accent-strong hover:underline">
+                Ask us directly.
+              </a>
+            </p>
           </Reveal>
-        )}
+
+          <div>
+            {/* FAQ Accordion */}
+            {shouldShowLoading && (
+              <div className="py-12 text-left text-muted-foreground font-mono text-sm">
+                Loading FAQs...
+              </div>
+            )}
+
+            {!shouldShowLoading && !hasFaqItems && (
+              <div className="py-12 text-left text-muted-foreground font-mono text-sm">
+                No FAQs available.
+              </div>
+            )}
+
+            {!shouldShowLoading && hasFaqItems && (
+              <Reveal delay={90}>
+                <Accordion type="single" collapsible className="w-full space-y-0">
+                  {faqItems.map((item, index) => (
+                    <AccordionItem
+                      key={item.id}
+                      value={item.id}
+                      className="border-b border-border/60 last:border-b-0 group"
+                    >
+                      <AccordionTrigger className="text-left text-lg md:text-xl font-semibold leading-snug hover:no-underline py-5 gap-4">
+                        <span className="flex items-baseline gap-4">
+                          <span
+                            aria-hidden="true"
+                            className="font-mono text-xs font-bold tabular-nums text-accent-strong/70 group-hover:text-accent-strong transition-colors"
+                          >
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          {item.question}
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm md:text-base text-muted-foreground/90 leading-relaxed pt-1 pb-6 md:pl-10">
+                        {item.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Reveal>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

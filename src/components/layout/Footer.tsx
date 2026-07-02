@@ -21,6 +21,11 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
 
   return (
     <footer ref={ref} className="relative z-10 border-t border-border bg-primary text-primary-foreground">
+      {/* Accent hairline — mirrors the top-of-page accent bar, closing the frame */}
+      <div
+        aria-hidden="true"
+        className="h-px w-full bg-gradient-to-r from-transparent via-accent/60 to-transparent"
+      />
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
           <div className="md:col-span-2">

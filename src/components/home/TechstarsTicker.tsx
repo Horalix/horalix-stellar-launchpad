@@ -22,8 +22,9 @@ export const TechstarsTicker = () => {
 
   return (
     <section className="bg-primary text-primary-foreground py-4 border-y border-accent relative z-20 overflow-hidden">
-      {/* Double the content: first half + second half (identical) creates seamless loop */}
-      <div className="animate-marquee">
+      {/* Double the content: first half + second half (identical) creates seamless loop.
+          marquee-mask fades the edges so items never hard-clip. */}
+      <div className="animate-marquee marquee-mask">
         {/* First set of items */}
         {[...Array(8)].map((_, i) => (
           <TickerItem key={`a-${i}`} />

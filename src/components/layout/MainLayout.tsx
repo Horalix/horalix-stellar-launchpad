@@ -42,15 +42,22 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent selection:text-accent-foreground flex flex-col relative">
       {/* Background pattern overlay */}
       <BackgroundPattern />
-      
+
+      {/* [ART] Ambient top glow — every page opens with the same atmosphere */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[420px] bg-[radial-gradient(ellipse_at_top,hsl(217_91%_65%/0.06),transparent_62%)]"
+      />
+
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-accent via-accent/70 to-accent w-full z-50 fixed top-0 left-0" />
-      
+
       {/* Navigation */}
       <Navbar />
-      
-      {/* Main content */}
-      <main className="relative z-10 flex-1 pt-[68px] md:pt-[84px]">
+
+      {/* Main content — keyed on pathname so every navigation plays the
+          page-enter rise (reduced-motion safe via index.css) */}
+      <main key={location.pathname} className="page-enter relative z-10 flex-1 pt-[68px] md:pt-[84px]">
         {children}
       </main>
       
