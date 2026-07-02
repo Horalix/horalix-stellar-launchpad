@@ -8,7 +8,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { format } from "date-fns";
 import { homepageNewsFallbacks } from "@/content/homepageFallbacks";
 import type { PublicNewsArticle } from "@/content/homepageFallbacks";
-import newsPlaceholderImage from "@/assets/hero/screenshot-dashboard.png";
+import newsPlaceholderImage from "@/assets/hero/screenshot-dashboard.webp";
 
 /**
  * NewsPreviewSection - Shows news articles on homepage with slider when > 3

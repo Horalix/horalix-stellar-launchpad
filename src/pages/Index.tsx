@@ -13,7 +13,9 @@ import {
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
   buildBreadcrumbJsonLd,
+  buildSpeakableJsonLd,
 } from "@/lib/structuredData";
+import { CANONICAL_SITE_URL } from "@/lib/canonical";
 
 /**
  * Index - Homepage for Horalix website
@@ -28,6 +30,8 @@ const Index = () => {
     buildOrganizationJsonLd(),
     buildWebSiteJsonLd(),
     buildBreadcrumbJsonLd([{ name: "Home", path: "/" }]),
+    // [AEO] Parity with the prerendered static homepage (generate-static-pages.mjs)
+    buildSpeakableJsonLd(`${CANONICAL_SITE_URL}/`, ["h1", "h2", "[data-speakable]"]),
   ];
 
   return (

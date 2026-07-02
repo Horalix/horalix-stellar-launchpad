@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
@@ -20,9 +20,19 @@ const NAV_ITEMS = [
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const activeSection = useActiveSection();
   const { user, isLoading } = useAuth();
+
+  // [MOTION] Scrolled state: header gains a shadow + solidity once content
+  // slides underneath — orientation feedback, 250ms via the class transition.
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const getIsActive = (item: (typeof NAV_ITEMS)[number]) => {
     if (location.pathname !== "/") {
@@ -45,7 +55,12 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="fixed left-0 top-0 z-40 w-full border-b border-border bg-card/90 backdrop-blur-md">
+    <header
+      className={cn(
+        "fixed left-0 top-0 z-40 w-full border-b border-border backdrop-blur-md transition-[background-color,box-shadow] duration-300",
+        isScrolled ? "bg-card/95 shadow-[0_8px_30px_rgba(15,23,42,0.08)]" : "bg-card/90",
+      )}
+    >
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="flex h-16 items-stretch justify-between md:h-20">
           <Link

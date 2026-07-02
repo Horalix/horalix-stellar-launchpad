@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import screenshotDashboard from "@/assets/hero/screenshot-dashboard.png";
-import screenshotAnalysis from "@/assets/hero/screenshot-analysis.png";
-import screenshotSegmentation from "@/assets/hero/screenshot-segmentation.png";
+// WebP re-encodes (~88% smaller than the source PNGs — LCP win); regenerate
+// with scripts/compress-images.mjs when the screenshots change
+import screenshotDashboard from "@/assets/hero/screenshot-dashboard.webp";
+import screenshotAnalysis from "@/assets/hero/screenshot-analysis.webp";
+import screenshotSegmentation from "@/assets/hero/screenshot-segmentation.webp";
 
 /**
  * HeroScreenshots
@@ -401,9 +403,9 @@ export const HeroScreenshots = () => {
     <div className="relative w-full h-full flex flex-col lg:justify-center">
       {/* ========== COLLAGE SECTION ========== */}
       <div className="relative w-full flex items-center justify-center overflow-hidden md:overflow-visible pt-5 pb-0 md:py-0 min-h-[320px] sm:min-h-[340px] md:min-h-[420px] lg:min-h-[520px]">
-        {/* Desktop/Tablet collage */}
+        {/* Desktop/Tablet collage — slow idle float gives the product visual life */}
         <div
-          className="hidden md:block relative w-full max-w-[720px] mx-auto aspect-[16/11]"
+          className="hidden md:block relative w-full max-w-[720px] mx-auto aspect-[16/11] animate-idle-float"
           style={fadeMaskStyle}
         >
           {order.map((id, idx) => (

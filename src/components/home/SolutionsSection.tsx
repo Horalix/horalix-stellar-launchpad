@@ -103,8 +103,8 @@ export const SolutionsSection = () => {
           </div>
         )}
 
-        {/* Icon */}
-        <div className="w-12 h-12 bg-secondary border border-border flex items-center justify-center mb-6 text-accent">
+        {/* Icon — gradient tile gives the card a focal anchor */}
+        <div className="w-12 h-12 rounded-lg border border-accent/20 bg-gradient-to-br from-accent/10 to-sky-400/10 flex items-center justify-center mb-6 text-accent-strong shadow-sm">
           <IconComponent className="w-6 h-6" />
         </div>
 

@@ -257,6 +257,64 @@
   will-change: transform, opacity;
 }
 
+/* ── Signature moment: ECG trace ──────────────────────────────────────────────
+   A clinical pulse drawn across the hero. Draw-on (60%), hold, fade, repeat.
+   Purpose: brand identity — the one motion a visitor remembers. */
+@keyframes ecg-draw {
+  0% {
+    stroke-dashoffset: 1200;
+    opacity: 1;
+  }
+  55% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  85% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.ecg-path {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: ecg-draw 4.5s cubic-bezier(0.4, 0, 0.2, 1) 900ms infinite;
+}
+
+/* Slow idle float for the hero screenshot collage — gives the product visual
+   life without demanding attention. */
+@keyframes idle-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-idle-float {
+  animation: idle-float 6.5s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecg-path {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: none;
+    opacity: 0.55;
+  }
+
+  .animate-idle-float {
+    animation: none;
+    will-change: auto;
+  }
+}
+
 /* Card hover: lift on the compositor thread; pairs with a border/shadow change
    declared per-card. Purpose: affordance feedback (this tile is interactive). */
 .hover-lift {
