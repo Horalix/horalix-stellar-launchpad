@@ -273,8 +273,12 @@ export const TimeToValueComparisonSection = () => {
     }
 
     // [FIX] Legacy browser fallback for matchMedia event listener
-    (mediaQuery as any).addListener(sync);
-    return () => (mediaQuery as any).removeListener(sync);
+    type LegacyMediaQueryList = MediaQueryList & {
+      addListener: (listener: () => void) => void;
+      removeListener: (listener: () => void) => void;
+    };
+    (mediaQuery as LegacyMediaQueryList).addListener(sync);
+    return () => (mediaQuery as LegacyMediaQueryList).removeListener(sync);
   }, []);
 
   // [PERF] IntersectionObserver for lazy reveal — disconnects after first trigger
@@ -580,10 +584,10 @@ export const TimeToValueComparisonSection = () => {
               {COMPARISON_ROWS.map((row) => (
                 <div
                   key={row.metric}
-                  className="grid gap-px bg-border/70 lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)]"
+                  className="group grid gap-px bg-border/70 lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)]"
                 >
                   {/* Metric label */}
-                  <div className="bg-secondary/55 px-5 py-4">
+                  <div className="bg-secondary/55 px-5 py-4 transition-colors duration-200 group-hover:bg-secondary/85">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <h3 className="text-sm font-semibold text-primary">{row.metric}</h3>
@@ -601,8 +605,9 @@ export const TimeToValueComparisonSection = () => {
                     </div>
                   </div>
 
-                  {/* Horalix value — [PSYCH] checkmark reinforces the winner narrative */}
-                  <div className="bg-background px-5 py-4">
+                  {/* Horalix value — [PSYCH] checkmark reinforces the winner narrative;
+                      row hover tints the Horalix cell accent-blue (scannability) */}
+                  <div className="bg-background px-5 py-4 transition-colors duration-200 group-hover:bg-accent/[0.05]">
                     <p className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent lg:hidden">
                       Horalix AI
                     </p>
@@ -616,7 +621,7 @@ export const TimeToValueComparisonSection = () => {
                   </div>
 
                   {/* Traditional value */}
-                  <div className="bg-background/88 px-5 py-4">
+                  <div className="bg-background/88 px-5 py-4 transition-colors duration-200 group-hover:bg-background">
                     <p className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground lg:hidden">
                       Traditional
                     </p>

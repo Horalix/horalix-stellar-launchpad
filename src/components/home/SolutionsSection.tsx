@@ -16,6 +16,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { ContentSlider } from "@/components/ui/content-slider";
+import { Reveal } from "@/components/ui/reveal";
 import { homepageSolutionFallbacks } from "@/content/homepageFallbacks";
 import type { HomepageSolution } from "@/content/homepageFallbacks";
 import type { LucideIcon } from "lucide-react";
@@ -88,7 +89,7 @@ export const SolutionsSection = () => {
       <Link
         key={solution.id}
         to={`/solutions/${solution.slug}`}
-        className="group bg-card border border-border p-8 hover:border-accent hover:shadow-lg transition-all relative overflow-hidden h-full flex flex-col"
+        className="group hover-lift bg-card border border-border p-8 hover:border-accent hover:shadow-lg relative overflow-hidden h-full flex flex-col"
       >
         {/* Background icon */}
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -143,7 +144,7 @@ export const SolutionsSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-border pb-6">
+        <Reveal className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b border-border pb-6">
           <div className="text-left">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
               <Layers className="w-4 h-4" />
@@ -160,7 +161,7 @@ export const SolutionsSection = () => {
               Select a module for specification details.
             </p>
           </div>
-        </div>
+        </Reveal>
 
         {/* Step 4: Loading state */}
         {shouldShowLoading && (
@@ -180,7 +181,12 @@ export const SolutionsSection = () => {
         {!shouldShowLoading && solutions.length > 0 && (
           solutions.length <= 3 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {solutions.map(renderSolutionCard)}
+              {/* [MOTION] 80ms card stagger — reads as one composed sequence */}
+              {solutions.map((solution, index) => (
+                <Reveal key={solution.id} delay={index * 80} className="h-full">
+                  {renderSolutionCard(solution)}
+                </Reveal>
+              ))}
             </div>
           ) : (
             <ContentSlider itemsPerView={3}>

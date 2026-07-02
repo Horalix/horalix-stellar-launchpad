@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Helmet } from "react-helmet-async";
+import { Reveal } from "@/components/ui/reveal";
 import { homepageFAQFallbacks } from "@/content/homepageFallbacks";
 import type { HomepageFAQItem } from "@/content/homepageFallbacks";
 import { buildFAQPageJsonLd } from "@/lib/structuredData";
@@ -57,7 +58,7 @@ export const FAQSection = () => {
 
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col items-start text-left mb-12">
+        <Reveal className="flex flex-col items-start text-left mb-12">
           <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-accent mb-4">
             <HelpCircle className="w-4 h-4" />
             Frequently Asked Questions
@@ -65,7 +66,7 @@ export const FAQSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold font-space tracking-tight text-primary">
             Questions & Answers
           </h2>
-        </div>
+        </Reveal>
 
         {/* FAQ Accordion */}
         {shouldShowLoading && (
@@ -81,7 +82,7 @@ export const FAQSection = () => {
         )}
 
         {!shouldShowLoading && hasFaqItems && (
-          <div className="max-w-7xl mx-auto">
+          <Reveal delay={90} className="max-w-7xl mx-auto">
             <Accordion type="single" collapsible className="w-full space-y-0">
               {faqItems.map((item) => (
                 <AccordionItem
@@ -98,7 +99,7 @@ export const FAQSection = () => {
                 </AccordionItem>
               ))}
             </Accordion>
-          </div>
+          </Reveal>
         )}
       </div>
     </section>

@@ -2,6 +2,7 @@ import { Users, ExternalLink, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
+import { Reveal } from "@/components/ui/reveal";
 import { homepageTeamFallbacks } from "@/content/homepageFallbacks";
 import type { HomepageTeamMember } from "@/content/homepageFallbacks";
 
@@ -72,7 +73,7 @@ export const TeamSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="mb-16 text-left">
+        <Reveal className="mb-16 text-left">
           <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
             <Users className="w-4 h-4" />
             <span>Personnel Manifest</span>
@@ -80,7 +81,7 @@ export const TeamSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-primary font-space">
             Founding Team
           </h2>
-        </div>
+        </Reveal>
 
         {/* Step 3: Loading state */}
         {shouldShowLoading && (
@@ -133,24 +134,27 @@ export const TeamSection = () => {
                 </>
               );
 
-              return profileSlug ? (
-                <Link
-                  key={member.id}
-                  to={`/team/${profileSlug}`}
-                  className="group border border-border bg-card hover:border-accent transition-all duration-300"
-                >
-                  {cardContent}
-                </Link>
-              ) : (
-                <a
-                  key={member.id}
-                  href={member.linkedin_url || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group border border-border bg-card hover:border-accent transition-all duration-300"
-                >
-                  {cardContent}
-                </a>
+              // [MOTION] 80ms stagger + hover lift — same grammar as solution cards
+              return (
+                <Reveal key={member.id} delay={i * 80}>
+                  {profileSlug ? (
+                    <Link
+                      to={`/team/${profileSlug}`}
+                      className="group hover-lift block h-full border border-border bg-card hover:border-accent hover:shadow-lg"
+                    >
+                      {cardContent}
+                    </Link>
+                  ) : (
+                    <a
+                      href={member.linkedin_url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group hover-lift block h-full border border-border bg-card hover:border-accent hover:shadow-lg"
+                    >
+                      {cardContent}
+                    </a>
+                  )}
+                </Reveal>
               );
             })}
           </div>

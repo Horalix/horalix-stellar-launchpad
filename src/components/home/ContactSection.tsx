@@ -2,6 +2,7 @@ import { useState, useEffect, forwardRef } from "react";
 import horalixLogoWhite from "@/assets/horalix-logo-white.png";
 import { ShieldCheck, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/ui/reveal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -196,7 +197,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
       id="contact"
       className="py-24 px-6 lg:px-12 bg-card relative z-10"
     >
-      <div className="max-w-4xl mx-auto bg-card border border-border shadow-2xl relative">
+      <Reveal className="max-w-4xl mx-auto bg-card border border-border shadow-2xl relative">
         {/* Decorative paper holes */}
         <div className="absolute -top-6 left-0 w-full flex justify-between px-8">
           <div className="w-4 h-4 rounded-full bg-muted-foreground/30" />
@@ -215,11 +216,12 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
               </p>
             </div>
             <div className="hidden md:block text-right">
-              <div className="w-24 h-24 border border-border flex items-center justify-center bg-secondary overflow-hidden">
-                <img 
-                  src={horalixLogoWhite} 
-                  alt="Horalix" 
-                  className="w-20 h-20 object-contain"
+              {/* Navy tile: the white logomark needs a dark ground to be visible */}
+              <div className="w-24 h-24 border border-border flex items-center justify-center bg-primary shadow-sm overflow-hidden">
+                <img
+                  src={horalixLogoWhite}
+                  alt="Horalix"
+                  className="w-16 h-16 object-contain"
                 />
               </div>
             </div>
@@ -336,7 +338,7 @@ export const ContactSection = forwardRef<HTMLElement>((_, ref) => {
             </div>
           </form>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 });

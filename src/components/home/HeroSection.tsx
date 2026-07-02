@@ -45,8 +45,11 @@ export const HeroSection = () => {
           <div className="absolute top-10 left-10 w-4 h-4 border-t border-l border-primary opacity-30" />
 
           <div className="relative z-10 max-w-2xl">
+            {/* [MOTION] Load-entrance stagger (70ms cadence) — orientation, not
+                decoration: the eye lands badge → claim → proof → action.
+                Reduced-motion users see everything immediately (index.css). */}
             {/* Category badge — states the wedge up front (5-second test + entity/AEO) */}
-            <div className="inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
+            <div className="hero-enter inline-flex items-center gap-2 mb-8 border border-primary/20 px-3 py-1 bg-card shadow-sm">
               <Activity className="w-3 h-3 text-accent" />
               <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-primary">
                 Echocardiography AI
@@ -54,20 +57,31 @@ export const HeroSection = () => {
             </div>
 
             {/* Fixed value headline — stable, scannable, names what Horalix does */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space tracking-tight text-primary leading-[1.05] mb-4">
+            <h1
+              style={{ "--enter-delay": "70ms" } as React.CSSProperties}
+              className="hero-enter text-4xl sm:text-5xl lg:text-6xl font-bold font-space tracking-tight text-primary leading-[1.05] mb-4"
+            >
               From echo capture to report-ready in seconds.
             </h1>
 
             {/* Kinetic tagline — brand flavor only; reduced-motion safe */}
-            <TypewriterHeadline />
+            <div style={{ "--enter-delay": "140ms" } as React.CSSProperties} className="hero-enter">
+              <TypewriterHeadline />
+            </div>
 
             {/* Subheadline */}
-            <p className="text-lg text-muted-foreground mt-6 mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1">
+            <p
+              style={{ "--enter-delay": "210ms" } as React.CSSProperties}
+              className="hero-enter text-lg text-muted-foreground mt-6 mb-10 leading-relaxed max-w-lg border-l-2 border-accent pl-6 py-1"
+            >
               {heroSubtitle}
             </p>
 
             {/* CTAs — one primary (experience the product), one secondary (talk to us) */}
-            <div className="flex flex-wrap gap-4">
+            <div
+              style={{ "--enter-delay": "280ms" } as React.CSSProperties}
+              className="hero-enter flex flex-wrap gap-4"
+            >
               <Button asChild size="lg" className="text-xs font-bold uppercase tracking-widest">
                 <a href={INTERACTIVE_DEMO_PATH}>
                   <MonitorPlay className="w-4 h-4" />
@@ -90,7 +104,10 @@ export const HeroSection = () => {
             {/* [PSYCH][TRUST] Persistent trust strip — surfaces the buyer's de-risking
                 signals (compliance, integration, clinician control) above the fold,
                 not just on the contact form. */}
-            <ul className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+            <ul
+              style={{ "--enter-delay": "350ms" } as React.CSSProperties}
+              className="hero-enter mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-mono uppercase tracking-widest text-muted-foreground"
+            >
               {[
                 "GDPR-aligned",
                 "EU data residency",
@@ -107,7 +124,10 @@ export const HeroSection = () => {
         </div>
 
         {/* Right hero screenshots */}
-        <div className="lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border">
+        <div
+          style={{ "--enter-delay": "200ms" } as React.CSSProperties}
+          className="hero-enter lg:col-span-5 bg-card flex flex-col relative overflow-hidden border-b lg:border-b-0 border-border"
+        >
           <HeroScreenshots />
         </div>
       </div>

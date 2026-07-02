@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { ContentSlider } from "@/components/ui/content-slider";
+import { Reveal } from "@/components/ui/reveal";
 import { format } from "date-fns";
 import { homepageNewsFallbacks } from "@/content/homepageFallbacks";
 import type { PublicNewsArticle } from "@/content/homepageFallbacks";
@@ -81,7 +82,7 @@ export const NewsPreviewSection = () => {
     <Link
       key={article.id}
       to={`/news/${article.slug}`}
-      className="group cursor-pointer border border-border bg-secondary hover:bg-card hover:border-primary transition-all duration-300 flex flex-col h-full"
+      className="group hover-lift cursor-pointer border border-border bg-secondary hover:bg-card hover:border-primary hover:shadow-lg flex flex-col h-full"
     >
       {/* Image area */}
       <div className="aspect-video w-full overflow-hidden border-b border-border relative">
@@ -124,7 +125,7 @@ export const NewsPreviewSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+        <Reveal className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div className="text-left">
             <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-widest mb-4">
               <Globe className="w-4 h-4" />
@@ -142,7 +143,7 @@ export const NewsPreviewSection = () => {
               </Button>
             </Link>
           </div>
-        </div>
+        </Reveal>
 
         {/* Step 5: Loading state */}
         {shouldShowLoading && (
@@ -162,7 +163,12 @@ export const NewsPreviewSection = () => {
         {!shouldShowLoading && articles.length > 0 && (
           articles.length <= 3 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.map(renderArticleCard)}
+              {/* [MOTION] 80ms card stagger — same grammar as solutions/team */}
+              {articles.map((article, index) => (
+                <Reveal key={article.id} delay={index * 80} className="h-full">
+                  {renderArticleCard(article)}
+                </Reveal>
+              ))}
             </div>
           ) : (
             <ContentSlider itemsPerView={3}>
