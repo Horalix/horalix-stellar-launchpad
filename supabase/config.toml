@@ -24,3 +24,9 @@ verify_jwt = false
 
 [functions.send-newsletter]
 verify_jwt = true
+
+[functions.auth-login]
+verify_jwt = false
+
+[functions.auth-signup]
+verify_jwt = false
