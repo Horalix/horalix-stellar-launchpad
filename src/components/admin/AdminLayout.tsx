@@ -71,7 +71,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-border bg-card transition-transform lg:static lg:transform-none ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 transform flex-col border-r border-border bg-card transition-transform lg:sticky lg:top-0 lg:bottom-auto lg:transform-none ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -88,7 +88,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
           </button>
         </div>
 
-        <nav className="space-y-1 p-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
@@ -111,7 +111,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 border-t border-border p-4">
+        <div className="mt-auto shrink-0 border-t border-border bg-card p-4">
           <div className="mb-2 truncate text-xs text-muted-foreground">{user?.email}</div>
           <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />

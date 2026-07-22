@@ -28,6 +28,7 @@ export type PublicNewsArticle = {
   id: string;
   slug: string;
   title: string;
+  seo_title?: string | null;
   summary: string;
   content: string;
   category: string;
@@ -156,22 +157,67 @@ export const getFallbackSolutionBySlug = (slug?: string): HomepageSolution | nul
 export const getFallbackNewsArticleBySlug = (slug?: string): PublicNewsArticle | null =>
   homepageNewsFallbacks.find((article) => article.slug === slug) ?? null;
 
-export const mergeNewsArticleWithFallback = (article: PublicNewsArticle): PublicNewsArticle => {
+export const mergeNewsArticleWithFallback = (
+  article: PublicNewsArticle,
+): PublicNewsArticle => {
   const fallback = getFallbackNewsArticleBySlug(article.slug);
-  if (!fallback) return article;
+
+  if (!fallback) {
+    return article;
+  }
 
   return {
+    ...fallback,
     ...article,
-    title: fallback.title,
-    summary: fallback.summary,
-    content: fallback.content,
-    category: fallback.category,
-    location: fallback.location,
-    image_urls: fallback.image_urls,
-    image_focus: fallback.image_focus,
-    keywords: fallback.keywords,
-    display_date: article.display_date || fallback.display_date,
-    published_at: article.published_at || fallback.published_at,
-    updated_at: article.updated_at ?? fallback.updated_at,
+
+    // Supabase is the source of truth. Fallback values are used only
+    // when the corresponding CMS value is missing or empty.
+    seo_title:
+      article.seo_title ??
+      fallback.seo_title ??
+      null,
+
+    summary:
+      article.summary ||
+      fallback.summary,
+
+    content:
+      article.content ||
+      fallback.content,
+
+    category:
+      article.category ||
+      fallback.category,
+
+    location:
+      article.location ??
+      fallback.location,
+
+    image_urls:
+      article.image_urls.length > 0
+        ? article.image_urls
+        : fallback.image_urls,
+
+    image_focus:
+      article.image_focus.length > 0
+        ? article.image_focus
+        : fallback.image_focus,
+
+    keywords:
+      article.keywords && article.keywords.length > 0
+        ? article.keywords
+        : fallback.keywords,
+
+    display_date:
+      article.display_date ||
+      fallback.display_date,
+
+    published_at:
+      article.published_at ||
+      fallback.published_at,
+
+    updated_at:
+      article.updated_at ??
+      fallback.updated_at,
   };
 };

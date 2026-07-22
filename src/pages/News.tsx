@@ -43,6 +43,7 @@ const News = () => {
           id: article.id,
           slug: article.slug,
           title: article.title,
+          seo_title: article.seo_title ?? null,
           summary: article.summary ?? "",
           content: article.content ?? "",
           category: article.category ?? "UPDATE",
@@ -55,6 +56,12 @@ const News = () => {
                 x: focus?.x ?? 50,
                 y: focus?.y ?? 50,
               }))
+            : [],
+          keywords: Array.isArray(article.keywords)
+            ? article.keywords.filter(
+                (keyword): keyword is string =>
+                  typeof keyword === "string",
+              )
             : [],
           display_date: article.display_date ?? article.published_at ?? "",
           published_at: article.published_at ?? "",

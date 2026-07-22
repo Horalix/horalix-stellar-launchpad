@@ -51,6 +51,7 @@ const NewsArticle = () => {
         id: data.id,
         slug: data.slug,
         title: data.title,
+        seo_title: data.seo_title ?? null,
         summary: data.summary ?? "",
         content: data.content ?? "",
         category: data.category ?? "UPDATE",
@@ -63,6 +64,12 @@ const NewsArticle = () => {
               x: focus?.x ?? 50,
               y: focus?.y ?? 50,
             }))
+          : [],
+        keywords: Array.isArray(data.keywords)
+          ? data.keywords.filter(
+              (keyword): keyword is string =>
+                typeof keyword === "string",
+            )
           : [],
         display_date: data.display_date ?? data.published_at ?? "",
         published_at: data.published_at ?? "",
@@ -166,7 +173,7 @@ const NewsArticle = () => {
   return (
     <MainLayout>
       <SEO
-        title={`${article.title} | Horalix`}
+        title={article.seo_title || `${article.title} | Horalix`}
         description={description}
         canonical={`/news/${article.slug}`}
         image={image}
