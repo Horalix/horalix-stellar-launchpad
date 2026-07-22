@@ -30,3 +30,6 @@ verify_jwt = false
 
 [functions.auth-signup]
 verify_jwt = false
+
+[functions.trigger-site-rebuild]
+verify_jwt = true
