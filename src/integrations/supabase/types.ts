@@ -53,6 +53,63 @@ export type Database = {
         }
         Relationships: []
       }
+      contributors: {
+        Row: {
+          bio_long: string | null
+          bio_short: string
+          contributor_type: string
+          created_at: string
+          credentials: string | null
+          display_order: number
+          id: string
+          is_public: boolean
+          linkedin_url: string | null
+          name: string
+          photo_url: string | null
+          role: string
+          same_as: Json
+          slug: string
+          specialty: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio_long?: string | null
+          bio_short: string
+          contributor_type?: string
+          created_at?: string
+          credentials?: string | null
+          display_order?: number
+          id?: string
+          is_public?: boolean
+          linkedin_url?: string | null
+          name: string
+          photo_url?: string | null
+          role: string
+          same_as?: Json
+          slug: string
+          specialty?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio_long?: string | null
+          bio_short?: string
+          contributor_type?: string
+          created_at?: string
+          credentials?: string | null
+          display_order?: number
+          id?: string
+          is_public?: boolean
+          linkedin_url?: string | null
+          name?: string
+          photo_url?: string | null
+          role?: string
+          same_as?: Json
+          slug?: string
+          specialty?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string

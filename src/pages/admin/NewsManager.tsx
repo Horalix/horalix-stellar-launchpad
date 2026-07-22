@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase as supabaseClient } from "@/integrations/supabase/client";
-const supabase = supabaseClient as any;
+import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { MultiImageUpload } from "@/components/admin/MultiImageUpload";
@@ -70,6 +69,7 @@ const defaultForm: ArticleForm = {
 };
 
 type NewsArticleRow = Tables<"news_articles">;
+type ContributorOption = Pick<Tables<"contributors">, "id" | "name">;
 type ImageFocusPoint = { x?: number; y?: number };
 
 const NewsManager = () => {
@@ -78,6 +78,23 @@ const NewsManager = () => {
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const triggerSiteRebuild = async () => {
+    const { data, error } = await supabase.functions.invoke(
+      "trigger-site-rebuild",
+    );
+
+    if (error) {
+      console.error(
+        "Failed to trigger static site rebuild:",
+        error,
+      );
+
+      return false;
+    }
+
+    console.log("Static site rebuild triggered:", data);
+    return true;
+  };
 
   // Fetch all articles, sorted by display_date (admin-chosen date)
   const { data: articles, isLoading } = useQuery({
@@ -92,7 +109,7 @@ const NewsManager = () => {
     },
   });
 
-  const { data: contributors } = useQuery({
+  const { data: contributors = [] } = useQuery<ContributorOption[]>({
     queryKey: ["admin-news-contributors"],
     queryFn: async () => {
       const { data, error } = await supabase.from("contributors").select("id, name").order("display_order", { ascending: true });
@@ -176,6 +193,14 @@ const NewsManager = () => {
         }
       }
 
+      const rebuildTriggered = await triggerSiteRebuild();
+
+      if (!rebuildTriggered) {
+        console.warn(
+          "Article was saved, but the static site rebuild was not triggered.",
+        );
+      }
+
       return { newsletterWarning };
     },
     onSuccess: ({ newsletterWarning }) => {
@@ -203,8 +228,22 @@ const NewsManager = () => {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("news_articles").delete().eq("id", id);
-      if (error) throw error;
+      const { error } = await supabase
+        .from("news_articles")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        throw error;
+      }
+
+      const rebuildTriggered = await triggerSiteRebuild();
+
+      if (!rebuildTriggered) {
+        console.warn(
+          "Article was deleted, but the static site rebuild was not triggered.",
+        );
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-news"] });
