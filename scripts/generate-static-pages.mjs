@@ -78,23 +78,69 @@ const FALLBACK_NEWS = fallbackNewsArticles;
 // ─── Utility helpers ─────────────────────────────────────────────────────────
 
 function mergeNewsArticleWithFallback(article) {
-  const fallback = FALLBACK_NEWS.find((fallbackArticle) => fallbackArticle.slug === article.slug);
-  if (!fallback) return article;
+  const fallback = FALLBACK_NEWS.find(
+    (fallbackArticle) =>
+      fallbackArticle.slug === article.slug,
+  );
+
+  if (!fallback) {
+    return article;
+  }
 
   return {
+    ...fallback,
     ...article,
-    title: fallback.title,
-    seoTitle: fallback.seoTitle,
-    summary: fallback.summary,
-    content: fallback.content,
-    category: fallback.category,
-    location: fallback.location,
-    image_urls: fallback.image_urls,
-    image_focus: fallback.image_focus,
-    keywords: fallback.keywords,
-    display_date: article.display_date || fallback.display_date,
-    published_at: article.published_at || fallback.published_at,
-    updated_at: article.updated_at ?? fallback.updated_at,
+
+    seo_title:
+      article.seo_title ??
+      fallback.seo_title ??
+      null,
+
+    summary:
+      article.summary ||
+      fallback.summary,
+
+    content:
+      article.content ||
+      fallback.content,
+
+    category:
+      article.category ||
+      fallback.category,
+
+    location:
+      article.location ??
+      fallback.location,
+
+    image_urls:
+      Array.isArray(article.image_urls) &&
+      article.image_urls.length > 0
+        ? article.image_urls
+        : fallback.image_urls,
+
+    image_focus:
+      Array.isArray(article.image_focus) &&
+      article.image_focus.length > 0
+        ? article.image_focus
+        : fallback.image_focus,
+
+    keywords:
+      Array.isArray(article.keywords) &&
+      article.keywords.length > 0
+        ? article.keywords
+        : fallback.keywords,
+
+    display_date:
+      article.display_date ||
+      fallback.display_date,
+
+    published_at:
+      article.published_at ||
+      fallback.published_at,
+
+    updated_at:
+      article.updated_at ??
+      fallback.updated_at,
   };
 }
 
@@ -1116,8 +1162,10 @@ function renderNewsArticle(article) {
   const articleBody = renderArticleBlocks(article.content, article.summary || "Company update from Horalix.");
 
   return {
-    // Prefer the hand-tuned ≤60-char seoTitle; the visible h1 keeps the full headline
-    title: article.seoTitle || `${article.title} | Horalix News`,
+    // Prefer the CMS SEO title; the visible h1 keeps the full headline.
+    title:
+      article.seo_title ||
+      `${article.title} | Horalix`,
     description: ((article.summary || `${article.title} - company update from Horalix, AI-powered echocardiography workflow software.`).length > 155
       ? (article.summary || "").slice(0, 152) + "..."
       : article.summary || `${article.title} - company update from Horalix, AI-powered echocardiography workflow software.`),
@@ -1228,10 +1276,15 @@ async function loadDynamicData() {
       ["is_active", "eq.true"],
       ["order", "display_order.asc"],
     ]),
-    fetchTable(config, "news_articles", "slug,title,summary,content,category,location,display_date,published_at,updated_at,image_urls", [
-      ["is_published", "eq.true"],
-      ["order", "display_date.desc.nullslast"],
-    ]),
+    fetchTable(
+      config,
+      "news_articles",
+      "slug,title,seo_title,summary,content,category,location,display_date,published_at,updated_at,image_urls,image_focus,keywords",
+      [
+        ["is_published", "eq.true"],
+        ["order", "display_date.desc.nullslast"],
+      ],
+    ),
   ]);
 
   const loadedNewsItems =

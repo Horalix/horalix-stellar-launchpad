@@ -39,8 +39,10 @@ import type { Tables } from "@/integrations/supabase/types";
 interface ArticleForm {
   id?: string;
   title: string;
+  seo_title: string;
   slug: string;
   summary: string;
+  keywords: string;
   content: string;
   category: string;
   location: string;
@@ -53,8 +55,10 @@ interface ArticleForm {
 
 const defaultForm: ArticleForm = {
   title: "",
+  seo_title: "",
   slug: "",
   summary: "",
+  keywords: "",
   content: "",
   category: "NEWS",
   location: "",
@@ -102,16 +106,23 @@ const NewsManager = () => {
     mutationFn: async (article: ArticleForm) => {
       // Build payload (image_url column was dropped in migration)
       const payload = {
-        title: article.title,
-        slug: article.slug,
-        summary: article.summary,
+        title: article.title.trim(),
+        seo_title: article.seo_title.trim() || null,
+        slug: article.slug.trim(),
+        summary: article.summary.trim(),
+        keywords: article.keywords
+          .split(",")
+          .map((keyword) => keyword.trim())
+          .filter(Boolean),
         content: article.content,
         category: article.category,
         location: article.location || null,
         author_id: article.author_id || null,
         image_urls: article.image_urls,
         image_focus: article.image_focus,
-        display_date: article.display_date ? new Date(article.display_date).toISOString() : null,
+        display_date: article.display_date
+          ? new Date(article.display_date).toISOString()
+          : null,
         published_at: article.is_published ? new Date().toISOString() : null,
         is_published: article.is_published,
       };
@@ -236,14 +247,20 @@ const NewsManager = () => {
     setForm({
       id: article.id,
       title: article.title,
+      seo_title: article.seo_title || "",
       slug: article.slug,
       summary: article.summary,
+      keywords: Array.isArray(article.keywords)
+        ? article.keywords.join(", ")
+        : "",
       content: article.content,
       category: article.category,
       location: article.location || "",
       image_urls: urls,
       image_focus: focus,
-      display_date: article.display_date ? article.display_date.split("T")[0] : "",
+      display_date: article.display_date
+        ? article.display_date.split("T")[0]
+        : "",
       author_id: article.author_id || "",
       is_published: article.is_published,
     });
@@ -318,6 +335,21 @@ const NewsManager = () => {
                         required
                       />
                     </div>
+                    <div className="col-span-2 space-y-2">
+                      <Label>SEO Title (optional)</Label>
+                      <Input
+                        value={form.seo_title}
+                        onChange={(e) =>
+                          setForm({ ...form, seo_title: e.target.value })
+                        }
+                        placeholder="Horalix Joins NVIDIA Inception | AI Echocardiography"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Browser and search-result title. Leave empty to use the visible
+                        article title. Recommended maximum: approximately 60 characters.
+                        Current: {form.seo_title.length}
+                      </p>
+                    </div>
                     <div className="space-y-2">
                       <Label>Slug</Label>
                       <Input
@@ -383,10 +415,30 @@ const NewsManager = () => {
                       <Label>Summary</Label>
                       <Textarea
                         value={form.summary}
-                        onChange={(e) => setForm({ ...form, summary: e.target.value })}
-                        rows={2}
+                        onChange={(e) =>
+                          setForm({ ...form, summary: e.target.value })
+                        }
+                        rows={3}
                         required
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Visible article summary and search-result description. Recommended:
+                        120–155 characters. Current: {form.summary.length}
+                      </p>
+                    </div>
+                    <div className="col-span-2 space-y-2">
+                      <Label>Keywords</Label>
+                      <Input
+                        value={form.keywords}
+                        onChange={(e) =>
+                          setForm({ ...form, keywords: e.target.value })
+                        }
+                        placeholder="Horalix, NVIDIA Inception, AI echocardiography, medical imaging AI"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Comma-separated article entities and topics. These are used in
+                        structured data, not as a meta-keywords tag.
+                      </p>
                     </div>
                     <div className="col-span-2 space-y-2">
                       <Label>Content</Label>
