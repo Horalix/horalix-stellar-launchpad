@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 import {
   benchmarkDisclosures,
@@ -1041,33 +1043,73 @@ function renderNewsPage(newsItems) {
   };
 }
 
-function renderArticleBlocks(content, fallback = "") {
-  const source = String(content || fallback || "");
+function renderArticleBlocks(content = "", fallback = "") {
+  const source = content || fallback;
 
-  return source
-    .split("\n\n")
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block) => {
-      const lines = block.split("\n");
+  if (!source.trim()) {
+    return "";
+  }
 
-      if (lines[0]?.startsWith("## ")) {
-        const paragraph = lines.slice(1).join("\n").trim();
-        return [
-          `<h2 ${S}="margin-top:32px;font-size:28px;line-height:1.25">${escapeHtml(lines[0].slice(3))}</h2>`,
-          paragraph ? `<p data-speakable>${escapeHtml(paragraph)}</p>` : "",
-        ].join("");
-      }
+  const parsedMarkdown = marked.parse(source, {
+    gfm: true,
+    breaks: false,
+  });
 
-      if (lines.length > 1 && lines.every((line) => line.startsWith("- "))) {
-        return `<ul ${S}="margin:16px 0;padding-left:24px;color:#475569">${lines
-          .map((line) => `<li>${escapeHtml(line.slice(2))}</li>`)
-          .join("")}</ul>`;
-      }
+  return sanitizeHtml(parsedMarkdown, {
+    allowedTags: [
+      "h2",
+      "h3",
+      "h4",
+      "p",
+      "strong",
+      "em",
+      "ul",
+      "ol",
+      "li",
+      "a",
+      "blockquote",
+      "code",
+      "pre",
+      "hr",
+      "br",
+    ],
+    allowedAttributes: {
+      a: ["href", "title", "target", "rel"],
+      p: ["data-speakable"],
+    },
+    transformTags: {
+      p: (tagName, attribs) => ({
+        tagName,
+        attribs: {
+          ...attribs,
+          "data-speakable": "",
+        },
+      }),
+      a: (tagName, attribs) => {
+        const href = attribs.href || "";
 
-      return `<p data-speakable>${escapeHtml(block)}</p>`;
-    })
-    .join("");
+        if (href.startsWith("/")) {
+          return {
+            tagName,
+            attribs: {
+              href,
+              ...(attribs.title ? { title: attribs.title } : {}),
+            },
+          };
+        }
+
+        return {
+          tagName,
+          attribs: {
+            href,
+            ...(attribs.title ? { title: attribs.title } : {}),
+            target: "_blank",
+            rel: "noopener noreferrer",
+          },
+        };
+      },
+    },
+  });
 }
 
 function renderNewsArticle(article) {

@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Calendar, MapPin } from "lucide-react";
-import { Fragment } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 import { Link, useParams } from "react-router-dom";
 
 import SEO from "@/components/SEO";
@@ -235,8 +237,37 @@ const NewsArticle = () => {
             {article.summary}
           </p>
 
-          <div className="mt-8 space-y-4">
-            {renderArticleBlocks(article.content || article.summary)}
+          <div className="prose prose-slate mt-8 max-w-none dark:prose-invert prose-headings:font-space prose-headings:text-primary prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-primary prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-blockquote:text-muted-foreground">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeSanitize]}
+              components={{
+                p: ({ children }) => (
+                  <p data-speakable>{children}</p>
+                ),
+                a: ({ href, children }) => {
+                  if (!href) {
+                    return <span>{children}</span>;
+                  }
+
+                  if (href.startsWith("/")) {
+                    return <Link to={href}>{children}</Link>;
+                  }
+
+                  return (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {children}
+                    </a>
+                  );
+                },
+              }}
+            >
+              {article.content || article.summary}
+            </ReactMarkdown>
           </div>
 
           <footer className="mt-12 border-t border-border pt-8">
@@ -256,53 +287,6 @@ const NewsArticle = () => {
       </article>
     </MainLayout>
   );
-};
-
-const renderArticleBlocks = (content: string) => {
-  return content
-    .split("\n\n")
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block, index) => {
-      const key = `${index}-${block.slice(0, 24)}`;
-
-      const lines = block.split("\n");
-
-      if (lines[0]?.startsWith("## ")) {
-        const paragraph = lines.slice(1).join("\n").trim();
-
-        return (
-          <Fragment key={key}>
-            <h2 className="pt-6 font-space text-2xl font-bold tracking-tight text-primary md:text-3xl">
-              {lines[0].slice(3)}
-            </h2>
-            {paragraph && (
-              <p data-speakable className="text-base leading-relaxed text-muted-foreground">
-                {paragraph}
-              </p>
-            )}
-          </Fragment>
-        );
-      }
-
-      if (lines.length > 1 && lines.every((line) => line.startsWith("- "))) {
-        return (
-          <ul key={key} className="space-y-2 border-l border-border pl-5 text-base leading-relaxed text-muted-foreground">
-            {lines.map((line) => (
-              <li key={line} className="list-disc">
-                {line.slice(2)}
-              </li>
-            ))}
-          </ul>
-        );
-      }
-
-      return (
-        <p key={key} data-speakable className="text-base leading-relaxed text-muted-foreground">
-          {block}
-        </p>
-      );
-    });
 };
 
 export default NewsArticle;
