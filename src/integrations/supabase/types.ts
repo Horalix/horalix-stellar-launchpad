@@ -130,8 +130,10 @@ export type Database = {
           image_focus: Json | null
           image_urls: Json | null
           is_published: boolean
+          keywords: string[]
           location: string | null
           published_at: string | null
+          seo_title: string | null
           slug: string
           summary: string
           title: string
@@ -147,8 +149,10 @@ export type Database = {
           image_focus?: Json | null
           image_urls?: Json | null
           is_published?: boolean
+          keywords?: string[]
           location?: string | null
           published_at?: string | null
+          seo_title?: string | null
           slug: string
           summary: string
           title: string
@@ -164,8 +168,10 @@ export type Database = {
           image_focus?: Json | null
           image_urls?: Json | null
           is_published?: boolean
+          keywords?: string[]
           location?: string | null
           published_at?: string | null
+          seo_title?: string | null
           slug?: string
           summary?: string
           title?: string
