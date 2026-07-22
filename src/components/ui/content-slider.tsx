@@ -70,7 +70,7 @@ export const ContentSlider = ({
           variant="outline"
           size="icon"
           onClick={() => scrollByAmount("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 h-10 w-10 rounded-full bg-card border-border shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute left-0 top-1/2 -mt-5 -translate-x-4 z-20 h-10 w-10 rounded-full bg-card border-border shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <ChevronLeft className="h-5 w-5" />
           <span className="sr-only">Previous</span>
@@ -110,7 +110,7 @@ export const ContentSlider = ({
           variant="outline"
           size="icon"
           onClick={() => scrollByAmount("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 h-10 w-10 rounded-full bg-card border-border shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute right-0 top-1/2 -mt-5 translate-x-4 z-20 h-10 w-10 rounded-full bg-card border-border shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <ChevronRight className="h-5 w-5" />
           <span className="sr-only">Next</span>
