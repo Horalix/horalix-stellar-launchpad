@@ -322,6 +322,20 @@ test("unsubscribe links from old emails and old share images still resolve", asy
   }
 });
 
+test("requests Netlify proxies from horalix.com are served as horalix.com", async () => {
+  const ctx = { waitUntil() {}, passThroughOnException() {} };
+  const workersDev = "https://horalix-com.server-9de.workers.dev";
+  const proxied = (path, init = {}) => worker.fetch(new Request(`${workersDev}${path}`, { ...init, headers: { "X-Horalix-Proxy": "netlify", "X-Forwarded-For": "203.0.113.7, 198.51.100.1", ...init.headers } }), { ASSETS: archiveAssets }, ctx);
+
+  const page = await proxied("/platform", { headers: { accept: "text/html" } });
+  assert.equal(page.status, 200);
+  assert.equal(page.headers.get("x-robots-tag"), null);
+  const direct = await worker.fetch(new Request(`${workersDev}/platform`, { headers: { accept: "text/html" } }), { ASSETS: archiveAssets }, ctx);
+  assert.equal(direct.headers.get("x-robots-tag"), "noindex, nofollow");
+  // The API routes import cloudflare:workers, which Node cannot load; their same-origin
+  // check behind the proxy is verified against the deployed Worker instead.
+});
+
 test("www.horalix.com redirects to the canonical host with its path", async () => {
   const response = await worker.fetch(new Request("https://www.horalix.com/platform?ref=x"), { ASSETS: archiveAssets }, { waitUntil() {}, passThroughOnException() {} });
   assert.equal(response.status, 301);

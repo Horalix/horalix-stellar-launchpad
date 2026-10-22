@@ -74,8 +74,29 @@ async function serveLegacy(request: Request, env: Env, url: URL): Promise<Respon
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
+// Cloudflare still hands horalix.com to the Netlify project, which proxies every request
+// here with this header until the domain is routed to this Worker directly (netlify.toml).
+const netlifyProxyHeader = "X-Horalix-Proxy";
+
+/** Rebuilds a request proxied by Netlify as the horalix.com request the visitor made. */
+function fromNetlifyProxy(request: Request): Request | undefined {
+  if (request.headers.get(netlifyProxyHeader) !== "netlify") return undefined;
+  const url = new URL(request.url);
+  url.protocol = "https:";
+  url.host = "horalix.com";
+  const headers = new Headers(request.headers);
+  headers.delete(netlifyProxyHeader);
+  // The connecting IP is Netlify's; the visitor is the first X-Forwarded-For entry.
+  const visitor = request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
+  if (visitor) headers.set("CF-Connecting-IP", visitor);
+  // duplex is required by the Node fetch the tests run on when the body is a stream.
+  const init: RequestInit & { duplex: "half" } = { method: request.method, headers, body: request.body, redirect: "manual", duplex: "half" };
+  return new Request(url.toString(), init);
+}
+
 const worker = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(incoming: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const request = fromNetlifyProxy(incoming) ?? incoming;
     const url = new URL(request.url);
 
     // horalix.com is the only canonical host; www used to be redirected by Netlify.

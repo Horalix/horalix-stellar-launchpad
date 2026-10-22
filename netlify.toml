@@ -1,10 +1,16 @@
-# horalix.com moves from Netlify to the Cloudflare Worker this repository now builds.
-# Netlify cannot run that Worker, so a Netlify build of this repository would publish an
-# empty site. Until the domain is cut over to Cloudflare, every Netlify build is skipped,
-# and if one is ever forced (for example by a build hook) it fails, so the last good
-# Netlify deploy keeps serving. Delete this file once Netlify is disconnected.
+# horalix.com is served by the horalix-com Cloudflare Worker this repository builds.
+# Cloudflare, which runs horalix.com's DNS, still hands its traffic to this Netlify project,
+# so Netlify proxies every request to the Worker. The X-Horalix-Proxy header tells the
+# Worker to answer as horalix.com (worker/index.ts). Once horalix.com is routed to the
+# Worker in Cloudflare directly, disconnect Netlify and delete this file.
 
 [build]
-  ignore = "exit 0"
-  command = "echo 'Netlify builds are disabled: this site deploys to Cloudflare Workers.' && exit 1"
-  publish = "dist"
+  command = "mkdir -p .netlify-proxy && echo 'horalix.com is served by the horalix-com Worker.' > .netlify-proxy/index.html"
+  publish = ".netlify-proxy"
+
+[[redirects]]
+  from = "/*"
+  to = "https://horalix-com.server-9de.workers.dev/:splat"
+  status = 200
+  force = true
+  headers = {X-Horalix-Proxy = "netlify"}
