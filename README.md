@@ -102,6 +102,14 @@ To rebuild the archive after changing `legacy/`, put the public Supabase URL and
 
 ## Deployment
 
-The site deploys to the `horalix-com` Cloudflare Worker (named in `vite.config.ts`). Run `npm test`, then `npx wrangler deploy`, or connect this repository to the Worker with Workers Builds (build command `npm run build`, deploy command `npx wrangler deploy`). `.openai/hosting.json` declares the Sites project and its D1 binding for the Sites workflow. Before a production-domain cutover, configure Turnstile, D1 migrations, notification destinations, scheduling URLs, Cloudflare Web Analytics, Search Console verification, and final clinical/legal approval.
+The site runs on the `horalix-com` Cloudflare Worker (named in `vite.config.ts`) in the server@horalix.com Cloudflare account, which also holds the `horalix-production` D1 database. To release, run `npm test`, then `npx wrangler deploy --keep-vars` while logged in to that account. The Worker's own address, `horalix-com.server-9de.workers.dev`, is noindex and is the place to check a deploy.
 
-Production cutover to `horalix.com` is deliberately separate from private staging publication. Until it happens, horalix.com is still served by the old Netlify site; `netlify.toml` stops Netlify from rebuilding it from this repository, which would publish an empty site. Delete `netlify.toml` once Netlify is disconnected.
+horalix.com reaches the Worker through Netlify:
+
+1. horalix.com is registered at Namecheap, and its DNS runs in a different Cloudflare account, which forwards the domain to the `horalix` Netlify project.
+2. The Netlify project builds this repository's `main`. `netlify.toml` publishes nothing of its own and proxies every request to the Worker with an `X-Horalix-Proxy: netlify` header.
+3. `worker/index.ts` rebuilds those requests as `https://horalix.com` requests, so pages are indexable, the form and event APIs pass their same-origin check, and rate limiting sees the visitor's IP.
+
+Changes to the site therefore go live with `wrangler deploy`; a push to `main` only redeploys the Netlify proxy. To drop the Netlify hop, the Worker has to live in the Cloudflare account that holds horalix.com's DNS, with routes for `horalix.com/*` and `www.horalix.com/*`; then disconnect Netlify and delete `netlify.toml`. That account also prepends Cloudflare's managed robots.txt, which disallows AI crawlers that `app/robots.ts` allows.
+
+Before the forms are switched on, configure Turnstile, notification destinations and scheduling URLs; Cloudflare Web Analytics and Search Console verification are configured the same way (see Environment).
