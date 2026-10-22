@@ -67,9 +67,6 @@ export function ProductFrame({ compact = false }: ProductFrameProps) {
           </svg>
           <span className="sound-toggle-label">{muted ? "Sound off" : "Sound on"}</span>
         </button>
-        <div className="media-corner media-corner-top" aria-hidden="true" />
-        <div className="media-corner media-corner-bottom" aria-hidden="true" />
-        <div className="scan-line" aria-hidden="true" />
       </div>
       <div className="product-flow" aria-label="Horalix workflow">
         <span><b>01</b>DICOM study</span><i aria-hidden="true">→</i>

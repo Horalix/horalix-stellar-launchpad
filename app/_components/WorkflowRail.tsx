@@ -39,9 +39,10 @@ const IconCloud = (
     <path d="M6.5 18a4.5 4.5 0 0 1-.4-9A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z" /><path d="M12 15V9" /><path d="m9.5 11.5 2.5-2.5 2.5 2.5" />
   </svg>
 );
-const IconSparkle = (
+// A calliper across a contour: the step prepares measurements on the image itself.
+const IconMeasure = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9z" /><path d="M18.5 16.5v3M20 18h-3" />
+    <path d="M12 4.5c4.5 0 7.5 3.4 7.5 7.5s-3 7.5-7.5 7.5S4.5 16.1 4.5 12 7.5 4.5 12 4.5z" /><path d="M7 12h10" /><path d="M7 10v4M17 10v4" />
   </svg>
 );
 const IconReview = (
@@ -210,7 +211,7 @@ const stages: Stage[] = [
     label: "AI results",
     title: "AI results",
     copy: "Measurements drawn on the study itself, each one toggled and traceable.",
-    icon: IconSparkle,
+    icon: IconMeasure,
     art: ArtMeasure,
     photo: { src: "/workflow/ai-results.webp", width: 1100, height: 733, tint: true },
   },
@@ -237,17 +238,16 @@ const stages: Stage[] = [
 ];
 
 export function WorkflowRail({
-  eyebrow = "How it fits",
   heading = "Between the scanner you own and the report you sign.",
   lede = "Horalix sits in the gap after acquisition and before sign-off. The scanner and the reporting record stay yours.",
-}: { eyebrow?: string; heading?: string; lede?: string }) {
+}: { heading?: string; lede?: string }) {
   const owned = stages.filter((stage) => !stage.external);
 
   return (
     <section className="section-tight shell workflow-rail" aria-labelledby="workflow-rail-heading">
       <WorkflowRailDefs />
       <div className="section-heading">
-        <div><p className="eyebrow">{eyebrow}</p><h2 id="workflow-rail-heading">{heading}</h2></div>
+        <div><h2 id="workflow-rail-heading">{heading}</h2></div>
         <p className="lede">{lede}</p>
       </div>
 

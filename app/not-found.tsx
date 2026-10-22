@@ -7,9 +7,9 @@ export const metadata = pageMetadata({ title: "Page not found", description: "Th
 
 export default function NotFound() {
   return <>
-    <PageIntro eyebrow="404" title="This page is no longer here." copy="The Horalix website has been rebuilt around echocardiography. The page you requested may have moved." actions={<Link className="button button-light" href="/">Return home <Arrow /></Link>} />
+    <PageIntro title="This page is no longer here." copy="The Horalix website has been rebuilt around echocardiography. The page you requested may have moved." actions={<Link className="button button-light" href="/">Return home <Arrow /></Link>} />
     <section className="section shell">
-      <div className="section-heading"><div><p className="eyebrow">Try instead</p><h2>The pages people usually want.</h2></div><p className="lede">If you arrived from an old link, these cover the same ground on the rebuilt site.</p></div>
+      <div className="section-heading"><div><h2>The pages people usually want.</h2></div><p className="lede">If you arrived from an old link, these cover the same ground on the rebuilt site.</p></div>
       <dl className="answer-grid">
         <div><dt>The product</dt><dd>The echocardiography workflow, from DICOM intake to clinician sign-off. <Link className="text-link" href="/platform">Explore the platform <Arrow /></Link></dd></div>
         <div><dt>For hospitals</dt><dd>Integration, security, evidence, regulatory status, and how a pilot is scoped. <Link className="text-link" href="/for-hospitals">Plan a pilot <Arrow /></Link></dd></div>

@@ -34,7 +34,6 @@ export default async function Contact({ searchParams }: { searchParams: Promise<
     {/* Centred masthead over a single card — the form is the whole page. */}
     <section className="contact-hero">
       <div className="shell">
-        <p className="eyebrow">{investor ? "Investor materials" : "Request a demo"}</p>
         <h1>
           {investor
             ? <>Review the company <span>behind the workflow.</span></>

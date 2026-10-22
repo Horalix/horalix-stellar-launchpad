@@ -4,7 +4,7 @@ import { Arrow, PageIntro } from "../_components/SiteChrome";
 import { newsItems } from "../_data/news";
 import { pageMetadata } from "../_data/metadata";
 
-export const metadata = pageMetadata({ title: "Horalix News — pilots, Techstars and NVIDIA Inception", description: "Verified Horalix updates from Sarajevo, including hospital pilot collaborations, Techstars Sarajevo Founder Catalyst, and NVIDIA Inception membership.", path: "/news" });
+export const metadata = pageMetadata({ title: "News — pilots, Techstars and NVIDIA Inception", description: "Verified Horalix updates from Sarajevo, including hospital pilot collaborations, Techstars Sarajevo Founder Catalyst, and NVIDIA Inception membership.", path: "/news" });
 
 const newsGraph = {
   "@context": "https://schema.org",
@@ -26,10 +26,10 @@ const newsGraph = {
 };
 
 export default function News() {
-  return <><PageIntro breadcrumb="News" path="/news" eyebrow="News" title="Progress, with the status attached." copy="Verified Horalix updates on hospital collaborations, company programs, product development, and evidence—each published with its scope and limitations." />
+  return <><PageIntro breadcrumb="News" path="/news" title="Progress, with the status attached." copy="Verified Horalix updates on hospital collaborations, company programs, product development, and evidence—each published with its scope and limitations." />
     <section className="section shell"><div className="news-grid">{newsItems.map((item) => <article className="news-card" key={item.slug}>{item.image ? <Image src={item.image} alt={item.imageAlt ?? ""} width={1200} height={676} sizes="(max-width: 720px) 100vw, 50vw" /> : <div className="news-card-graphic" aria-hidden="true"><span>H</span><i /></div>}<div><span className="card-label">{item.label} · {item.displayDate}</span><h2>{item.title}</h2><p>{item.summary}</p><Link className="text-link" href={`/news/${item.slug}`}>Read the verified update <Arrow /></Link></div></article>)}</div></section>
     <section className="section-tight section-dark"><div className="shell">
-      <div className="section-heading"><div><p className="eyebrow">Publication standard</p><h2>No milestone without its boundary.</h2></div><p className="lede">Pilot, programme, and partner announcements do not imply regulatory clearance, completed validation, investment, certification, or endorsement unless the source explicitly establishes it.</p></div>
+      <div className="section-heading"><div><h2>No milestone without its boundary.</h2></div><p className="lede">Pilot, programme, and partner announcements do not imply regulatory clearance, completed validation, investment, certification, or endorsement unless the source explicitly establishes it.</p></div>
       <div className="trust-list">
         <div className="trust-row"><span>Sourced</span><p>Every update links the primary source — a programme announcement, an independent report, or a named company confirmation. Nothing rests on our own summary alone.</p></div>
         <div className="trust-row"><span>Bounded</span><p>Each article carries an explicit status and limitation note stating what the milestone does not establish, published alongside the news rather than buried in a footer.</p></div>

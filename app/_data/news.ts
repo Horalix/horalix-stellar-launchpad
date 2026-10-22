@@ -2,6 +2,8 @@ export type NewsItem = {
   slug: string;
   label: string;
   title: string;
+  /** A shorter title for search results when the headline runs past about 60 characters. */
+  metaTitle?: string;
   summary: string;
   published: string;
   displayDate: string;
@@ -18,6 +20,7 @@ export const newsItems: NewsItem[] = [
     slug: "maribor-hospital-pilot-ai-echocardiography-workflow",
     label: "Clinical collaboration",
     title: "Horalix begins an AI-assisted echocardiography workflow pilot with UKC Maribor",
+    metaTitle: "Horalix begins an AI echo workflow pilot with UKC Maribor",
     summary: "A scoped evaluation of Horalix inside a real echocardiography workflow under physician supervision.",
     published: "2026-06-19",
     displayDate: "19 June 2026",
@@ -36,6 +39,7 @@ export const newsItems: NewsItem[] = [
     slug: "clinic-validation-in-sarajevo-poliklinika-dr-nabil",
     label: "Clinical collaboration",
     title: "Horalix evaluates its AI-assisted echocardiography workflow at Poliklinika Dr Nabil",
+    metaTitle: "Horalix evaluates its echo workflow at Poliklinika Dr Nabil",
     summary: "A supervised Sarajevo evaluation focused on workflow fit and clinician review.",
     published: "2026-01-30",
     displayDate: "30 January 2026",

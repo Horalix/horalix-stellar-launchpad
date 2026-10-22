@@ -5,6 +5,8 @@ export type Resource = {
   label: string;
   cluster: ResourceCluster;
   title: string;
+  /** A shorter title for search results when the headline runs past about 60 characters. */
+  metaTitle?: string;
   description: string;
   reviewed: string;
   readTime: string;
@@ -235,6 +237,7 @@ export const resources: Resource[] = [
     label: "Clinical workflow",
     cluster: "Clinical workflow",
     title: "Automated versus manual echo measurement: what actually changes",
+    metaTitle: "Automated vs manual echo measurement: what changes",
     description: "What shifts for the sonographer and the reporting cardiologist when quantification is prepared automatically, and what does not shift at all.",
     reviewed: "14 August 2026",
     readTime: "7 min",
@@ -362,6 +365,7 @@ export const resources: Resource[] = [
     label: "Deployment",
     cluster: "Integration and deployment",
     title: "On-premise or cloud: choosing a deployment model for hospital AI",
+    metaTitle: "On-premise or cloud deployment for hospital AI",
     description: "How deployment choice affects data protection, latency, maintenance, and the questions your IT and governance teams will ask.",
     reviewed: "14 August 2026",
     readTime: "8 min",

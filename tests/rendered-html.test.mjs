@@ -365,6 +365,14 @@ test("the glossary answers each term on its own page and on the hub", async () =
   assert.match(await (await render("/")).text(), /href="\/glossary"/);
 });
 
+test("pages carry no eyebrow labels or decorative loop effects", async () => {
+  for (const path of ["/", "/platform", "/for-hospitals", "/investors", "/about", "/glossary/tapse"]) {
+    const html = await (await render(path)).text();
+    assert.doesNotMatch(html, /class="eyebrow/, path);
+    assert.doesNotMatch(html, /scan-line|media-corner|cursor-echo|footer-watermark|benefit-icon/, path);
+  }
+});
+
 test("the organisation lists only identity profiles in sameAs and coverage in subjectOf", async () => {
   const html = await (await render("/")).text();
   assert.match(html, /"sameAs":\["https:\/\/www\.linkedin\.com\/company\/horalix\/"\]/);

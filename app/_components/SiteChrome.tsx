@@ -71,7 +71,6 @@ export function SiteFooter() {
         <p>© 2026 Horalix. All rights reserved.</p>
         <div><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div>
       </div>
-      <div className="footer-watermark" aria-hidden="true">HORALIX</div>
     </footer>
   );
 }
@@ -95,7 +94,7 @@ export function Breadcrumbs({ items }: { items: { label: string; href?: string }
  * the matching BreadcrumbList, so the two can never drift apart — a page either has both
  * or neither.
  */
-export function PageIntro({ eyebrow, title, copy, actions, breadcrumb, path }: { eyebrow: string; title: string; copy: string; actions?: React.ReactNode; breadcrumb?: string; path?: `/${string}` }) {
+export function PageIntro({ title, copy, actions, breadcrumb, path }: { title: string; copy: string; actions?: React.ReactNode; breadcrumb?: string; path?: `/${string}` }) {
   const schema = breadcrumb && path
     ? {
         "@context": "https://schema.org",
@@ -112,7 +111,6 @@ export function PageIntro({ eyebrow, title, copy, actions, breadcrumb, path }: {
       <div className="shell intro-grid">
         <div>
           {breadcrumb && <Breadcrumbs items={[{ label: "Horalix", href: "/" }, { label: breadcrumb }]} />}
-          <p className="eyebrow">{eyebrow}</p>
           <h1>{title}</h1>
         </div>
         <div><p className="lede">{copy}</p>{actions && <div className="button-row">{actions}</div>}</div>
@@ -122,13 +120,13 @@ export function PageIntro({ eyebrow, title, copy, actions, breadcrumb, path }: {
   );
 }
 
-export function MetricRow({ path, eyebrow = "Current build", heading }: { path: string; eyebrow?: string; heading: string }) {
+export function MetricRow({ path, heading }: { path: string; heading: string }) {
   const metrics = metricsFor(path);
   if (!metrics.length) return null;
   return (
     <section className="metric-band" aria-label="Internal product benchmarks">
       <div className="shell">
-        <div className="metric-band-head"><p className="eyebrow">{eyebrow}</p><h2>{heading}</h2></div>
+        <div className="metric-band-head"><h2>{heading}</h2></div>
         <dl className="metric-row">
           {metrics.map((item) => (
             <div className="metric-tile" key={item.id}>
@@ -146,8 +144,8 @@ export function MetricRow({ path, eyebrow = "Current build", heading }: { path: 
 export function SplitCta() {
   return (
     <section className="split-cta shell">
-      <div className="split-cta-panel hospital-panel"><p className="eyebrow">For clinical teams</p><h2>See the workflow with your environment in mind.</h2><p>Bring your integration, governance, and review questions to a focused hospital demo.</p><Link className="text-link" href="/contact">Request a hospital demo <Arrow /></Link></div>
-      <div className="split-cta-panel investor-panel"><p className="eyebrow">For investors</p><h2>Review the company behind the clinical workflow.</h2><p>Request a private overview of milestones, defensibility, and the path ahead.</p><Link className="text-link" href="/contact?for=investor">Request investor materials <Arrow /></Link></div>
+      <div className="split-cta-panel hospital-panel"><h2>See the workflow with your environment in mind.</h2><p>Bring your integration, governance, and review questions to a focused hospital demo.</p><Link className="text-link" href="/contact">Request a hospital demo <Arrow /></Link></div>
+      <div className="split-cta-panel investor-panel"><h2>Review the company behind the clinical workflow.</h2><p>Request a private overview of milestones, defensibility, and the path ahead.</p><Link className="text-link" href="/contact?for=investor">Request investor materials <Arrow /></Link></div>
     </section>
   );
 }

@@ -52,31 +52,9 @@ export function MotionLayer() {
     updateHeader();
     window.addEventListener("scroll", onScroll, { passive: true });
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    const pointerTargets = reduceMotion || coarsePointer
-      ? []
-      : Array.from(document.querySelectorAll<HTMLElement>(".hero, .product-frame"));
-    let pointerFrame = 0;
-    const onPointer = (event: PointerEvent) => {
-      const target = event.currentTarget as HTMLElement;
-      const clientX = event.clientX;
-      const clientY = event.clientY;
-      if (pointerFrame) return;
-      pointerFrame = window.requestAnimationFrame(() => {
-        const rect = target.getBoundingClientRect();
-        target.style.setProperty("--pointer-x", `${clientX - rect.left}px`);
-        target.style.setProperty("--pointer-y", `${clientY - rect.top}px`);
-        pointerFrame = 0;
-      });
-    };
-    pointerTargets.forEach((target) => target.addEventListener("pointermove", onPointer));
-
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);
-      pointerTargets.forEach((target) => target.removeEventListener("pointermove", onPointer));
-      if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
       if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
       window.cancelAnimationFrame(entryFrame);
       root.classList.remove("motion-ready");

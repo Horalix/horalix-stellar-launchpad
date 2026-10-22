@@ -26,7 +26,7 @@ const resourceCollection = {
 
 export default function Resources() {
   const grouped = resourcesByCluster();
-  return <><PageIntro breadcrumb="Resources" path="/resources" eyebrow="Research and resources" title="Practical answers for responsible clinical-AI decisions." copy="Concise, source-led guidance for clinicians, hospital teams, and investors evaluating AI-assisted echocardiography workflows." />
+  return <><PageIntro breadcrumb="Resources" path="/resources" title="Practical answers for responsible clinical-AI decisions." copy="Concise, source-led guidance for clinicians, hospital teams, and investors evaluating AI-assisted echocardiography workflows." />
     {grouped.map((cluster) => (
       <section className="section-tight shell" key={cluster.name}>
         <div className="cluster-head"><h2>{cluster.name}</h2><p className="lede">{cluster.blurb}</p></div>
@@ -34,5 +34,5 @@ export default function Resources() {
       </section>
     ))}
     <section className="section-tight shell"><div className="cluster-head"><h2>Glossary</h2><p className="lede">Plain definitions of the measurements and terms these guides use, from LVEF and GLS to DICOM and automation bias. <Link className="text-link" href="/glossary">Open the glossary <Arrow /></Link></p></div></section>
-    <section className="section-tight section-dark"><div className="shell grid-2"><div><p className="eyebrow">Editorial standard</p><h2>Named scope. Primary sources. Review dates.</h2></div><p className="lede">Every resource begins with a direct answer, distinguishes product context from external evidence, and receives a scheduled review instead of silently ageing.</p></div></section><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(resourceCollection) }} /></>;
+    <section className="section-tight section-dark"><div className="shell grid-2"><div><h2>Named scope. Primary sources. Review dates.</h2></div><p className="lede">Every resource begins with a direct answer, distinguishes product context from external evidence, and receives a scheduled review instead of silently ageing.</p></div></section><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(resourceCollection) }} /></>;
 }

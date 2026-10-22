@@ -70,7 +70,6 @@ const programs = [
 export function ProgramLogoRow() {
   return (
     <div className="program-logo-inline">
-      <p className="eyebrow">Also on the record</p>
       <ul className="program-logo-row">
         {programs.map((program) => (
           <li key={program.id}>
@@ -89,11 +88,11 @@ export function ProgramLogoRow() {
   );
 }
 
-export function ProgramLogos({ tone = "light", eyebrow = "Recognized by", heading }: { tone?: "light" | "dark"; eyebrow?: string; heading?: string }) {
+export function ProgramLogos({ tone = "light", heading }: { tone?: "light" | "dark"; heading?: string }) {
   return (
     <section className={tone === "dark" ? "program-logos program-logos-dark section-dark" : "program-logos"} aria-label="Programs Horalix participates in">
       <div className="shell">
-        <div className="program-logos-head"><p className="eyebrow">{eyebrow}</p>{heading && <h2>{heading}</h2>}</div>
+        {heading && <div className="program-logos-head"><h2>{heading}</h2></div>}
         <ul className="program-logo-row">
           {programs.map((program) => (
             <li key={program.id}>

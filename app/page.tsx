@@ -59,14 +59,10 @@ export default function Home() {
         <Image unoptimized className="hero-monogram" src="/brand/horalix-mark-white.png" alt="" aria-hidden="true" width={653} height={863} sizes="52vw" priority />
         <div className="shell hero-grid">
           <div className="hero-copy">
-            <p className="eyebrow">AI-assisted echocardiography workflow</p>
             <h1>Make every echo <span>ready for review.</span></h1>
             <p className="lede">Horalix turns DICOM echocardiograms into structured measurements and report-ready outputs, helping clinicians review faster while retaining final control.</p>
-            <div className="button-row hero-cta"><Link className="button button-accent" href="/contact">Request a demo <span className="button-dot" aria-hidden="true">→</span></Link></div>
-            <p className="hero-disclosure">Pilot-stage · Pre-clearance · Not for diagnostic use</p>
-            <ul className="hero-chips" aria-label="Product status">
-              <li>Pilot-stage</li><li>Europe-first</li><li>DICOM-compatible</li><li>Clinician sign-off</li>
-            </ul>
+            <div className="button-row hero-cta"><Link className="button button-accent" href="/contact">Request a demo <span className="button-dot" aria-hidden="true">→</span></Link><Link className="button button-ghost" href="/product-tour">Watch the product tour</Link></div>
+            <p className="hero-disclosure">Pilot-stage and pre-clearance. Clinician sign-off on every study. Not for diagnostic use.</p>
           </div>
           <div className="hero-partners">
             <p className="hero-partners-label">Clinical collaborations</p>
@@ -84,11 +80,11 @@ export default function Home() {
         <p className="hero-caption"><b>Human control is the product boundary.</b> Suggested outputs stay inside a clinician review path.</p>
       </section>
 
-      <MetricRow path="/" eyebrow="Current pilot build" heading="What one study produces before a clinician opens it." />
+      <MetricRow path="/" heading="What one study produces before a clinician opens it." />
 
       <section className="section shell" id="pilots">
         <div className="section-heading">
-          <div><p className="eyebrow">Active clinical collaborations</p><h2>Already running inside real echo workflows.</h2></div>
+          <div><h2>Already running inside real echo workflows.</h2></div>
           <div>
             <p className="lede">{approvedClaim("active-pilot-collaborations")}</p>
             <p className="microcopy">“Pilot” means a scoped evaluation collaboration. It does not imply completed clinical validation, regulatory clearance, or routine clinical use.</p>
@@ -143,7 +139,7 @@ export default function Home() {
       </section>
 
       <BenefitGrid
-        eyebrow="Why this shape"
+       
         heading="Six things an echo lab actually gets."
         lede="Not a list of model capabilities — the operational differences a lab and its IT team would notice in the first month."
       />
@@ -152,7 +148,7 @@ export default function Home() {
           Both links moved into the team strip; the posture line stays with the metrics. */}
       <section className="section-tight shell team-strip">
         <div className="team-strip-head">
-          <div><p className="eyebrow">The team</p><h2>Four disciplines, one clinical workflow.</h2></div>
+          <div><h2>Four disciplines, one clinical workflow.</h2></div>
           <Link className="text-link" href="/about#team">Meet the team <Arrow /></Link>
         </div>
         <div className="team-strip-faces">
@@ -169,7 +165,7 @@ export default function Home() {
           heading and a full section of padding for no reader benefit. */}
       <section className="section-tight shell faq-section">
         <div className="section-heading">
-          <div><p className="eyebrow">Clear answers</p><h2>Horalix, in plain language.</h2></div>
+          <div><h2>Horalix, in plain language.</h2></div>
           <p className="lede">Concise, source-aligned answers for clinicians, hospitals, investors, search engines, and AI assistants.</p>
         </div>
         <div className="faq-list">
@@ -183,7 +179,7 @@ export default function Home() {
         {/* Slim links rather than cards: the research library keeps its homepage inbound
             links without three more card-heights of scrolling. */}
         <div className="research-links">
-          <p className="eyebrow">Selected research</p>
+          <h3 className="research-links-title">Selected research</h3>
           <ul>
             {featuredResources.map((item) => (
               <li key={item.slug}>

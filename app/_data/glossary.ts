@@ -115,7 +115,7 @@ export const glossary: GlossaryTerm[] = [
     slug: "biplane-method-of-discs",
     name: "Biplane method of discs",
     alternateNames: ["Modified Simpson's rule", "Biplane Simpson's method"],
-    question: "What is the biplane method of discs (modified Simpson's rule)?",
+    question: "What is the biplane method of discs?",
     definition: "The biplane method of discs, or modified Simpson's rule, calculates left ventricular volume by tracing the inner border of the ventricle in two perpendicular apical views and adding up the volumes of a stack of elliptical discs. It is the recommended two-dimensional method for left ventricular volumes and ejection fraction.",
     explanation: [
       "The endocardial border of the left ventricle is traced in the apical four-chamber and two-chamber views at end-diastole and end-systole. The ventricle is divided into a series of discs along its long axis; each disc's diameters come from the two views, and the disc volumes are summed.",

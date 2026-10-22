@@ -4,14 +4,13 @@ import "@fontsource-variable/manrope";
 import "./globals.css";
 import { Analytics } from "./_components/Analytics";
 import { MotionLayer } from "./_components/MotionLayer";
-import { CursorEcho } from "./_components/CursorEcho";
 import { HashNavigation } from "./_components/HashNavigation";
 import { SiteFooter, SiteHeader } from "./_components/SiteChrome";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://horalix.com"),
   title: { default: "Horalix — AI-assisted echocardiography workflow", template: "%s | Horalix" },
-  description: "Horalix is a Sarajevo medical-AI startup building an AI-assisted echocardiography workflow for structured measurements, report-ready outputs, and clinician review.",
+  description: "Horalix is a Sarajevo medical-AI startup building an AI-assisted echocardiography workflow: structured measurements, report-ready outputs, clinician review.",
   applicationName: "Horalix",
   alternates: { canonical: "/" },
   // Square icons only: Google's favicon crawler rejects non-square marks, and Apple
@@ -82,6 +81,6 @@ const organizationGraph = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const cloudflareAnalyticsToken = process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN;
   return (
-    <html lang="en"><body><a className="skip-link" href="#main">Skip to content</a><SiteHeader /><main id="main">{children}</main><SiteFooter /><Analytics /><MotionLayer /><CursorEcho /><HashNavigation /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationGraph) }} />{cloudflareAnalyticsToken && <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: cloudflareAnalyticsToken, spa: true })} />}</body></html>
+    <html lang="en"><body><a className="skip-link" href="#main">Skip to content</a><SiteHeader /><main id="main">{children}</main><SiteFooter /><Analytics /><MotionLayer /><HashNavigation /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationGraph) }} />{cloudflareAnalyticsToken && <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: cloudflareAnalyticsToken, spa: true })} />}</body></html>
   );
 }

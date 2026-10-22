@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "../../_components/ReliableLink";
 import { Arrow, Breadcrumbs, SplitCta } from "../../_components/SiteChrome";
 import { getNewsItem, newsItems } from "../../_data/news";
+import { fittedTitle } from "../../_data/metadata";
 
 export function generateStaticParams() { return newsItems.map((item) => ({ slug: item.slug })); }
 
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // Without a photo of its own an update shares the News card, not the homepage one.
   const image = item.image ?? "/og/news.jpg";
   return {
-    title: item.title,
+    title: fittedTitle(item.metaTitle ?? item.title),
     description: item.summary,
     alternates: { canonical: `/news/${item.slug}` },
     authors: [{ name: "Horalix", url: "https://horalix.com/about" }],
@@ -44,5 +45,5 @@ export default async function NewsArticle({ params }: { params: Promise<{ slug: 
       { "@type": "BreadcrumbList", "@id": `https://horalix.com/news/${item.slug}#breadcrumbs`, itemListElement: [{ "@type": "ListItem", position: 1, name: "Horalix", item: "https://horalix.com/" }, { "@type": "ListItem", position: 2, name: "News", item: "https://horalix.com/news" }, { "@type": "ListItem", position: 3, name: item.title, item: `https://horalix.com/news/${item.slug}` }] },
     ],
   };
-  return <><article><header className="article-hero"><div className="shell"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "News", href: "/news" }, { label: item.label }]} /><p className="eyebrow">{item.label}</p><h1>{item.title}</h1><div className="article-meta"><span>{item.displayDate}</span><span>{item.status}</span></div></div></header>{item.image && <div className="article-image shell"><Image src={item.image} alt={item.imageAlt ?? ""} width={1200} height={676} priority sizes="(max-width: 720px) 100vw, 1200px" /></div>}<div className="article-body narrow"><p className="article-standfirst">{item.summary}</p>{item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<aside className="article-disclosure"><b>Status and limitation</b><p>{item.disclosure}</p></aside><h2>Sources</h2><ul className="article-sources">{item.sources.map((source) => <li key={source.href}><a href={source.href} rel="noreferrer">{source.label} ↗</a></li>)}</ul><p className="article-return"><Link className="text-link" href="/news">All Horalix news <Arrow reverse /></Link></p></div></article><SplitCta /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /></>;
+  return <><article><header className="article-hero"><div className="shell"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "News", href: "/news" }, { label: item.label }]} /><h1>{item.title}</h1><div className="article-meta"><span>{item.displayDate}</span><span>{item.status}</span></div></div></header>{item.image && <div className="article-image shell"><Image src={item.image} alt={item.imageAlt ?? ""} width={1200} height={676} priority sizes="(max-width: 720px) 100vw, 1200px" /></div>}<div className="article-body narrow"><p className="article-standfirst">{item.summary}</p>{item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<aside className="article-disclosure"><b>Status and limitation</b><p>{item.disclosure}</p></aside><h2>Sources</h2><ul className="article-sources">{item.sources.map((source) => <li key={source.href}><a href={source.href} rel="noreferrer">{source.label} ↗</a></li>)}</ul><p className="article-return"><Link className="text-link" href="/news">All Horalix news <Arrow reverse /></Link></p></div></article><SplitCta /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /></>;
 }

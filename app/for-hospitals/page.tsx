@@ -3,7 +3,7 @@ import { Arrow, MetricRow, PageIntro } from "../_components/SiteChrome";
 import { approvedClaim } from "../_data/claims";
 import { pageMetadata } from "../_data/metadata";
 
-export const metadata = pageMetadata({ title: "AI Echocardiography for Hospitals", description: "Evaluate Horalix with a transparent pilot plan covering echo workflow fit, DICOM and PACS integration, clinician oversight, security, GDPR, evidence, and regulatory status.", path: "/for-hospitals" });
+export const metadata = pageMetadata({ title: "AI Echocardiography for Hospitals", description: "Plan a transparent Horalix pilot: echo workflow fit, DICOM and PACS integration, clinician oversight, GDPR, security, evidence and regulatory status.", path: "/for-hospitals" });
 
 const faq = [
   {
@@ -65,17 +65,17 @@ const hospitalGraph = {
 export default function Hospitals() {
   return <>
     <PageIntro
-      breadcrumb="For hospitals" path="/for-hospitals" eyebrow="For hospitals"
+      breadcrumb="For hospitals" path="/for-hospitals"
       title="Answer the hard questions before the first study moves."
       copy="Horalix brings workflow, integration, oversight, security, evidence, and regulatory status into the same pilot conversation—before the first study moves, not after."
       actions={<><Link className="button button-light" href="/contact">Request a demo <Arrow /></Link><Link className="button button-ghost" href="/evidence">Review evidence posture</Link></>}
     />
 
-    <MetricRow path="/for-hospitals" eyebrow="Current pilot build" heading="What arrives before a clinician opens the study." />
+    <MetricRow path="/for-hospitals" heading="What arrives before a clinician opens the study." />
 
     <section className="section shell">
       <div className="section-heading">
-        <div><p className="eyebrow">The operational problem</p><h2>The bottleneck is after image capture, not during it.</h2></div>
+        <div><h2>The bottleneck is after image capture, not during it.</h2></div>
         <div>
           <p className="lede">Echo labs are usually well optimised at acquisition. The drag appears afterwards—in measurement extraction, report assembly, and the repeated validation steps that stand between a completed study and a signed report.</p>
           <p className="microcopy">This is an operational description of echo workflow, not a claim about outcomes at your site.</p>
@@ -92,7 +92,7 @@ export default function Hospitals() {
     <section className="section section-dark">
       <div className="shell">
         <div className="section-heading">
-          <div><p className="eyebrow">Workflow fit</p><h2>What changes for each person it touches.</h2></div>
+          <div><h2>What changes for each person it touches.</h2></div>
           <p className="lede">A pilot has to be worth the disruption for every person it touches. These are the intended changes for each role—stated as intent, because they are what the pilot is designed to test.</p>
         </div>
         <div className="trust-list">
@@ -106,7 +106,7 @@ export default function Hospitals() {
 
     <section className="section shell">
       <div className="section-heading">
-        <div><p className="eyebrow">Integration</p><h2>“DICOM-compatible” is a starting point, not an answer.</h2></div>
+        <div><h2>“DICOM-compatible” is a starting point, not an answer.</h2></div>
         <p className="lede">Compatibility is confirmed against your environment during scoping. Until it is, we describe it as unconfirmed—including when that is the less convenient answer.</p>
       </div>
       <div className="timeline">
@@ -120,7 +120,7 @@ export default function Hospitals() {
 
     <section className="section section-line shell">
       <div className="section-heading">
-        <div><p className="eyebrow">IT, security, and data protection</p><h2>Questions your DPO will ask first.</h2></div>
+        <div><h2>Questions your DPO will ask first.</h2></div>
         <p className="lede">Detailed architecture and control evidence is shared privately under qualified diligence. What follows is the posture, not a certification claim—Horalix does not assert certifications it has not completed.</p>
       </div>
       <dl className="answer-grid">
@@ -134,7 +134,7 @@ export default function Hospitals() {
 
     <section className="section section-dark">
       <div className="shell grid-2">
-        <div><p className="eyebrow">Clinician oversight</p><h2>Disagreement is a designed feature, not an edge case.</h2></div>
+        <div><h2>Disagreement is a designed feature, not an edge case.</h2></div>
         <div>
           <p className="lede">{approvedClaim("workflow-clinician-control")} Every suggested output is traceable to the view that produced it, editable without losing context, and rejectable without penalty to the workflow.</p>
           <p className="lede">A system that is hard to disagree with invites automation bias. The review surface is built so checking a value is faster than reconstructing it, and so overriding one costs nothing.</p>
@@ -145,7 +145,7 @@ export default function Hospitals() {
 
     <section className="section shell">
       <div className="section-heading">
-        <div><p className="eyebrow">Evidence and regulatory status</p><h2>What we have shown, and what we have not.</h2></div>
+        <div><h2>What we have shown, and what we have not.</h2></div>
         <p className="lede">Buying committees are entitled to a plain statement of maturity. Here is ours, without softening.</p>
       </div>
       <div className="grid-2">
@@ -164,7 +164,7 @@ export default function Hospitals() {
 
     <section className="section section-line shell">
       <div className="section-heading">
-        <div><p className="eyebrow">Pilot design</p><h2>Start with a bounded clinical workflow.</h2></div>
+        <div><h2>Start with a bounded clinical workflow.</h2></div>
         <p className="lede">A useful pilot defines eligibility, responsibilities, success criteria, failure paths, data handling, and review ownership before the first study moves.</p>
       </div>
       <div className="timeline">
@@ -202,7 +202,7 @@ export default function Hospitals() {
 
     <section className="section shell">
       <div className="section-heading">
-        <div><p className="eyebrow">Procurement</p><h2>The objections we expect, answered directly.</h2></div>
+        <div><h2>The objections we expect, answered directly.</h2></div>
         <p className="lede">These are the questions a hospital committee actually raises. We would rather answer them here than have them surface late in a process.</p>
       </div>
       <dl className="answer-grid">
@@ -215,7 +215,7 @@ export default function Hospitals() {
 
     <section className="section section-line shell faq-section">
       <div className="section-heading">
-        <div><p className="eyebrow">Direct answers</p><h2>Hospital questions, in plain language.</h2></div>
+        <div><h2>Hospital questions, in plain language.</h2></div>
         <p className="lede">The same answers we give in the room, written down so your team can circulate them without a meeting.</p>
       </div>
       <div className="faq-list">{faq.map((item) => <details key={item.question}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
