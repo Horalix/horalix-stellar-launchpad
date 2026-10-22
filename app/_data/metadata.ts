@@ -6,15 +6,17 @@ type PageMetadataInput = {
   description: string;
   path: `/${string}`;
   index?: boolean;
+  /** A card for routes without their own entry in og-pages.json, e.g. a section's shared card. */
+  image?: `/${string}`;
 };
 
 // Cards are pre-rendered by scripts/generate-og.ps1 from the same file, so a route either
 // has its own card here or falls back to the site-wide one. Nothing can point at a missing image.
 const ogByPath = new Map(ogPages.map((page) => [page.path, `/og/${page.file}.jpg`]));
 
-export function pageMetadata({ title, description, path, index = true }: PageMetadataInput): Metadata {
+export function pageMetadata({ title, description, path, index = true, image: fallbackImage }: PageMetadataInput): Metadata {
   const url = `https://horalix.com${path}`;
-  const image = ogByPath.get(path) ?? "/og.jpg";
+  const image = ogByPath.get(path) ?? fallbackImage ?? "/og.jpg";
   return {
     title,
     description,

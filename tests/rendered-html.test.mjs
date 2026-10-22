@@ -341,3 +341,36 @@ test("www.horalix.com redirects to the canonical host with its path", async () =
   assert.equal(response.status, 301);
   assert.equal(response.headers.get("location"), "https://horalix.com/platform?ref=x");
 });
+
+test("the glossary answers each term on its own page and on the hub", async () => {
+  const hub = await render("/glossary");
+  assert.equal(hub.status, 200);
+  const hubHtml = await hub.text();
+  assert.match(hubHtml, /"@type":"DefinedTermSet"/);
+  assert.equal((hubHtml.match(/"@type":"DefinedTerm"/g) || []).length, 15);
+  assert.match(hubHtml, /<link rel="canonical" href="https:\/\/horalix\.com\/glossary"/);
+
+  const term = await render("/glossary/left-ventricular-ejection-fraction");
+  assert.equal(term.status, 200);
+  const html = await term.text();
+  assert.match(html, /<h1[^>]*>What is left ventricular ejection fraction \(LVEF\)\?<\/h1>/);
+  assert.match(html, /Short answer:/);
+  for (const type of ["DefinedTerm", "MedicalWebPage", "FAQPage", "BreadcrumbList"]) assert.match(html, new RegExp(`"@type":"${type}"`), type);
+  assert.match(html, /pubmed\.ncbi\.nlm\.nih\.gov\/25559473/);
+  assert.equal((await render("/glossary/not-a-term")).status, 404);
+
+  const sitemap = await (await render("/sitemap.xml")).text();
+  assert.match(sitemap, /<loc>https:\/\/horalix\.com\/glossary<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/horalix\.com\/glossary\/automation-bias<\/loc>/);
+  assert.match(await (await render("/")).text(), /href="\/glossary"/);
+});
+
+test("the organisation lists only identity profiles in sameAs and coverage in subjectOf", async () => {
+  const html = await (await render("/")).text();
+  assert.match(html, /"sameAs":\["https:\/\/www\.linkedin\.com\/company\/horalix\/"\]/);
+  assert.match(html, /"subjectOf":\[\{"@type":"NewsArticle"/);
+  assert.match(html, /klix\.ba/);
+  // News updates without a photo share the News card, not the homepage card.
+  const news = await (await render("/news/horalix-nvidia-inception")).text();
+  assert.doesNotMatch(news, /<meta property="og:image" content="https:\/\/horalix\.com\/og\.jpg"/);
+});

@@ -59,13 +59,17 @@ const organizationGraph = {
         { "@id": "https://horalix.com/about#affan-kapidzic" },
         { "@id": "https://horalix.com/about#neuman-alkhalil" },
       ],
-      sameAs: [
-        "https://www.linkedin.com/company/horalix/",
-        "https://www.techstars.com/blog/program-news/techstars-launches-first-startup-community-partnership-founder-catalyst",
-        "https://www.nvidia.com/en-us/startups/",
-        "https://www.klix.ba/biznis/startupi/dva-bh-startupa-primljena-u-prestizni-nvidia-program-za-umjetnu-inteligenciju/260716029",
-        "https://profitiraj.ba/horalix-i-roboticks-u-naprestiznijem-ai-programu-na-svijetu/",
+      // sameAs is only for profiles that *are* Horalix; coverage *about* Horalix goes in subjectOf,
+      // where search engines and answer engines read it as independent evidence.
+      sameAs: ["https://www.linkedin.com/company/horalix/"],
+      subjectOf: [
+        { "@type": "NewsArticle", headline: "Dva bh. startupa primljena u prestižni NVIDIA program za umjetnu inteligenciju", url: "https://www.klix.ba/biznis/startupi/dva-bh-startupa-primljena-u-prestizni-nvidia-program-za-umjetnu-inteligenciju/260716029", inLanguage: "bs", publisher: { "@type": "Organization", name: "Klix.ba", url: "https://www.klix.ba" } },
+        { "@type": "NewsArticle", headline: "Horalix i Roboticks u naprestižnijem AI programu na svijetu", url: "https://profitiraj.ba/horalix-i-roboticks-u-naprestiznijem-ai-programu-na-svijetu/", inLanguage: "bs", publisher: { "@type": "Organization", name: "Profitiraj.ba", url: "https://profitiraj.ba" } },
+        { "@type": "Article", headline: "Techstars Launches First Startup Community Partnership Founder Catalyst: Uniting Founders and Communities Across Omaha & Sarajevo", url: "https://www.techstars.com/blog/program-news/techstars-launches-first-startup-community-partnership-founder-catalyst", publisher: { "@type": "Organization", name: "Techstars", url: "https://www.techstars.com" } },
       ],
+      slogan: "Make every echo ready for review.",
+      knowsLanguage: ["en", "bs"],
+      contactPoint: { "@type": "ContactPoint", contactType: "sales", email: "support@horalix.com", telephone: "+387 62 340 020", areaServed: "Europe", availableLanguage: ["English", "Bosnian"] },
       memberOf: [
         { "@type": "Organization", name: "NVIDIA Inception", url: "https://www.nvidia.com/en-us/startups/" },
         { "@type": "Organization", name: "Techstars Sarajevo Founder Catalyst", url: "https://www.techstars.com/" },

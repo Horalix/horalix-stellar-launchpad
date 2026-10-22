@@ -14,6 +14,7 @@
     "claims:audit": "node scripts/claims-audit.mjs",
     "assets:audit": "node scripts/assets-audit.mjs",
     "legacy:build": "npm --prefix legacy ci && npm --prefix legacy run build",
+    "indexnow": "node scripts/indexnow.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node scripts/apply-migrations.mjs",
     "db:migrate:remote": "node scripts/apply-migrations.mjs --remote"

@@ -10,7 +10,8 @@ export function generateStaticParams() { return newsItems.map((item) => ({ slug:
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const item = getNewsItem((await params).slug);
   if (!item) return {};
-  const image = item.image ?? "/og.jpg";
+  // Without a photo of its own an update shares the News card, not the homepage one.
+  const image = item.image ?? "/og/news.jpg";
   return {
     title: item.title,
     description: item.summary,
@@ -39,7 +40,7 @@ export default async function NewsArticle({ params }: { params: Promise<{ slug: 
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "NewsArticle", "@id": `https://horalix.com/news/${item.slug}#article`, headline: item.title, description: item.summary, datePublished: item.published, dateModified: item.published, inLanguage: "en", image: item.image ? `https://horalix.com${item.image}` : "https://horalix.com/og.jpg", author: { "@id": "https://horalix.com/#organization" }, publisher: { "@id": "https://horalix.com/#organization" }, isPartOf: { "@id": "https://horalix.com/#website" }, mainEntityOfPage: `https://horalix.com/news/${item.slug}` },
+      { "@type": "NewsArticle", "@id": `https://horalix.com/news/${item.slug}#article`, headline: item.title, description: item.summary, datePublished: item.published, dateModified: item.published, inLanguage: "en", image: item.image ? `https://horalix.com${item.image}` : "https://horalix.com/og/news.jpg", author: { "@id": "https://horalix.com/#organization" }, publisher: { "@id": "https://horalix.com/#organization" }, isPartOf: { "@id": "https://horalix.com/#website" }, mainEntityOfPage: `https://horalix.com/news/${item.slug}` },
       { "@type": "BreadcrumbList", "@id": `https://horalix.com/news/${item.slug}#breadcrumbs`, itemListElement: [{ "@type": "ListItem", position: 1, name: "Horalix", item: "https://horalix.com/" }, { "@type": "ListItem", position: 2, name: "News", item: "https://horalix.com/news" }, { "@type": "ListItem", position: 3, name: item.title, item: `https://horalix.com/news/${item.slug}` }] },
     ],
   };

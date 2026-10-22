@@ -48,7 +48,7 @@ export function SiteFooter() {
         <div>
           <p className="footer-label">Trust</p>
           <Link href="/evidence">Evidence</Link><Link href="/security">Security</Link>
-          <Link href="/resources">Resources</Link><Link href="/press">Press</Link>
+          <Link href="/resources">Resources</Link><Link href="/glossary">Glossary</Link>
           {/* Linked so crawlers and assistants can discover the citation guidance files. */}
           <a href="/llms.txt">AI citation guide</a><a href="/llms-full.txt">Full reference</a>
         </div>

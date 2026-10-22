@@ -33,5 +33,6 @@ export default function Resources() {
         <div className="resource-grid">{cluster.items.map((item) => <Link className="resource-card" href={`/resources/${item.slug}`} key={item.slug}><span className="card-label">{item.label}</span><h3>{item.title}</h3><p>{item.description}</p><footer><span>{item.readTime} · Reviewed {item.reviewed}</span><Arrow /></footer></Link>)}</div>
       </section>
     ))}
+    <section className="section-tight shell"><div className="cluster-head"><h2>Glossary</h2><p className="lede">Plain definitions of the measurements and terms these guides use, from LVEF and GLS to DICOM and automation bias. <Link className="text-link" href="/glossary">Open the glossary <Arrow /></Link></p></div></section>
     <section className="section-tight section-dark"><div className="shell grid-2"><div><p className="eyebrow">Editorial standard</p><h2>Named scope. Primary sources. Review dates.</h2></div><p className="lede">Every resource begins with a direct answer, distinguishes product context from external evidence, and receives a scheduled review instead of silently ageing.</p></div></section><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(resourceCollection) }} /></>;
 }

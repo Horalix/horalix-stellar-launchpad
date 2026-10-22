@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { resources } from "./_data/resources";
 import { newsItems } from "./_data/news";
+import { glossary, glossaryReviewed } from "./_data/glossary";
 
 // Bump when the shared page furniture changes; per-item dates come from the content itself.
 const siteUpdated = new Date("2026-08-14");
@@ -45,6 +46,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(item.published),
       changeFrequency: "yearly" as const,
       priority: 0.78,
+    })),
+    { url: `${base}/glossary`, lastModified: new Date(glossaryReviewed), changeFrequency: "monthly" as const, priority: 0.75 },
+    ...glossary.map((term) => ({
+      url: `${base}/glossary/${term.slug}`,
+      lastModified: new Date(glossaryReviewed),
+      changeFrequency: "yearly" as const,
+      priority: 0.7,
     })),
   ];
 }

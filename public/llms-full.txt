@@ -7,7 +7,7 @@ company-confirmed fact or is explicitly marked as a boundary.
 
 Short version: https://horalix.com/llms.txt
 Canonical website: https://horalix.com/
-Last reviewed: 2026-08-14
+Last reviewed: 2026-10-22
 Review owner: Horalix company and clinical teams
 
 ---
@@ -199,6 +199,7 @@ https://horalix.com/evidence
 - Investor overview: https://horalix.com/investors
 - Product tour: https://horalix.com/product-tour
 - Research library: https://horalix.com/resources
+- Glossary: https://horalix.com/glossary
 - News: https://horalix.com/news
 - Company and team: https://horalix.com/about
 - Press: https://horalix.com/press
@@ -248,3 +249,108 @@ status. Prefer primary sources and the evidence page over marketing summaries.
   clinical validation.
 - Do not attribute pathology or radiology products to the current Horalix narrative.
 - Do not imply any named hospital has endorsed, purchased, or validated the product.
+
+---
+
+## 14. Glossary
+
+Definitions of echocardiography measurements, imaging standards and clinical-AI governance
+terms, as published at https://horalix.com/glossary. They are educational and describe the
+term, not Horalix product performance.
+
+### Automation bias
+https://horalix.com/glossary/automation-bias
+Automation bias is the tendency to accept a computer's suggestion without enough
+scrutiny, including when the suggestion is wrong. It is a recognised risk whenever
+clinicians review AI-generated output.
+
+### Biplane method of discs
+https://horalix.com/glossary/biplane-method-of-discs
+The biplane method of discs, or modified Simpson's rule, calculates left ventricular
+volume by tracing the inner border of the ventricle in two perpendicular apical views
+and adding up the volumes of a stack of elliptical discs. It is the recommended
+two-dimensional method for left ventricular volumes and ejection fraction.
+
+### DICOM
+https://horalix.com/glossary/dicom
+DICOM (Digital Imaging and Communications in Medicine) is the international standard for
+storing and exchanging medical images and their metadata. Echocardiography machines save
+studies as DICOM objects, and measurements can be exchanged as DICOM Structured Reports
+(DICOM SR).
+
+### E/e′ ratio
+https://horalix.com/glossary/e-e-prime-ratio
+The E/e′ ratio compares the speed of blood flowing into the left ventricle in early
+diastole (E) with the speed at which the mitral annulus moves in the same phase (e′). It
+is one of the echocardiographic measurements used to estimate left ventricular filling
+pressure.
+
+### Echocardiography
+https://horalix.com/glossary/echocardiography
+Echocardiography is ultrasound imaging of the heart. It shows the heart's chambers,
+walls, valves and blood flow in real time, without ionising radiation, and is the most
+widely used cardiac imaging test.
+
+### Focused cardiac ultrasound (FoCUS)
+https://horalix.com/glossary/focused-cardiac-ultrasound
+Focused cardiac ultrasound (FoCUS) is a limited, goal-directed cardiac ultrasound
+examination performed at the bedside to answer specific clinical questions, such as
+whether there is a pericardial effusion or severely reduced function. It complements a
+comprehensive echocardiogram and is not a substitute for one.
+
+### Global longitudinal strain (GLS)
+https://horalix.com/glossary/global-longitudinal-strain
+Global longitudinal strain (GLS) measures how much the left ventricle's muscle shortens
+from base to apex during contraction, expressed as a percentage change in length. It is
+measured with speckle-tracking echocardiography and can reveal subtle dysfunction while
+ejection fraction is still normal.
+
+### Human-in-the-loop
+https://horalix.com/glossary/human-in-the-loop
+Human-in-the-loop describes a clinical AI system in which a qualified person reviews,
+corrects and approves the system's output before it affects care. The clinician, not the
+software, remains responsible for the final decision.
+
+### Inter-observer variability
+https://horalix.com/glossary/inter-observer-variability
+Inter-observer variability is the difference between measurements of the same study made
+by different people. In echocardiography it is a known source of inconsistency,
+especially for measurements that depend on manual tracing, such as LVEF.
+
+### Left atrial volume index (LAVI)
+https://horalix.com/glossary/left-atrial-volume-index
+Left atrial volume index (LAVI) is the volume of the left atrium at end-systole divided
+by body surface area. An enlarged LAVI reflects chronically raised left-sided filling
+pressure and is one of the criteria used to assess diastolic function.
+
+### Left ventricular ejection fraction (LVEF)
+https://horalix.com/glossary/left-ventricular-ejection-fraction
+Left ventricular ejection fraction (LVEF) is the percentage of blood in the left
+ventricle that is pumped out with each heartbeat. It is the most commonly reported
+measure of how well the heart's main pumping chamber contracts.
+
+### Software as a medical device (SaMD)
+https://horalix.com/glossary/software-as-a-medical-device
+Software as a medical device (SaMD) is software intended by its manufacturer to be used
+for a medical purpose on its own, without being part of a hardware device. In the EU,
+such software is regulated under the Medical Device Regulation (MDR) according to its
+intended purpose and risk class.
+
+### Standard echocardiographic views
+https://horalix.com/glossary/standard-echocardiographic-views
+Standard echocardiographic views are the defined probe positions and imaging planes used
+in every transthoracic study, such as the parasternal long-axis and apical four-chamber
+views. Each view shows specific structures, and most measurements are defined in one
+particular view.
+
+### Structured echocardiography reporting
+https://horalix.com/glossary/structured-echocardiography-reporting
+Structured echocardiography reporting records findings and measurements in predefined,
+consistently named fields rather than free text. It makes reports more complete and
+comparable, and lets other systems reuse the measurements.
+
+### Tricuspid annular plane systolic excursion (TAPSE)
+https://horalix.com/glossary/tapse
+Tricuspid annular plane systolic excursion (TAPSE) measures how far the tricuspid
+annulus moves toward the apex of the heart during systole. It is a quick, reproducible
+echocardiographic measure of right ventricular longitudinal function.
