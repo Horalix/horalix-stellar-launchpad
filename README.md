@@ -82,7 +82,9 @@ The form is intentionally unavailable until D1 and Turnstile are configured. Thi
 
 - Route-level titles, descriptions, canonical URLs, and structured data live beside their pages.
 - `app/robots.ts` allows Googlebot, Bingbot, and OAI-SearchBot while blocking GPTBot.
-- `app/sitemap.ts` lists public pages and research resources.
+- `app/sitemap.ts` lists public pages, research resources, and glossary terms.
+- `app/_data/glossary.ts` holds the glossary at `/glossary`: each term opens with a self-contained answer and cites its primary source. `public/llms.txt` and `public/llms-full.txt` list and define the same terms.
+- `scripts/indexnow.mjs` (`npm run indexnow`) tells Bing and the other IndexNow engines to recrawl; its key is the 32-character `.txt` file in `public/`.
 - Funnel analytics store only an approved event name, page path, coarse referral source, and timestamp.
 - Cloudflare Web Analytics is loaded only when its token is configured.
 - Thank-you routes are `noindex, nofollow`.
@@ -102,7 +104,7 @@ To rebuild the archive after changing `legacy/`, put the public Supabase URL and
 
 ## Deployment
 
-The site runs on the `horalix-com` Cloudflare Worker (named in `vite.config.ts`) in the server@horalix.com Cloudflare account, which also holds the `horalix-production` D1 database. To release, run `npm test`, then `npx wrangler deploy --keep-vars` while logged in to that account. The Worker's own address, `horalix-com.server-9de.workers.dev`, is noindex and is the place to check a deploy.
+The site runs on the `horalix-com` Cloudflare Worker (named in `vite.config.ts`) in the server@horalix.com Cloudflare account, which also holds the `horalix-production` D1 database. To release, run `npm test`, then `npx wrangler deploy --keep-vars` while logged in to that account, then `npm run indexnow`. The Worker's own address, `horalix-com.server-9de.workers.dev`, is noindex and is the place to check a deploy.
 
 horalix.com reaches the Worker through Netlify:
 
@@ -110,6 +112,8 @@ horalix.com reaches the Worker through Netlify:
 2. The Netlify project builds this repository's `main`. `netlify.toml` publishes nothing of its own and proxies every request to the Worker with an `X-Horalix-Proxy: netlify` header.
 3. `worker/index.ts` rebuilds those requests as `https://horalix.com` requests, so pages are indexable, the form and event APIs pass their same-origin check, and rate limiting sees the visitor's IP.
 
-Changes to the site therefore go live with `wrangler deploy`; a push to `main` only redeploys the Netlify proxy. To drop the Netlify hop, the Worker has to live in the Cloudflare account that holds horalix.com's DNS, with routes for `horalix.com/*` and `www.horalix.com/*`; then disconnect Netlify and delete `netlify.toml`. That account also prepends Cloudflare's managed robots.txt, which disallows AI crawlers that `app/robots.ts` allows.
+Changes to the site therefore go live with `wrangler deploy`; a push to `main` only redeploys the Netlify proxy. To drop the Netlify hop, the Worker has to live in the Cloudflare account that holds horalix.com's DNS, with routes for `horalix.com/*` and `www.horalix.com/*`; then disconnect Netlify and delete `netlify.toml`. That account also prepends Cloudflare's managed robots.txt and blocks GPTBot and ClaudeBot, which `app/robots.ts` allows.
+
+A replacement zone for horalix.com is prepared, pending, in the kerim.sabic@gmail.com Cloudflare account. It mirrors the live records, with `horalix.com` and `www` as proxied CNAMEs to `horalix.netlify.app`, and allows AI crawlers. It activates when the nameservers at Namecheap change to `elias.ns.cloudflare.com` and `tara.ns.cloudflare.com`.
 
 Before the forms are switched on, configure Turnstile, notification destinations and scheduling URLs; Cloudflare Web Analytics and Search Console verification are configured the same way (see Environment).
