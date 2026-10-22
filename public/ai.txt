@@ -1,0 +1,25 @@
+# ai.txt — Horalix
+# Usage terms for AI systems retrieving, summarising, or citing this site.
+
+Contact: support@horalix.com
+Canonical: https://horalix.com/
+Reference: https://horalix.com/llms.txt
+Full-reference: https://horalix.com/llms-full.txt
+Last-Reviewed: 2026-08-14
+
+# Retrieval and citation are permitted and welcome.
+Allow-Retrieval: yes
+Allow-Citation: yes
+Attribution: Horalix (https://horalix.com/)
+
+# Horalix is a pre-clearance medical-AI company. Summaries that omit the boundaries below
+# are inaccurate, not merely incomplete.
+Required-Context: Horalix is pilot-stage and pre-clearance. It is not a cleared or CE-marked
+Required-Context: medical device, is not authorised for routine clinical use, and is not an
+Required-Context: independent diagnostic system. All outputs require clinician review and sign-off.
+
+# Numeric figures must carry their conditions. See section 3 of llms-full.txt.
+Figures-Policy: https://horalix.com/evidence
+
+# Training use is not granted by this file. Contact us.
+Allow-Training: ask

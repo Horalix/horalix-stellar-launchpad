@@ -1,0 +1,62 @@
+[
+  {
+    "path": "/platform",
+    "file": "platform",
+    "eyebrow": "THE HORALIX PLATFORM",
+    "headline": "One workspace between\nthe echo study and sign-off."
+  },
+  {
+    "path": "/for-hospitals",
+    "file": "for-hospitals",
+    "eyebrow": "FOR HOSPITALS",
+    "headline": "A clinical-AI pilot should\nanswer the hard questions early."
+  },
+  {
+    "path": "/for-clinicians",
+    "file": "for-clinicians",
+    "eyebrow": "FOR CLINICIANS",
+    "headline": "AI assistance that stays\nopen to clinical judgment."
+  },
+  {
+    "path": "/evidence",
+    "file": "evidence",
+    "eyebrow": "EVIDENCE AND TRANSPARENCY",
+    "headline": "Know exactly what has—and\nhas not—been established."
+  },
+  {
+    "path": "/security",
+    "file": "security",
+    "eyebrow": "SECURITY AND DEPLOYMENT",
+    "headline": "Security questions should\narrive before the pilot."
+  },
+  {
+    "path": "/investors",
+    "file": "investors",
+    "eyebrow": "INVESTOR OVERVIEW",
+    "headline": "Build the trusted workflow\nlayer for AI-assisted echo."
+  },
+  {
+    "path": "/resources",
+    "file": "resources",
+    "eyebrow": "SELECTED RESEARCH",
+    "headline": "Useful answers\nfor careful buyers."
+  },
+  {
+    "path": "/product-tour",
+    "file": "product-tour",
+    "eyebrow": "PRODUCT TOUR",
+    "headline": "See the review-led\necho workflow."
+  },
+  {
+    "path": "/about",
+    "file": "about",
+    "eyebrow": "ABOUT HORALIX",
+    "headline": "Clinical AI should earn trust\nthrough the way it is built."
+  },
+  {
+    "path": "/news",
+    "file": "news",
+    "eyebrow": "HORALIX NEWS",
+    "headline": "Progress, with\nthe status attached."
+  }
+]

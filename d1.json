@@ -1,0 +1,5 @@
+{
+  "_comment": "Cloudflare D1 target. The binding name itself comes from .openai/hosting.json (currently \"DB\") because worker/index.ts and the API routes read env.DB — changing it there breaks both. Only the database this points at belongs here. A D1 database_id is an identifier, not a credential: access still requires an authenticated Cloudflare account.",
+  "database_name": "horalix-production",
+  "database_id": "ef1e8c78-00ec-4891-bf02-08c7371fbca2"
+}
