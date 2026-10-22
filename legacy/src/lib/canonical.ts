@@ -3,6 +3,8 @@
  * Ensures users always interact with https://horalix.com, never preview domains
  */
 
+import { ARCHIVE_BASE } from "../../archive-urls.js";
+
 // Step 1: Define canonical production URL
 export const CANONICAL_SITE_URL = "https://horalix.com";
 
@@ -15,10 +17,11 @@ const ALLOWED_HOSTS = [
   "127.0.0.1",
 ];
 
-// Suffixes for development/preview environments (e.g. Lovable, Netlify deploy previews)
+// Suffixes for development/preview environments (e.g. Lovable, Netlify, Cloudflare previews)
 const ALLOWED_HOST_SUFFIXES = [
   ".lovable.app",
   ".netlify.app",
+  ".workers.dev",
 ];
 
 function isAllowedHost(hostname: string): boolean {
@@ -51,12 +54,12 @@ export function enforceCanonicalHost(): void {
 export function authRedirectUrl(path: string): string {
   // Ensure path starts with /
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  return `${CANONICAL_SITE_URL}${normalizedPath}`;
+  return `${CANONICAL_SITE_URL}${ARCHIVE_BASE}${normalizedPath}`;
 }
 
 /**
  * toCanonicalUrl
- * Resolves relative or absolute URLs to the canonical site host.
+ * Resolves relative or absolute URLs to the canonical site host, inside the archive path.
  */
 export function toCanonicalUrl(input?: string): string | undefined {
   if (!input) return undefined;
@@ -64,7 +67,9 @@ export function toCanonicalUrl(input?: string): string | undefined {
   try {
     // Resolve relative and absolute inputs against canonical host.
     const parsed = new URL(input, CANONICAL_SITE_URL);
-    return `${CANONICAL_SITE_URL}${parsed.pathname}${parsed.search}`;
+    const inArchive = parsed.pathname === ARCHIVE_BASE || parsed.pathname.startsWith(`${ARCHIVE_BASE}/`);
+    const pathname = inArchive ? parsed.pathname : `${ARCHIVE_BASE}${parsed.pathname}`;
+    return `${CANONICAL_SITE_URL}${pathname}${parsed.search}`;
   } catch {
     return undefined;
   }

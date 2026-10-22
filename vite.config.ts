@@ -2,6 +2,7 @@ import vinext from "vinext";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import d1Config from "./d1.json";
+import legacyArchive from "./legacy/archive-routes.json";
 import { sites } from "./build/sites-vite-plugin";
 
 const { d1, r2 } = hostingConfig;
@@ -10,8 +11,14 @@ const { d1, r2 } = hostingConfig;
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 
 const localBindingConfig = {
+  // The Worker already serving this site in the Horalix Cloudflare account.
+  name: "horalix-com",
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  // The archived previous site is plain files, but it needs noindex and security headers
+  // and an app-shell fallback, so those requests reach the worker before the asset layer.
+  // The binding is what worker/index.ts reads as env.ASSETS.
+  assets: { binding: "ASSETS", run_worker_first: [legacyArchive.basePath, `${legacyArchive.basePath}/*`] },
   d1_databases: d1
     ? [
         {

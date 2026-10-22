@@ -87,8 +87,21 @@ The form is intentionally unavailable until D1 and Turnstile are configured. Thi
 - Cloudflare Web Analytics is loaded only when its token is configured.
 - Thank-you routes are `noindex, nofollow`.
 
+## Previous site archive
+
+The previous horalix.com site (the Lovable/Vite app) lives in `legacy/` and is kept as a hidden archive under the `basePath` in `legacy/archive-routes.json`. Nothing links to it, nothing redirects into it, it is not in the sitemap, and every response there is `noindex, nofollow`. Its build output is committed under `public/`, so deploying the new site never has to build the old one.
+
+`legacy/archive-routes.json` decides where every old URL goes:
+
+- `redirects`: each URL the old site published redirects (308) to its closest page on the new site, so search rankings carry over. Old news with no equivalent falls through to `/news`.
+- `appRoutes`: only `/unsubscribe`, because unsubscribe links in emails already sent must keep working. It redirects into the archive with its query string.
+
+`worker/index.ts` applies those rules and serves the archive with the old site's own security policy and an app-shell fallback for client-side routes. `npm test` checks that every URL from the previous site's sitemap lands on a page of the new site, and that no public page mentions the archive path.
+
+To rebuild the archive after changing `legacy/`, put the public Supabase URL and publishable key in `legacy/.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) and run `npm run legacy:build`.
+
 ## Deployment
 
-`.openai/hosting.json` declares the Sites project and its D1 binding. Publish through the configured Sites workflow after `npm test` passes. Before a production-domain cutover, configure Turnstile, D1 migrations, notification destinations, scheduling URLs, Cloudflare Web Analytics, Search Console verification, and final clinical/legal approval.
+The site deploys to the `horalix-com` Cloudflare Worker (named in `vite.config.ts`). Run `npm test`, then `npx wrangler deploy`, or connect this repository to the Worker with Workers Builds (build command `npm run build`, deploy command `npx wrangler deploy`). `.openai/hosting.json` declares the Sites project and its D1 binding for the Sites workflow. Before a production-domain cutover, configure Turnstile, D1 migrations, notification destinations, scheduling URLs, Cloudflare Web Analytics, Search Console verification, and final clinical/legal approval.
 
-Production cutover to `horalix.com` is deliberately separate from private staging publication.
+Production cutover to `horalix.com` is deliberately separate from private staging publication. Until it happens, horalix.com is still served by the old Netlify site; `netlify.toml` stops Netlify from rebuilding it from this repository, which would publish an empty site. Delete `netlify.toml` once Netlify is disconnected.

@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The archived previous site has its own toolchain; public/_archive-* is its build output.
+    "legacy/**",
+    "public/_archive-*/**",
   ]),
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

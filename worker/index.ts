@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import legacyArchive from "../legacy/archive-routes.json";
 
 interface Env {
   ASSETS: Fetcher;
@@ -25,17 +26,60 @@ interface ExecutionContext {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+// The previous site is kept as a hidden archive under legacyBase, built from legacy/.
+// Its published URLs redirect to their equivalents on this site, never into the archive.
+const legacyBase = legacyArchive.basePath;
+const legacyRedirects: Record<string, string> = legacyArchive.redirects;
+
+// The archive still talks to its Supabase project and Google Analytics, so it keeps the
+// policy it shipped with on Netlify rather than the new site's stricter one.
+const legacySecurityHeaders: Record<string, string> = {
+  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' data: https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://horalix.com https://*.supabase.co; connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://www.googletagmanager.com; frame-src https://www.linkedin.com; frame-ancestors 'none';",
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+};
+
+/** Appends the request's query string to a redirect target, keeping any #fragment last. */
+function withSearch(target: string, search: string) {
+  const hashIndex = target.indexOf("#");
+  return hashIndex < 0 ? `${target}${search}` : `${target.slice(0, hashIndex)}${search}${target.slice(hashIndex)}`;
+}
+
+/** Where a URL from the previous site lives now, if it is one. */
+function legacyTarget(path: string): string | undefined {
+  if (legacyRedirects[path]) return legacyRedirects[path];
+  // Unsubscribe links in emails the old site already sent must keep working.
+  if (legacyArchive.appRoutes.some((route) => path === route || path.startsWith(`${route}/`))) return `${legacyBase}${path}`;
+  // Old share-card images and logos were served from /assets/; the new site has no such directory.
+  if (path.startsWith("/assets/")) return `${legacyBase}${path}`;
+  return undefined;
+}
+
+async function serveLegacy(request: Request, env: Env, url: URL): Promise<Response> {
+  let response = await env.ASSETS.fetch(request);
+  // The archive is a client-routed app: a path that is not a built file (admin, account
+  // pages, unknown URLs) gets the app shell.
+  const isAppShell = response.status === 404 && !/\.[a-z0-9]+$/i.test(url.pathname);
+  if (isAppShell) response = await env.ASSETS.fetch(new Request(new URL(`${legacyBase}/`, url), request));
+
+  const headers = new Headers(response.headers);
+  for (const [name, value] of Object.entries(legacySecurityHeaders)) headers.set(name, value);
+  // Nothing in the archive is ever indexed, pages and files alike.
+  headers.set("X-Robots-Tag", "noindex, nofollow");
+  if (response.ok && url.pathname.startsWith(`${legacyBase}/assets/`)) headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
+    headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  }
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    const exactRedirects: Record<string, string> = {
-      "/solutions": "/platform",
-      "/solutions/cardiology-ai": "/platform",
-      "/solutions/pathology-ai": "/platform",
-      "/solutions/radiology-ai": "/platform",
-      "/demo/horalix-demo.html": "/product-tour",
-    };
+    if (url.pathname === legacyBase || url.pathname.startsWith(`${legacyBase}/`)) return serveLegacy(request, env, url);
+
     const publishedNews = new Set([
       "/news/maribor-hospital-pilot-ai-echocardiography-workflow",
       "/news/clinic-validation-in-sarajevo-poliklinika-dr-nabil",
@@ -43,7 +87,8 @@ const worker = {
       "/news/techstars-sarajevo-founder-catalyst",
     ]);
     const normalizedPath = url.pathname.length > 1 ? url.pathname.replace(/\/$/, "") : url.pathname;
-    const redirect = exactRedirects[url.pathname]
+    const legacy = legacyTarget(normalizedPath);
+    const redirect = (legacy ? withSearch(legacy, url.search) : undefined)
       ?? (url.pathname.startsWith("/team/") ? "/about#team" : undefined)
       ?? (url.pathname.startsWith("/news/") && !publishedNews.has(normalizedPath) ? "/news" : undefined);
     if (redirect) return new Response(null, { status: 308, headers: { Location: redirect, "Cache-Control": "public, max-age=86400" } });

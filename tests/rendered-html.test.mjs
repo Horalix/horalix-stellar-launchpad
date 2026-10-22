@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
+import legacyArchive from "../legacy/archive-routes.json" with { type: "json" };
 
 const workerUrl = new URL("../dist/server/index.js", import.meta.url);
 workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
@@ -229,4 +231,93 @@ test("legacy solution and demo URLs redirect", async () => {
   const demo = await render("/demo/horalix-demo.html");
   assert.equal(demo.status, 308);
   assert.equal(demo.headers.get("location"), "/product-tour");
+});
+
+// Every URL the previous site listed in its sitemap when it was archived (2026-10-22).
+const previousSitemap = [
+  "/", "/about", "/evidence", "/news", "/press", "/resources", "/solutions", "/terms",
+  "/solutions/cardiology-ai", "/solutions/pathology-ai", "/solutions/radiology-ai",
+  "/news/horalix-nvidia-inception", "/news/horalix-viennaup-2026-travel-grant", "/news/horalix-adria-future-hackathon-2026",
+  "/news/maribor-hospital-pilot-ai-echocardiography-workflow", "/news/clinic-validation-in-sarajevo-poliklinika-dr-nabil",
+  "/news/horalix-at-fls", "/news/demo-day", "/news/the-beginning",
+  "/resources/ai-echocardiography-software", "/resources/manual-vs-ai-echocardiography-measurement",
+  "/resources/echo-workflow-automation-for-hospitals", "/resources/focused-cardiac-ultrasound-ai",
+  "/resources/automated-echocardiography-reporting", "/resources/cardiac-ultrasound-ai-europe",
+  "/resources/ai-in-medical-imaging-workflow", "/resources/how-ai-reduces-echo-reporting-burden",
+  "/resources/how-to-choose-ai-echocardiography-software",
+  "/team/kerim-sabic", "/team/amr-husain", "/team/affan-kapidzic", "/team/neuman-alkhalil",
+];
+
+const archiveBase = legacyArchive.basePath;
+
+/** Serves the built archive in public/ the way the Cloudflare asset layer would. */
+const archiveAssets = {
+  async fetch(request) {
+    const { pathname } = new URL(request.url);
+    const relative = pathname.slice(archiveBase.length).replace(/^\//, "");
+    const candidates = relative === "" ? ["index.html"] : [relative, `${relative}.html`];
+    for (const candidate of candidates) {
+      try {
+        const body = await readFile(new URL(`../public${archiveBase}/${candidate}`, import.meta.url));
+        return new Response(body, { status: 200, headers: { "Content-Type": candidate.endsWith(".html") ? "text/html" : "application/octet-stream" } });
+      } catch {
+        // try the next candidate
+      }
+    }
+    return new Response("Not found", { status: 404 });
+  },
+};
+
+function renderWithArchive(path) {
+  return worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }), { ASSETS: archiveAssets }, { waitUntil() {}, passThroughOnException() {} });
+}
+
+test("every URL from the previous site's sitemap lands on a page of the new site", async () => {
+  for (const path of previousSitemap) {
+    const response = await render(path);
+    if (response.status === 200) continue;
+    assert.equal(response.status, 308, path);
+    const target = response.headers.get("location");
+    assert.ok(!target.startsWith(archiveBase), `${path} must not lead into the archive`);
+    const resolved = await render(target.split("#")[0]);
+    assert.equal(resolved.status, 200, `${path} -> ${target}`);
+  }
+  for (const [path, target] of [
+    ["/resources/cardiac-ultrasound-ai-europe", "/resources/eu-mdr-clinical-ai-pathway"],
+    ["/news/demo-day", "/news/techstars-sarajevo-founder-catalyst"],
+    ["/news/horalix-at-fls", "/news"],
+    ["/team/kerim-sabic?ref=x", "/about?ref=x#kerim-sabic"],
+  ]) {
+    assert.equal((await render(path)).headers.get("location"), target, path);
+  }
+});
+
+test("the previous site is kept as a hidden archive that is never indexed or linked", async () => {
+  for (const path of [`${archiveBase}/`, `${archiveBase}/about`, `${archiveBase}/news/demo-day`]) {
+    const response = await renderWithArchive(path);
+    assert.equal(response.status, 200, path);
+    assert.equal(response.headers.get("x-robots-tag"), "noindex, nofollow", path);
+    assert.match(await response.text(), /<meta name="robots" content="noindex,nofollow"/, path);
+  }
+  const admin = await renderWithArchive(`${archiveBase}/admin/news`);
+  assert.equal(admin.status, 200);
+  assert.equal(admin.headers.get("x-robots-tag"), "noindex, nofollow");
+  assert.match(admin.headers.get("content-security-policy") ?? "", /https:\/\/\*\.supabase\.co/);
+  assert.match(await admin.text(), /<div id="root">/);
+  assert.equal((await renderWithArchive(`${archiveBase}/assets/missing.js`)).status, 404);
+
+  for (const path of ["/", "/sitemap.xml", "/robots.txt", "/about", "/news"]) {
+    assert.ok(!(await (await render(path)).text()).includes(archiveBase), `${path} must not mention the archive`);
+  }
+});
+
+test("unsubscribe links from old emails and old share images still resolve", async () => {
+  const unsubscribe = await render("/unsubscribe?token=abc");
+  assert.equal(unsubscribe.status, 308);
+  assert.equal(unsubscribe.headers.get("location"), `${archiveBase}/unsubscribe?token=abc`);
+  const asset = await render("/assets/og/horalix-og.png");
+  assert.equal(asset.headers.get("location"), `${archiveBase}/assets/og/horalix-og.png`);
+  for (const path of ["/login", "/admin", "/verify-email"]) {
+    assert.notEqual((await render(path)).status, 308, path);
+  }
 });

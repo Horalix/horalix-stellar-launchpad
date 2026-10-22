@@ -2,6 +2,8 @@ import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { ARCHIVE_BASE } from "../archive-urls.js";
+import { ArchiveNotice } from "./components/layout/ArchiveNotice";
 import { PendingSubmissionHandler } from "./components/home/PendingSubmissionHandler";
 import { AuthenticatedRoute } from "./components/auth/AuthenticatedRoute";
 import { Toaster } from "@/components/ui/toaster";
@@ -76,7 +78,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={ARCHIVE_BASE}>
+        <ArchiveNotice />
         <PendingSubmissionHandler />
         <Suspense fallback={<RouteLoadingState />}>
           <Routes>

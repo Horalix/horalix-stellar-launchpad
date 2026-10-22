@@ -297,10 +297,10 @@ const Press = () => {
               <h2 className="font-space text-2xl font-bold text-primary">Brand assets</h2>
               <div className="mt-6 flex items-center gap-6">
                 <div className="flex h-24 w-24 items-center justify-center border border-border bg-primary p-3">
-                  <img src={pressKit.logo.path} alt="Horalix logo" className="h-full w-full object-contain" />
+                  <img src={`${import.meta.env.BASE_URL}${pressKit.logo.path.slice(1)}`} alt="Horalix logo" className="h-full w-full object-contain" />
                 </div>
                 <Button asChild variant="outline">
-                  <a href={pressKit.logo.path} download>
+                  <a href={`${import.meta.env.BASE_URL}${pressKit.logo.path.slice(1)}`} download>
                     Download {pressKit.logo.label}
                   </a>
                 </Button>

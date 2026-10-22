@@ -1,0 +1,10 @@
+# horalix.com moves from Netlify to the Cloudflare Worker this repository now builds.
+# Netlify cannot run that Worker, so a Netlify build of this repository would publish an
+# empty site. Until the domain is cut over to Cloudflare, every Netlify build is skipped,
+# and if one is ever forced (for example by a build hook) it fails, so the last good
+# Netlify deploy keeps serving. Delete this file once Netlify is disconnected.
+
+[build]
+  ignore = "exit 0"
+  command = "echo 'Netlify builds are disabled: this site deploys to Cloudflare Workers.' && exit 1"
+  publish = "dist"

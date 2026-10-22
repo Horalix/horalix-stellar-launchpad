@@ -1,0 +1,27 @@
+{
+  "_comment": "The previous horalix.com site is kept as a hidden archive under basePath: nothing links to it, nothing redirects into it, and every response there is noindex. Change basePath here only. Read by worker/index.ts, vite.config.ts and legacy/. `redirects` sends each URL the old site published to its closest page on the new site (old news with no equivalent falls through to /news in the worker). `appRoutes` are old-site paths that must keep working because they are in emails already sent; they redirect into the archive with their query string.",
+  "basePath": "/_archive-7k2q9x",
+  "redirects": {
+    "/solutions": "/platform",
+    "/solutions/cardiology-ai": "/platform",
+    "/solutions/pathology-ai": "/platform",
+    "/solutions/radiology-ai": "/platform",
+    "/demo/horalix-demo.html": "/product-tour",
+    "/team/kerim-sabic": "/about#kerim-sabic",
+    "/team/amr-husain": "/about#amr-husain",
+    "/team/affan-kapidzic": "/about#affan-kapidzic",
+    "/team/neuman-alkhalil": "/about#neuman-alkhalil",
+    "/resources/ai-echocardiography-software": "/resources/ai-echocardiography-software-guide",
+    "/resources/manual-vs-ai-echocardiography-measurement": "/resources/automated-vs-manual-echo-measurement",
+    "/resources/how-ai-reduces-echo-reporting-burden": "/resources/echo-reporting-burden",
+    "/resources/automated-echocardiography-reporting": "/resources/echo-reporting-burden",
+    "/resources/focused-cardiac-ultrasound-ai": "/resources/focused-cardiac-ultrasound-ai-evidence",
+    "/resources/how-to-choose-ai-echocardiography-software": "/resources/clinical-ai-procurement-checklist",
+    "/resources/cardiac-ultrasound-ai-europe": "/resources/eu-mdr-clinical-ai-pathway",
+    "/resources/ai-in-medical-imaging-workflow": "/resources/ai-echocardiography-software-guide",
+    "/resources/echo-workflow-automation-for-hospitals": "/for-hospitals",
+    "/news/demo-day": "/news/techstars-sarajevo-founder-catalyst",
+    "/news/the-beginning": "/about"
+  },
+  "appRoutes": ["/unsubscribe"]
+}

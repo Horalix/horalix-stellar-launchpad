@@ -71,7 +71,7 @@ export const FAQSection = () => {
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground max-w-xs">
               The questions hospitals, clinicians, and investors actually ask — answered plainly.
               Anything missing?{" "}
-              <a href="/#contact" className="font-medium text-accent-strong hover:underline">
+              <a href={`${import.meta.env.BASE_URL}#contact`} className="font-medium text-accent-strong hover:underline">
                 Ask us directly.
               </a>
             </p>

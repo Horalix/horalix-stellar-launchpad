@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node scripts/generate-sitemap.mjs && node scripts/generate-static-pages.mjs && node scripts/prerender.js",
+    "postbuild": "node scripts/generate-static-pages.mjs && node scripts/build-archive.mjs",
     "build:dev": "vite build --mode development",
     "indexnow": "node scripts/submit-indexnow.mjs",
     "og:image": "node scripts/generate-og-image.mjs",

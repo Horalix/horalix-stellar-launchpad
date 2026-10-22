@@ -2,9 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { ARCHIVE_BASE } from "./archive-urls.js";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // [ARCHIVE] The new site owns the root of horalix.com; this one is a hidden archive.
+  base: `${ARCHIVE_BASE}/`,
   server: {
     host: "::",
     port: 8080,

@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import type { FC, ReactNode } from "react";
 import { toCanonicalUrl } from "@/lib/canonical";
+import { rebaseAbsoluteUrls } from "../../archive-urls.js";
 
 /**
  * SEO component
@@ -40,14 +41,15 @@ const SEO: FC<SEOProps> = ({
   // Always resolve canonicals to the canonical domain.
   const canonicalInput = canonical ?? (typeof window !== "undefined" ? window.location.href : undefined);
   const canonicalUrl = canonicalInput ? toCanonicalUrl(canonicalInput) : undefined;
-  const robotsContent =
-    robots ??
-    (noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
+  // [ARCHIVE] This site is a hidden archive now: nothing in it is indexed, whatever
+  // a page asks for (the robots and noindex props are ignored). The new site at the
+  // root of horalix.com carries search.
+  const robotsContent = "noindex,nofollow";
   const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 
   // [SEO] Always provide og:image — the default is a designed 1200×630 card,
   // so every page qualifies for the large share preview
-  const resolvedImage = image ?? DEFAULT_OG_IMAGE;
+  const resolvedImage = rebaseAbsoluteUrls(image ?? DEFAULT_OG_IMAGE);
   const twitterCard = "summary_large_image";
 
   return (
@@ -73,7 +75,7 @@ const SEO: FC<SEOProps> = ({
 
         {jsonLdArray.map((entry, index) => (
           <script key={`json-ld-${index}`} type="application/ld+json">
-            {JSON.stringify(entry)}
+            {rebaseAbsoluteUrls(JSON.stringify(entry))}
           </script>
         ))}
       </Helmet>
