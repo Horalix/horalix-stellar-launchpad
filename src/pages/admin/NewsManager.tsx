@@ -69,7 +69,17 @@ const defaultForm: ArticleForm = {
 };
 
 type NewsArticleRow = Tables<"news_articles">;
-type ContributorOption = Pick<Tables<"contributors">, "id" | "name">;
+
+// The contributors table isn't in the generated database types yet, so keep a
+// local shape for it and read it through an untyped client (same approach as
+// ContributorsManager/ResourcesManager).
+interface ContributorOption {
+  id: string;
+  name: string;
+}
+
+const contributorsDb = supabase as any;
+
 type ImageFocusPoint = { x?: number; y?: number };
 
 const NewsManager = () => {
@@ -112,9 +122,12 @@ const NewsManager = () => {
   const { data: contributors = [] } = useQuery<ContributorOption[]>({
     queryKey: ["admin-news-contributors"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("contributors").select("id, name").order("display_order", { ascending: true });
+      const { data, error } = await contributorsDb
+        .from("contributors")
+        .select("id, name")
+        .order("display_order", { ascending: true });
       if (error) throw error;
-      return data || [];
+      return (data || []) as ContributorOption[];
     },
   });
 
