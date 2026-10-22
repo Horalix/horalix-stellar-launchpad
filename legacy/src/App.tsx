@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -9,38 +9,40 @@ import { AuthenticatedRoute } from "./components/auth/AuthenticatedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { lazyPage } from "@/lib/lazyPage";
 
-const Index = lazy(() => import("./pages/Index"));
-const News = lazy(() => import("./pages/News"));
-const NewsArticle = lazy(() => import("./pages/NewsArticle"));
-const Solutions = lazy(() => import("./pages/Solutions"));
-const SolutionDetail = lazy(() => import("./pages/SolutionDetail"));
-const Resources = lazy(() => import("./pages/Resources"));
-const ResourceDetail = lazy(() => import("./pages/ResourceDetail"));
-const About = lazy(() => import("./pages/About"));
-const TeamProfile = lazy(() => import("./pages/TeamProfile"));
-const Evidence = lazy(() => import("./pages/Evidence"));
-const Press = lazy(() => import("./pages/Press"));
-const Terms = lazy(() => import("./pages/Terms"));
-const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
-const Login = lazy(() => import("./pages/Login"));
-const Signup = lazy(() => import("./pages/Signup"));
-const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
-const Profile = lazy(() => import("./pages/Profile"));
-const ProfileSubmissions = lazy(() => import("./pages/ProfileSubmissions"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+// Every route loads through lazyPage so a stale tab reloads instead of blanking
+const Index = lazyPage(() => import("./pages/Index"));
+const News = lazyPage(() => import("./pages/News"));
+const NewsArticle = lazyPage(() => import("./pages/NewsArticle"));
+const Solutions = lazyPage(() => import("./pages/Solutions"));
+const SolutionDetail = lazyPage(() => import("./pages/SolutionDetail"));
+const Resources = lazyPage(() => import("./pages/Resources"));
+const ResourceDetail = lazyPage(() => import("./pages/ResourceDetail"));
+const About = lazyPage(() => import("./pages/About"));
+const TeamProfile = lazyPage(() => import("./pages/TeamProfile"));
+const Evidence = lazyPage(() => import("./pages/Evidence"));
+const Press = lazyPage(() => import("./pages/Press"));
+const Terms = lazyPage(() => import("./pages/Terms"));
+const Unsubscribe = lazyPage(() => import("./pages/Unsubscribe"));
+const Login = lazyPage(() => import("./pages/Login"));
+const Signup = lazyPage(() => import("./pages/Signup"));
+const VerifyEmail = lazyPage(() => import("./pages/VerifyEmail"));
+const Profile = lazyPage(() => import("./pages/Profile"));
+const ProfileSubmissions = lazyPage(() => import("./pages/ProfileSubmissions"));
+const NotFound = lazyPage(() => import("./pages/NotFound"));
 
-const AdminLogin = lazy(() => import("./pages/admin/Login"));
-const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
-const NewsManager = lazy(() => import("./pages/admin/NewsManager"));
-const LinkedInManager = lazy(() => import("./pages/admin/LinkedInManager"));
-const TeamManager = lazy(() => import("./pages/admin/TeamManager"));
-const SolutionsManager = lazy(() => import("./pages/admin/SolutionsManager"));
-const ResourcesManager = lazy(() => import("./pages/admin/ResourcesManager"));
-const ContributorsManager = lazy(() => import("./pages/admin/ContributorsManager"));
-const ContentManager = lazy(() => import("./pages/admin/ContentManager"));
-const ContactsManager = lazy(() => import("./pages/admin/ContactsManager"));
-const FAQManager = lazy(() => import("./pages/admin/FAQManager"));
+const AdminLogin = lazyPage(() => import("./pages/admin/Login"));
+const AdminDashboard = lazyPage(() => import("./pages/admin/Dashboard"));
+const NewsManager = lazyPage(() => import("./pages/admin/NewsManager"));
+const LinkedInManager = lazyPage(() => import("./pages/admin/LinkedInManager"));
+const TeamManager = lazyPage(() => import("./pages/admin/TeamManager"));
+const SolutionsManager = lazyPage(() => import("./pages/admin/SolutionsManager"));
+const ResourcesManager = lazyPage(() => import("./pages/admin/ResourcesManager"));
+const ContributorsManager = lazyPage(() => import("./pages/admin/ContributorsManager"));
+const ContentManager = lazyPage(() => import("./pages/admin/ContentManager"));
+const ContactsManager = lazyPage(() => import("./pages/admin/ContactsManager"));
+const FAQManager = lazyPage(() => import("./pages/admin/FAQManager"));
 
 const queryClient = new QueryClient();
 
