@@ -78,6 +78,11 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
+    // horalix.com is the only canonical host; www used to be redirected by Netlify.
+    if (url.hostname === "www.horalix.com") {
+      return new Response(null, { status: 301, headers: { Location: `https://horalix.com${url.pathname}${url.search}`, "Cache-Control": "public, max-age=86400" } });
+    }
+
     if (url.pathname === legacyBase || url.pathname.startsWith(`${legacyBase}/`)) return serveLegacy(request, env, url);
 
     const publishedNews = new Set([

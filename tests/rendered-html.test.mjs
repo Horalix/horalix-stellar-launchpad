@@ -321,3 +321,9 @@ test("unsubscribe links from old emails and old share images still resolve", asy
     assert.notEqual((await render(path)).status, 308, path);
   }
 });
+
+test("www.horalix.com redirects to the canonical host with its path", async () => {
+  const response = await worker.fetch(new Request("https://www.horalix.com/platform?ref=x"), { ASSETS: archiveAssets }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 301);
+  assert.equal(response.headers.get("location"), "https://horalix.com/platform?ref=x");
+});
